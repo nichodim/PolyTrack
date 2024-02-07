@@ -1,0 +1,4 @@
+Hello, my name is Matt and I have been learning computer science for almost one year. \n
+Some of my most recent projects consist of the utilization of Python and databases such as PostgreSQL. \n
+In my free time I enjoy learning more about computers and further developing my knowledge in computing. \n
+Much of my drive derives from my passion to adventually have a job that I am able to practice these skills in the near future.
