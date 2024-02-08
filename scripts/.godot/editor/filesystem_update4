@@ -1,9 +1,2 @@
-<<<<<<< HEAD
-res://grid.tscn
-res://grid.gd
-res://tile.tscn
-res://tile.gd
-=======
 res://main.tscn
-res://texture_rect.tscn
->>>>>>> a42875afee1b8a1c6689abb9228ed9b7c271ca3d
+res://grid.tscn

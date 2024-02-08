@@ -1,15 +1,11 @@
 ea4bc82a6ad023ab7ee23ee620429895
-<<<<<<< HEAD
-::res://::1707248390
-grid.gd::GDScript::-1::1707247724::0::1::::<>GridContainer<>::
-grid.tscn::PackedScene::7354617962637222686::1707248177::0::1::::<><>::res://grid.gd<>uid://mtkf6iyslmik::::res://tile.tscn
-tile.gd::GDScript::-1::1707247871::0::1::::<>Node<>::
-tile.tscn::PackedScene::882107041577953986::1707248177::0::1::::<><>::
-=======
-::res://::1707258511
-icon.svg::CompressedTexture2D::3474546082729635294::1707178549::1707179553::1::::<><>::
-main.gd::GDScript::-1::1707181139::0::1::::<>Node2D<>::
-main.tscn::PackedScene::8868522049769481976::1707191874::0::1::::<><>::res://main.gd<>uid://th54cyh63wdh::::res://texture_rect.tscn<>uid://bprdjb5oo8d6m::::res://icon.svg
-texture_rect.gd::GDScript::-1::1707191874::0::1::::<>TextureRect<>::
-texture_rect.tscn::PackedScene::1349912113689876341::1707191673::0::1::::<><>::res://texture_rect.gd
->>>>>>> a42875afee1b8a1c6689abb9228ed9b7c271ca3d
+::res://::1707410098
+grid.gd::GDScript::-1::1707409992::0::1::::<>Node<>::
+grid.tscn::PackedScene::7354617962637222686::1707409992::0::1::::<><>::res://grid.gd<>uid://mtkf6iyslmik::::res://tile.tscn
+icon.svg::CompressedTexture2D::3474546082729635294::1707259285::1707410098::1::::<><>::
+main.gd::GDScript::-1::1707259285::0::1::::<>Node2D<>::
+main.tscn::PackedScene::8868522049769481976::1707338935::0::1::::<><>::res://main.gd<>uid://th54cyh63wdh::::res://texture_rect.tscn<>uid://bprdjb5oo8d6m::::res://icon.svg
+texture_rect.gd::GDScript::-1::1707259285::0::1::::<>TextureRect<>::
+texture_rect.tscn::PackedScene::1349912113689876341::1707338935::0::1::::<><>::res://texture_rect.gd
+tile.gd::GDScript::-1::1707409992::0::1::::<>Node<>::
+tile.tscn::PackedScene::882107041577953986::1707409992::0::1::::<><>::res://tile.gd
