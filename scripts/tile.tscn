@@ -1,7 +1,34 @@
-[gd_scene format=3 uid="uid://mtkf6iyslmik"]
+[gd_scene load_steps=3 format=3 uid="uid://mtkf6iyslmik"]
 
-[node name="Tile" type="ColorRect"]
-custom_minimum_size = Vector2(50, 50)
-offset_right = 40.0
-offset_bottom = 40.0
-color = Color(0.0470588, 1, 1, 0.380392)
+[ext_resource type="Script" path="res://tile.gd" id="1_ie7ng"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3on1q"]
+size = Vector2(34.2724, 10.8783)
+
+[node name="Border Color" type="ColorRect"]
+custom_minimum_size = Vector2(48, 48)
+offset_right = 48.0
+offset_bottom = 48.0
+color = Color(0, 1, 1, 0.341176)
+script = ExtResource("1_ie7ng")
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
+
+[node name="Inner Color" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 46.0
+offset_bottom = 46.0
+color = Color(0.101961, 1, 1, 0.67451)
+
+[node name="Area2D" type="Area2D" parent="."]
+scale = Vector2(-0.461915, -68.5551)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-51.958, -0.35)
+scale = Vector2(2.832, 0.06)
+shape = SubResource("RectangleShape2D_3on1q")
+one_way_collision_margin = 0.0
+debug_color = Color(0.94902, 0, 0.580392, 0.419608)

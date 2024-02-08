@@ -1,3 +1,4 @@
-res://tile.tscn
 res://grid.tscn
 res://grid.gd
+res://tile.tscn
+res://tile.gd

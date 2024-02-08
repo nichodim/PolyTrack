@@ -1,4 +1,8 @@
+Node
+GridContainer
+CollisionShape2D
+Area2D
+ColorRect
+GridMap
 HBoxContainer
 VBoxContainer
-Node
-ColorRect
