@@ -16,8 +16,6 @@ func _ready():
 	
 	for i in range(columns * rows):
 		var tile = tile_scene.instantiate()
-		tile.size = Vector2(100.0, 100.0)
-		tile.child_entered_tree
 		grid.add_child(tile)
 	add_child(grid)
 	

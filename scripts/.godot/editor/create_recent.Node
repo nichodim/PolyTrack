@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+TextureRect
 Node
 GridContainer
 CollisionShape2D
@@ -7,15 +7,8 @@ ColorRect
 GridMap
 HBoxContainer
 VBoxContainer
-=======
-TextureRect
 PanelContainer
 Panel
 CollisionShape2D
 Area2D
 Sprite2D
-TextureButton
-CenterContainer
-BoxContainer
-Control
->>>>>>> a42875afee1b8a1c6689abb9228ed9b7c271ca3d

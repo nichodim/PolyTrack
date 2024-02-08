@@ -1,2 +1,5 @@
-res://main.tscn
+res://tile.tscn
 res://grid.tscn
+res://main.tscn
+res://texture_rect.tscn
+res://grid.gd
