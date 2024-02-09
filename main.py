@@ -2,6 +2,8 @@
 # Game Description: ...
 import pygame
 import sys
+import random
+
 
 # Initialize the pygame settings
 pygame.init()
@@ -28,9 +30,38 @@ for row in range(num_rows):                     # Row       # Col
         row_list.append(0)
     grid.append(row_list)      
 
+# Creates the boxes to drag and drop
+active_track = None
+tracks = []
+x = 100
+for i in range(5): 
+    y = 850
+    w = 50
+    h = 50
+    track = pygame.Rect(x, y, w, h)
+    x += 200
+    tracks.append(track)
+    
+      
+
 # Pygame mainloop that will run while the game is running
 while True:
     for event in pygame.event.get(): 
+
+        if event.type == pygame.MOUSEBUTTONDOWN: # Checks for left mouse button clicks on boxes
+            if event.button == 1:
+                for num, track in enumerate(tracks):
+                    if track.collidepoint(event.pos):
+                        active_track = num
+        
+        if event.type == pygame.MOUSEBUTTONUP: # Checks for left mouse button releases on boxes
+            if event.button == 1:
+                active_track = None
+        
+        if event.type == pygame.MOUSEMOTION: # Moves box according to mouse movement
+            if active_track != None:
+                tracks[active_track].move_ip(event.rel)
+
         if event.type == pygame.QUIT: # Quits game if event is told to quit
             pygame.quit()
             sys.exit()
@@ -47,6 +78,11 @@ while True:
     
     for y in range(0, 1000, 50):
         pygame.draw.line(game_view, Colors.dark_gray, (0, y), (1000, y))
+
+    # Draws the tracks on the screen
+    for track in tracks:
+        pygame.draw.rect(game_view, "white", track)
+
 
     # Updates the display with previous functions
     pygame.display.update()
