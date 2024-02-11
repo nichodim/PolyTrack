@@ -93,6 +93,12 @@ while True:
             if event.button == 1:
                 for num, track in enumerate(tracks):
                     if track.collidepoint(event.pos):
+                        # Check if track is attached 
+                        for i, row in enumerate(grid_tiles):
+                            for j, tile in enumerate(row):
+                                if tile['track'] == tracks[num]:
+                                    grid_tiles[i][j]['track'] = None
+
                         active_track = num
         
         if event.type == pygame.MOUSEBUTTONUP: # Checks for left mouse button releases on boxes
