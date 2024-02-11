@@ -5,15 +5,28 @@ import sys
 import random
 
 
+# Constant variables - things you would configure
+# Resolution config
+GAME_WIDTH = 1000
+GAME_HEIGHT = 1100
+
+# Board config
+OUTER_BORDER_SIZE = 150
+NUM_ROWS = 10
+NUM_COLS = 10
+INNER_GAP = 10
+OUTER_GAP = 35
+
+# Trackbox config
+TRACK_WIDTH = 50
+TRACK_HEIGHT = 50
+NUMBER_OF_TRACKS = 5
+TRACK_SEPERATION = 100
+
 # Initialize the pygame settings
 pygame.init()
-game_view = pygame.display.set_mode((1000, 1000)) # Viewport Size
+game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT)) # Viewport Size
 fps = pygame.time.Clock() # Games FPS
-
-# Size of board
-outer_border_size = 100
-num_rows = 20
-num_cols = 20
 
 # Class to define colors that will be later called
 class Colors:
@@ -22,24 +35,45 @@ class Colors:
     dark_gray = (40, 40, 40)
     light_gray = (70,70,70)
 
-# Creates the list for row and col with inital val of 0
-grid = []
-for row in range(num_rows):                     # Row       # Col
-    row_list = []               # i.e. grid = [[0,0,0,0], [0,0,0,0,] ...]
-    for col in range(num_cols): 
-        row_list.append(0)
-    grid.append(row_list)      
+# Creates the 2d list for row and col with inital val of 0
+board_width = NUM_COLS * TRACK_WIDTH + INNER_GAP * (NUM_COLS - 1) + OUTER_GAP * 2
+board_height = NUM_ROWS * TRACK_HEIGHT + INNER_GAP * (NUM_ROWS - 1) + OUTER_GAP * 2
+board_x = GAME_WIDTH / 2 - board_width / 2
+board = pygame.Rect(board_x, GAME_HEIGHT * 0.1, board_width, board_height)
+
+grid_tiles = []
+row_y_increment = TRACK_HEIGHT + INNER_GAP
+row_y = board.top + OUTER_GAP
+                # Row       # Col
+# i.e. grid = [[0,0,0,0], [0,0,0,0,] ...]
+for row in range(NUM_ROWS):  
+    tile_x = OUTER_GAP
+
+    row_list = []
+    for col in range(NUM_COLS): 
+        board_tile = pygame.Rect(board.left + tile_x, row_y, TRACK_WIDTH, TRACK_HEIGHT)
+        row_list.append(board_tile)
+
+        tile_x += TRACK_WIDTH + INNER_GAP
+    grid_tiles.append(row_list)    
+
+    row_y += row_y_increment 
 
 # Creates the boxes to drag and drop
+extra_width = TRACK_WIDTH * 0.75
+extra_height = TRACK_WIDTH / 2
+
+track_box_width = NUMBER_OF_TRACKS * TRACK_WIDTH + (TRACK_SEPERATION - TRACK_WIDTH) * (NUMBER_OF_TRACKS - 1) + extra_width * 4
+track_box_x = GAME_WIDTH / 2 - track_box_width / 2
+track_box = pygame.Rect(track_box_x, GAME_HEIGHT * 0.85, track_box_width, TRACK_HEIGHT + extra_height * 2)
+
 active_track = None
 tracks = []
-x = 100
-for i in range(5): 
-    y = 850
-    w = 50
-    h = 50
-    track = pygame.Rect(x, y, w, h)
-    x += 200
+track_x = extra_width * 2
+for i in range(NUMBER_OF_TRACKS): 
+    y = GAME_HEIGHT * 0.85
+    track = pygame.Rect(track_box.left + track_x, track_box.center[1] - extra_height, TRACK_WIDTH, TRACK_HEIGHT)
+    track_x += TRACK_SEPERATION
     tracks.append(track)
     
       
@@ -56,6 +90,13 @@ while True:
         
         if event.type == pygame.MOUSEBUTTONUP: # Checks for left mouse button releases on boxes
             if event.button == 1:
+                # Check if pointer over a board tile
+                for i, row in enumerate(grid_tiles):
+                    for j, tile in enumerate(row):
+                        if tile.collidepoint(event.pos):
+                            tracks[active_track].x = grid_tiles[i][j].left
+                            tracks[active_track].y = grid_tiles[i][j].top
+
                 active_track = None
         
         if event.type == pygame.MOUSEMOTION: # Moves box according to mouse movement
@@ -67,21 +108,18 @@ while True:
             sys.exit()
 
     # Fills background black
-    game_view.fill(Colors.dark_gray)
-    
-    # Overwrite the background to show a grid in the center of the viewport
-    pygame.draw.rect(game_view, Colors.light_gray, (outer_border_size, outer_border_size, 1000 - 2 * outer_border_size, 1000 - 2 * outer_border_size))
+    game_surf.fill(Colors.dark_gray)
 
-    # Draws the lines in range of the viewport with a step of 50 to give grid size for x and y
-    for x in range(0, 1000, 50):
-        pygame.draw.line(game_view, Colors.dark_gray, (x, 0), (x, 1000))
-    
-    for y in range(0, 1000, 50):
-        pygame.draw.line(game_view, Colors.dark_gray, (0, y), (1000, y))
+    # draws the board and tiles on screen
+    pygame.draw.rect(game_surf, Colors.light_gray, board)
+    for row in grid_tiles:
+        for tile in row:
+            pygame.draw.rect(game_surf, "white", tile)
 
+    pygame.draw.rect(game_surf, "black", track_box)
     # Draws the tracks on the screen
     for track in tracks:
-        pygame.draw.rect(game_view, "white", track)
+        pygame.draw.rect(game_surf, "red", track)
 
 
     # Updates the display with previous functions
