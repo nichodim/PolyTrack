@@ -102,7 +102,7 @@ while True:
                         active_track = num
         
         if event.type == pygame.MOUSEBUTTONUP: # Checks for left mouse button releases on boxes
-            if event.button == 1:
+            if event.button == 1 and active_track != None:
                 # Check if pointer over an empty board tile
                 #   -> Snap track to board tile and link track to tile
                 for i, row in enumerate(grid_tiles):
