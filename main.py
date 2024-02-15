@@ -35,6 +35,11 @@ class Colors:
     dark_gray = (40, 40, 40)
     light_gray = (70,70,70)
 
+class Tracks:
+    horizontal_track = pygame.image.load('images/horizontal_track.png') 
+    straight_track = pygame.image.load('images/straight_track.png')
+    right_track = pygame.image.load('images/right_track.png')
+    left_track = pygame.image.load('images/left_track.png')
 
 # Creates a board rectangle where tiles will be placed
 board_width = NUM_COLS * TRACK_WIDTH + INNER_GAP * (NUM_COLS - 1) + OUTER_GAP * 2
@@ -78,31 +83,9 @@ active_track = None
 tracks = []
 track_x = extra_width * 2
 
-possible_tracks = ["red", "blue", "green", "yellow"]
-
-'''
-for i in range(NUMBER_OF_TRACKS): 
-    y = GAME_HEIGHT * .85 # what is this used for 
-
-    next_track = possible_tracks[0]
-    next_track["track_location"].x = track_box.left + extra_width * 2 + TRACK_SEPERATION * len(tracks)
-    print(next_track["track_location"])
-    tracks.append(next_track)
-
-    track = {    
-                "track_location": pygame.Rect(track_box.left + extra_width * 2 + TRACK_SEPERATION * len(tracks), track_box.center[1] - extra_height, TRACK_WIDTH, TRACK_HEIGHT),
-                "color": possible_tracks[random.randint(0, 3)]
-            }
-
-    print(track)
-    #track_x += TRACK_SEPERATION
-    tracks.append(track)
-'''
-
-
+possible_tracks = [Tracks.horizontal_track, Tracks.straight_track, Tracks.left_track, Tracks.right_track]
 
 time = 0
-
 
 # Pygame mainloop that will run while the game is running
 while True:
@@ -163,10 +146,11 @@ while True:
     if time % 60 == 0 and NUMBER_OF_TRACKS < 5:
         track = {    
                 "track_location": pygame.Rect(track_box.left + extra_width * 2 + TRACK_SEPERATION * len(tracks), track_box.center[1] - extra_height, TRACK_WIDTH, TRACK_HEIGHT),
-                "color": possible_tracks[random.randint(0, 3)]
+                "image": possible_tracks[random.randint(0, 3)]
             }
-        
+
         print(track)
+
         #track_x += TRACK_SEPERATION
         NUMBER_OF_TRACKS += 1
         tracks.append(track)
@@ -181,16 +165,25 @@ while True:
         for tile in row:
             pygame.draw.rect(game_surf, "white", tile['board'])
             if tile['track'] != None:
-                pygame.draw.rect(game_surf, tile['track']['color'], tile['track']['track_location'])
+                # Changes the scalling with the initalized sizes of the tile
+                scaled_image_grid = pygame.transform.scale(tile['track']['image'], (TRACK_WIDTH, TRACK_HEIGHT))
+
+                # Centers the the tracks by moving to origin (0,0)
+                center = tile['track']['track_location'].move(0, 0)
+                
+                # Displays the images in
+                game_surf.blit(scaled_image_grid, center)
 
     pygame.draw.rect(game_surf, "black", track_box)
 
-    # Draws the tracks on the screen
-    if len(tracks) > 0 :
-        for i in range(len(tracks)):
-            pygame.draw.rect(game_surf, tracks[i]['color'], tracks[i]['track_location'])
-
-
+   # Draws the tracks on the screen
+    if len(tracks) > 0:
+        for track in tracks:        
+            # Scales the image to fit the preset track size of 50, 50
+            scaled_image = pygame.transform.scale(track['image'], (TRACK_WIDTH, TRACK_HEIGHT))
+            # Displays the images in the toolbox
+            game_surf.blit(scaled_image, track['track_location'])
+            
     # Updates the display with previous functions
     pygame.display.update()
  
