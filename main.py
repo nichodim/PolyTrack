@@ -3,7 +3,7 @@
 import pygame
 import sys
 import random
-
+import math
 
 # Constant variables - things you would configure
 # Resolution config
@@ -20,7 +20,7 @@ OUTER_GAP = 35
 # Trackbox config
 TRACK_WIDTH = 50
 TRACK_HEIGHT = 50
-NUMBER_OF_TRACKS = 5
+NUMBER_OF_TRACKS = 0
 TRACK_SEPERATION = 100
 
 # Initialize the pygame settings
@@ -69,7 +69,7 @@ extra_width = TRACK_WIDTH * 0.75
 extra_height = TRACK_WIDTH / 2
 
 # Creates track box underneath the tracks
-track_box_width = NUMBER_OF_TRACKS * TRACK_WIDTH + (TRACK_SEPERATION - TRACK_WIDTH) * (NUMBER_OF_TRACKS - 1) + extra_width * 4
+track_box_width = 5 * TRACK_WIDTH + (TRACK_SEPERATION - TRACK_WIDTH) * (5 - 1) + extra_width * 4
 track_box_x = GAME_WIDTH / 2 - track_box_width / 2
 track_box = pygame.Rect(track_box_x, GAME_HEIGHT * 0.85, track_box_width, TRACK_HEIGHT + extra_height * 2)
 
@@ -77,50 +77,100 @@ track_box = pygame.Rect(track_box_x, GAME_HEIGHT * 0.85, track_box_width, TRACK_
 active_track = None
 tracks = []
 track_x = extra_width * 2
+
+possible_tracks = ["red", "blue", "green", "yellow"]
+
+'''
 for i in range(NUMBER_OF_TRACKS): 
-    y = GAME_HEIGHT * 0.85
-    track = pygame.Rect(track_box.left + track_x, track_box.center[1] - extra_height, TRACK_WIDTH, TRACK_HEIGHT)
-    track_x += TRACK_SEPERATION
+    y = GAME_HEIGHT * .85 # what is this used for 
+
+    next_track = possible_tracks[0]
+    next_track["track_location"].x = track_box.left + extra_width * 2 + TRACK_SEPERATION * len(tracks)
+    print(next_track["track_location"])
+    tracks.append(next_track)
+
+    track = {    
+                "track_location": pygame.Rect(track_box.left + extra_width * 2 + TRACK_SEPERATION * len(tracks), track_box.center[1] - extra_height, TRACK_WIDTH, TRACK_HEIGHT),
+                "color": possible_tracks[random.randint(0, 3)]
+            }
+
+    print(track)
+    #track_x += TRACK_SEPERATION
     tracks.append(track)
-    
-      
+'''
+
+
+
+time = 0
+
 
 # Pygame mainloop that will run while the game is running
 while True:
     for event in pygame.event.get(): 
-
         if event.type == pygame.MOUSEBUTTONDOWN: # Checks for left mouse button clicks on boxes
             if event.button == 1:
+
                 for num, track in enumerate(tracks):
-                    if track.collidepoint(event.pos):
-                        # Check if track is attached 
+                    if track["track_location"].collidepoint(event.pos):
+
+                        # Check if track is attached to the grid
                         for i, row in enumerate(grid_tiles):
                             for j, tile in enumerate(row):
                                 if tile['track'] == tracks[num]:
                                     grid_tiles[i][j]['track'] = None
-
+                        
                         active_track = num
         
         if event.type == pygame.MOUSEBUTTONUP: # Checks for left mouse button releases on boxes
             if event.button == 1 and active_track != None:
+
                 # Check if pointer over an empty board tile
                 #   -> Snap track to board tile and link track to tile
-                for i, row in enumerate(grid_tiles):
-                    for j, tile in enumerate(row):
-                        if tile['board'].collidepoint(event.pos) and not grid_tiles[i][j]['track']:
-                            tracks[active_track].x = grid_tiles[i][j]['board'].left
-                            tracks[active_track].y = grid_tiles[i][j]['board'].top
-                            grid_tiles[i][j]['track'] = tracks[active_track]
 
+                # calculate the nearest row and column when tile is drop
+                precice_row = ((event.pos[1] - board.top - OUTER_GAP) - 10 * ((event.pos[1] - board.top - OUTER_GAP) // 55)) // 50
+                precice_column = ((event.pos[0] - board.left - OUTER_GAP) - 10 * ((event.pos[0] - board.left - OUTER_GAP) // 55)) // 50
+    
+                # first set of condition detects if it on the board 
+                # second condition detects if the track is over a tile
+                # third condition detects if the track is empty
+                if (0 <= precice_row <= 9 and 0 <= precice_column<= 9) and grid_tiles[precice_row][precice_column]['board'].collidepoint(event.pos) and not grid_tiles[precice_row][precice_column]['track']:
+                    tracks[active_track]["track_location"].x = grid_tiles[precice_row][precice_column]['board'].left
+                    tracks[active_track]["track_location"].y = grid_tiles[precice_row][precice_column]['board'].top
+                    grid_tiles[precice_row][precice_column]['track'] = tracks[active_track]
+
+                    tracks.pop(active_track)
+                    NUMBER_OF_TRACKS -= 1
+                    for i in range(active_track, len(tracks)):
+                        tracks[i]["track_location"].x -= TRACK_SEPERATION
+                    
+                # send the track back to it initial position if it fails to snap to the grid
+                else:
+                    tracks[active_track]["track_location"].x = track_box_x + extra_width * 2 + TRACK_SEPERATION * active_track
+                    tracks[active_track]["track_location"].y = track_box.center[1] - extra_height
+                
                 active_track = None
         
         if event.type == pygame.MOUSEMOTION: # Moves box according to mouse movement
             if active_track != None:
-                tracks[active_track].move_ip(event.rel)
+                tracks[active_track]["track_location"].move_ip(event.rel)
 
         if event.type == pygame.QUIT: # Quits game if event is told to quit
             pygame.quit()
             sys.exit()
+    
+    time += 1
+    if time % 60 == 0 and NUMBER_OF_TRACKS < 5:
+        track = {    
+                "track_location": pygame.Rect(track_box.left + extra_width * 2 + TRACK_SEPERATION * len(tracks), track_box.center[1] - extra_height, TRACK_WIDTH, TRACK_HEIGHT),
+                "color": possible_tracks[random.randint(0, 3)]
+            }
+        
+        print(track)
+        #track_x += TRACK_SEPERATION
+        NUMBER_OF_TRACKS += 1
+        tracks.append(track)
+    
 
     # Fills background black
     game_surf.fill(Colors.dark_gray)
@@ -130,11 +180,15 @@ while True:
     for row in grid_tiles:
         for tile in row:
             pygame.draw.rect(game_surf, "white", tile['board'])
+            if tile['track'] != None:
+                pygame.draw.rect(game_surf, tile['track']['color'], tile['track']['track_location'])
 
     pygame.draw.rect(game_surf, "black", track_box)
+
     # Draws the tracks on the screen
-    for track in tracks:
-        pygame.draw.rect(game_surf, "red", track)
+    if len(tracks) > 0 :
+        for i in range(len(tracks)):
+            pygame.draw.rect(game_surf, tracks[i]['color'], tracks[i]['track_location'])
 
 
     # Updates the display with previous functions
