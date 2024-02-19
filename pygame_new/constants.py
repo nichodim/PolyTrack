@@ -2,13 +2,11 @@
 
 import pygame
 
-class TrackTypes:
+class TrackSprites:
     horizontal_track = pygame.image.load('images/horizontal_track.png') 
     straight_track = pygame.image.load('images/straight_track.png')
     right_track = pygame.image.load('images/right_track.png')
     left_track = pygame.image.load('images/left_track.png')
-
-# Class to define colors that will be later called
 class Colors:
     black = (0, 0, 0)
     white = (255, 255, 255)

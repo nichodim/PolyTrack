@@ -1,5 +1,4 @@
-# Top level of the game, responsible for states of the game
-# Currently, the game only has the state of Game but could be menu and different scenes/levels
+# Top level of the game, responsible for states such as scenes and menus
 
 import pygame
 from buttons import Button
@@ -22,7 +21,7 @@ def main():
         screen.fill((202, 228, 241))
         
         if start_button.draw(screen):
-            game.run_game()
+            game.run()
         if quit_button.draw(screen):
             run = False
         

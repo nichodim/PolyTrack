@@ -7,8 +7,8 @@ class Tile:
         self.rect = rect
         self.attached_track = None
     
-    def update_attached_track(self, Track):
-        if self.attached_track != None:
+    def try_attach_track(self, track):
+        if self.attached_track:
             return False
-        self.attached_track = Track
+        self.attached_track = track
         return True
