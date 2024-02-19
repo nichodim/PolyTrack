@@ -6,7 +6,6 @@ import random
 from constants import *
 from board import Board
 from track_box import Trackbox
-from tile import Tile
 
 class Game:
     def __init__(self):
