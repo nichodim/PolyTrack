@@ -12,6 +12,7 @@ class Colors:
     white = (255, 255, 255)
     dark_gray = (40, 40, 40)
     light_gray = (70,70,70)
+    red = (255, 0, 0)
 
 # Constant variables - things you would configure
 # Resolution config

@@ -1,5 +1,5 @@
 # The board holding and controlling the tiles
-
+import random
 import pygame
 from constants import *
 from tile import Tile
@@ -16,6 +16,17 @@ class Board:
         # Create tiles
         self.tiles = self.create_grid()
 
+        # Generate two random tiles
+        start_tile = random.choice(self.tiles[0])
+        end_tile = random.choice(self.tiles[NUM_ROWS - 1])
+
+        # Checks to see if the random tiles are the same
+        while start_tile == end_tile:
+            end_tile = random.randint(0, NUM_COLS - 1)
+
+        # Sets the tiles on the bottom and top of the board
+        self.start_tile = start_tile
+        self.end_tile = end_tile
 
     # Board game logic
     def create_grid(self):
@@ -50,22 +61,21 @@ class Board:
         ):
             return self.tiles[row][col]
         return None
-
-
-
-
     # Rendering
     def draw(self, game_surf):
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
         self.draw_tracks(game_surf)
-
+        
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
     def draw_tiles(self, game_surf):
         for row in self.tiles:
             for tile in row:
                 pygame.draw.rect(game_surf, Colors.white, tile.rect)
+                if tile == self.start_tile or tile == self.end_tile:
+                    pygame.draw.rect(game_surf, Colors.red, tile.rect)
+                    
     def draw_tracks(self, game_surf):
         for row in self.tiles:
             for tile in row:
