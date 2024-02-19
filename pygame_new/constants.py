@@ -18,7 +18,7 @@ class Colors:
 # Constant variables - things you would configure
 # Resolution config
 GAME_WIDTH = 1000
-GAME_HEIGHT = 1100
+GAME_HEIGHT = 950
 
 # Board config
 OUTER_BORDER_SIZE = 150
