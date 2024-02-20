@@ -36,7 +36,9 @@ class Train:
         self.train["area"].set_colorkey(Colors.white)
 
         # train image
-        self.train["area"].blit(TrackSprites.horizontal_track, (100,100))
+        image = TrackSprites.horizontal_track.convert_alpha()
+        image = pygame.transform.smoothscale(image, (56, 48)) 
+        self.train["area"].blit(image, (0,0))
 
         self.trains.append(self.train)
 
