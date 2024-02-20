@@ -14,9 +14,9 @@ class Train:
         self.train = {}
         
         # pygame.Surface([width,height]) controls size of the train
-        self.train["area"] = pygame.Surface([56, 48])
-        self.train["degree"] = 360
-        self.train["speed"] = 1
+        self.train["area"] = pygame.Surface([60, 48])
+        self.train["degree"] = 0
+        self.train["speed"] = 10
         print(self.train["area"].get_width)
 
         # center of the train x and y location
@@ -54,17 +54,19 @@ class Train:
             # turning
             # clockwise
             if self.trains[i]["direction"] == "clockwise":
-                self.trains[i]["degree"] -= 1 # minus 1 to the degree since it going counter-clockwise
+                self.trains[i]["degree"] -= self.trains[i]["speed"] # minus 1 to the degree since it going counter-clockwise
             
             # counter-clockwise
             if self.trains[i]["direction"] == "counter-clockwise":
-                self.trains[i]["degree"] += 1 # add 1 to the degree since it going counter-clockwise
+                self.trains[i]["degree"] += self.trains[i]["speed"] # add 1 to the degree since it going counter-clockwise
             
-            if self.trains[i]["degree"] % 90 == 0: # check when it full turns
+            print(self.trains[i]["degree"] % 90 == 0)
+            if self.trains[i]["degree"] % 90 < self.trains[i]["speed"]: # check when it full turns
                 self.trains[i]["direction"] = "foward" # stop it from turning
-            else:
-                # update the turn on screen
-                self.trains[i]["rotated"] = pygame.transform.rotate(self.trains[i]["area"], self.trains[i]["degree"])
+                self.trains[i]["degree"] -= self.trains[i]["degree"] % 90
+            # update the turn on screen
+            self.trains[i]["rotated"] = pygame.transform.rotate(self.trains[i]["area"], self.trains[i]["degree"])
+
             print(self.trains[i]["degree"])
 
             # movement
