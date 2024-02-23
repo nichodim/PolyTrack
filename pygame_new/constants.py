@@ -2,8 +2,11 @@
 
 import pygame
 
+class Images:
+    start_img = pygame.image.load('images/start.png')
+    quit_img = pygame.image.load('images/quit.png')
 class TrackSprites:
-    horizontal_track = pygame.image.load('images/horizontal_track.png') 
+    horizontal_track = pygame.image.load('images/horizontal_track.png')
     straight_track = pygame.image.load('images/straight_track.png')
     right_track = pygame.image.load('images/right_track.png')
     left_track = pygame.image.load('images/left_track.png')
@@ -13,11 +16,12 @@ class Colors:
     dark_gray = (40, 40, 40)
     light_gray = (70,70,70)
     red = (255, 0, 0)
+    sky_blue = (202, 228, 241)
 
 # Constant variables - things you would configure
 # Resolution config
 GAME_WIDTH = 1000
-GAME_HEIGHT = 950
+GAME_HEIGHT = 700
 
 # Board config
 OUTER_BORDER_SIZE = 150
