@@ -26,10 +26,12 @@ def main():
         quit_button.draw(main_surf)
         
         # Check buttons
-        if start_button.clicked():
-            game.run()
-        if quit_button.clicked():
-            run = False
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_button.clicked():
+                    game.run()
+                if quit_button.clicked():
+                    run = False
         
         # Set start button to track when hovered
         if start_button.hovered():
