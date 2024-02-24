@@ -75,11 +75,16 @@ class Board:
         self.tile_paths.append(tiles_in_path)
 
     
+    # TODO calculation does not work on grids that arent 10 by 10
     def find_tile_in_location(self, pos):
         x, y = pos
 
-        row = ((y - self.rect.top - OUTER_GAP) - NUM_ROWS * ((y - self.rect.top - OUTER_GAP) // 55)) // 50
-        col = ((x - self.rect.left - OUTER_GAP) - NUM_COLS * ((x - self.rect.left - OUTER_GAP) // 55)) // 50
+        y_no_margin = y - self.rect.top - OUTER_GAP
+        row = (y_no_margin - NUM_ROWS * (y_no_margin // 55)) // 50
+        
+        x_no_margin = x - self.rect.left - OUTER_GAP
+        col = (x_no_margin - NUM_COLS * (x_no_margin // 55)) // 50
+        # print('row:', row, '-', 'col:', col)
 
         if ( 
             0 <= row <= NUM_ROWS - 1 and # valid row

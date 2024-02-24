@@ -7,7 +7,7 @@ class Images:
     quit_img = pygame.image.load('images/quit.png')
 class TrackSprites:
     horizontal_track = pygame.image.load('images/horizontal_track.png')
-    straight_track = pygame.image.load('images/straight_track.png')
+    vertical_track = pygame.image.load('images/vertical_track.png')
     right_track = pygame.image.load('images/right_track.png')
     left_track = pygame.image.load('images/left_track.png')
 class Colors:
@@ -25,8 +25,8 @@ GAME_HEIGHT = 900
 
 # Board config
 OUTER_BORDER_SIZE = 150
-NUM_ROWS = 6
-NUM_COLS = 15
+NUM_ROWS = 10
+NUM_COLS = 10
 INNER_GAP = 10
 OUTER_GAP = 35
 

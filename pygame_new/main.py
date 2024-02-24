@@ -35,7 +35,7 @@ def main():
         
         # Set start button to track when hovered
         if start_button.hovered():
-            start_button.setImage(TrackSprites.straight_track)
+            start_button.setImage(TrackSprites.vertical_track)
         else:
             start_button.setImage(Images.start_img)
         

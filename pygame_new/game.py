@@ -21,6 +21,8 @@ class Game:
 
         self.train = Train()
 
+
+
     # Event control 
     def handle_events(self):
         for event in pygame.event.get():
