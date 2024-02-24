@@ -16,17 +16,10 @@ class Board:
         # Create tiles
         self.tiles = self.create_grid()
 
-        # Generate two random tiles
-        start_tile = random.choice(self.tiles[0])
-        end_tile = random.choice(self.tiles[NUM_ROWS - 1])
+        # Create tile paths - TODO creation should be an event
+        self.tile_paths = []
+        self.create_new_path()
 
-        # Checks to see if the random tiles are the same
-        while start_tile == end_tile:
-            end_tile = random.randint(0, NUM_COLS - 1)
-
-        # Sets the tiles on the bottom and top of the board
-        self.start_tile = start_tile
-        self.end_tile = end_tile
 
     # Board game logic
     def create_grid(self):
@@ -47,6 +40,40 @@ class Board:
             row_y += row_y_increment
 
         return tiles
+
+    def create_new_path(self):
+        # Find needed variables
+        path_index = len(self.tile_paths)
+        sides = ['top', 'bottom', 'left', 'right']
+
+        # Helper functions
+        def find_random_tile_on_side(side):
+            max_row = NUM_ROWS - 1
+            max_col = NUM_COLS - 1
+            index = random.randint(3, max_col - 1)
+            if side == 'left' or side == 'right': index = random.randint(3, max_row - 1)
+
+            if side == 'top': return self.tiles[0][index]
+            if side == 'bottom': return self.tiles[max_row][index]
+            if side == 'left': return self.tiles[index][0]
+            if side == 'right': return self.tiles[index][max_col]
+        def find_unused_path_tile(side, path_index):
+            for i in range(200):
+                tile = find_random_tile_on_side(side)
+                if tile.try_set_tile_to_path(path_index): return tile
+            return None
+
+        # Finds 2 tiles for the path
+        tiles_in_path = []
+        for i in range(2):
+            side = random.choice(sides)
+            tile = find_unused_path_tile(side, path_index)
+            tiles_in_path.append(tile)
+            sides.remove(side)
+
+        if None in tiles_in_path: return
+        self.tile_paths.append(tiles_in_path)
+
     
     def find_tile_in_location(self, pos):
         x, y = pos
@@ -61,10 +88,13 @@ class Board:
         ):
             return self.tiles[row][col]
         return None
+    
+
     # Rendering
     def draw(self, game_surf):
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
+        self.draw_path_tiles(game_surf)
         self.draw_tracks(game_surf)
         
     def draw_board(self, game_surf):
@@ -73,9 +103,12 @@ class Board:
         for row in self.tiles:
             for tile in row:
                 pygame.draw.rect(game_surf, Colors.white, tile.rect)
-                if tile == self.start_tile or tile == self.end_tile:
-                    pygame.draw.rect(game_surf, Colors.red, tile.rect)
-                    
+    
+    def draw_path_tiles(self, game_surf):
+        for path in self.tile_paths:
+            for tile in path:
+                pygame.draw.rect(game_surf, Colors.red, tile.rect)
+
     def draw_tracks(self, game_surf):
         for row in self.tiles:
             for tile in row:

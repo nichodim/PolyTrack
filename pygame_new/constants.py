@@ -21,12 +21,12 @@ class Colors:
 # Constant variables - things you would configure
 # Resolution config
 GAME_WIDTH = 1000
-GAME_HEIGHT = 700
+GAME_HEIGHT = 900
 
 # Board config
 OUTER_BORDER_SIZE = 150
-NUM_ROWS = 10
-NUM_COLS = 10
+NUM_ROWS = 6
+NUM_COLS = 15
 INNER_GAP = 10
 OUTER_GAP = 35
 

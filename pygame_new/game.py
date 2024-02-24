@@ -77,7 +77,6 @@ class Game:
 
     def update(self):
         self.track_box.update()
-        
 
     def render(self):
         self.game_surf.fill(Colors.dark_gray)
