@@ -38,3 +38,9 @@ EXTRA_WIDTH = TRACK_WIDTH * 0.75
 EXTRA_HEIGHT = TRACK_HEIGHT / 2
 
 NUMBER_OF_TRACKS = 0
+
+# Board Size
+board_width = NUM_COLS * TRACK_WIDTH + INNER_GAP * (NUM_COLS - 1) + OUTER_GAP * 2
+board_height = NUM_ROWS * TRACK_HEIGHT + INNER_GAP * (NUM_ROWS - 1) + OUTER_GAP * 2
+board_x = GAME_WIDTH / 2 - board_width / 2
+board_y = GAME_HEIGHT * 0.1
