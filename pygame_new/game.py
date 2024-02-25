@@ -6,7 +6,7 @@ import random
 from constants import *
 from board import Board
 from track_box import Trackbox
-from train import Train
+from trains import Trains
 
 class Game:
     def __init__(self):
@@ -19,7 +19,7 @@ class Game:
         self.track_box = Trackbox()
         self.active_track = None
 
-        self.train = Train()
+        self.trains = Trains()
 
 
 
@@ -85,6 +85,6 @@ class Game:
         
         self.board.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
-        self.train.draw(self.game_surf)
+        self.trains.draw(self.game_surf)
 
         pygame.display.update()
