@@ -80,12 +80,11 @@ class Board:
         x, y = pos
 
         y_no_margin = y - self.rect.top - OUTER_GAP
-        row = (y_no_margin - NUM_ROWS * (y_no_margin // (TRACK_HEIGHT + INNER_GAP//2))) // TRACK_HEIGHT
+        row = int((y_no_margin - INNER_GAP * (y_no_margin // (TRACK_HEIGHT + INNER_GAP))) // TRACK_HEIGHT)
         
         x_no_margin = x - self.rect.left - OUTER_GAP
-        col = (x_no_margin - NUM_COLS * (x_no_margin // (TRACK_WIDTH + INNER_GAP//2))) // TRACK_WIDTH
-        # print('row:', row, '-', 'col:', col)
-        # print(row, col)
+        col = int((x_no_margin - INNER_GAP * (x_no_margin // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
+        print('row:', row, '-', 'col:', col)
 
         if ( 
             0 <= row <= NUM_ROWS - 1 and # valid row
