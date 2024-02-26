@@ -85,7 +85,7 @@ class Board:
         x_no_margin = x - self.rect.left - OUTER_GAP
         col = (x_no_margin - NUM_COLS * (x_no_margin // (TRACK_WIDTH + INNER_GAP//2))) // TRACK_WIDTH
         # print('row:', row, '-', 'col:', col)
-        print(row, col)
+        # print(row, col)
 
         if ( 
             0 <= row <= NUM_ROWS - 1 and # valid row

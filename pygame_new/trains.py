@@ -42,7 +42,7 @@ class Trains:
 
             self.x_correction = ((TRACK_WIDTH - pygame.Surface.get_width(trains[i].surface)) / 2) * abs(math.sin(math.radians(trains[i].degree)))
             self.y_correction = ((TRACK_HEIGHT - pygame.Surface.get_height(trains[i].surface)) / 2) * abs(math.cos(math.radians(trains[i].degree)))
-            print(self.x_correction, self.y_correction)
+            # print(self.x_correction, self.y_correction)
 
             # draws it on screen
             trains[i].rotate_rect = trains[i].rotate.get_rect(center = (trains[i].x + self.x_correction, trains[i].y + self.y_correction))

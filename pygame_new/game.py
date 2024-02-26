@@ -8,6 +8,9 @@ from board import Board
 from track_box import Trackbox
 from trains import Trains
 
+from track_set_types import TrackSetTypes
+from track_set import TrackSet
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -17,10 +20,9 @@ class Game:
         self.board = Board()
 
         self.track_box = Trackbox()
-        self.active_track = None
+        self.active_set = None
 
         self.trains = Trains()
-
 
 
     # Event control 
@@ -36,33 +38,37 @@ class Game:
                 self.quit_game()
 
     def handle_mouse_down(self, event):
-        for num, track in enumerate(self.track_box.tracks):
-            if track.rect.collidepoint(event.pos):
-                self.active_track = num
+        self.active_set = self.track_box.find_track_set(event.pos)
 
     def handle_mouse_up(self, event):
-        if self.active_track != None:
-            self.try_snap_track_to_board(event)
-            self.active_track = None
+        if self.active_set != None:
+            self.snap_set_to_board()
+            self.active_set = None
 
     def handle_mouse_motion(self, event):
-        if self.active_track != None:
-            self.track_box.move_track(self.active_track, event.rel)
+        if self.active_set != None:
+            self.active_set.move(event.rel)
     
 
     # Game logic between components
-    def try_snap_track_to_board(self, event):
-        hovered_tile = self.board.find_tile_in_location(event.pos)
-        if hovered_tile == None:
-            self.track_box.set_track_to_initial(self.active_track)
+    def find_tiles_under_tracks(self):
+        track_positions = self.active_set.find_pos_of_tracks()
+        tiles = []
+        for position in track_positions:
+            tile = self.board.find_tile_in_location(position)
+
+            if tile == None: return None
+            if not tile.is_open(): return None
+            tiles.append(tile)
+        return tiles
+
+    def snap_set_to_board(self):
+        hovered_tiles = self.find_tiles_under_tracks()
+        if not hovered_tiles: 
+            self.track_box.track_set_to_initial(self.active_set)
             return
-        
-        did_track_attach = self.track_box.try_attach_track_to_tile(hovered_tile, self.active_track)
-        if did_track_attach == False:
-            self.track_box.set_track_to_initial(self.active_track)
-            return
-        
-        self.track_box.remove_track(self.active_track)
+        self.active_set.attach_tracks_to_tiles(hovered_tiles)
+        self.track_box.remove_track_set(self.active_set)
 
 
     # Boilerplate to functionally update the game

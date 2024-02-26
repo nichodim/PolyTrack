@@ -2,8 +2,8 @@
 
 import random
 from constants import *
-from track import Track
-from tile import Tile
+from track_set import TrackSet
+from track_set_types import TrackSetTypes
 
 class Trackbox:
     def __init__(self):
@@ -15,57 +15,53 @@ class Trackbox:
         self.rect = pygame.Rect(track_box_x, track_box_y, track_box_width, track_box_height)
 
         # Create tracks
-        self.tracks = []
+        self.track_sets = []
 
 
     # Track box game logic
-    def generate_new_tracks(self):  
-        not_enough_tracks = len(self.tracks) < 5
-        if not_enough_tracks:
-            track_possibilities = [TrackSprites.horizontal_track, TrackSprites.vertical_track, TrackSprites.right_track, TrackSprites.left_track, TrackSprites.inverted_right, TrackSprites.inverted_left]
-            track_x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * len(self.tracks)
-            track_y = self.rect.centery - EXTRA_HEIGHT
+    def generate_new_track_sets(self):  
+        not_enough_sets = len(self.track_sets) < 5
+        if not_enough_sets:
+            set_name = random.choice(list(TrackSetTypes))
+            set_type = TrackSetTypes[set_name]
+            x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * len(self.track_sets)
+            y = self.rect.centery - EXTRA_HEIGHT
 
-            new_track = Track(
-                image = random.choice(track_possibilities),
-                rect = pygame.Rect(track_x, track_y, TRACK_WIDTH, TRACK_HEIGHT)
+            track_set = TrackSet(
+                pos = (x, y), 
+                type = set_type
             )
-            self.tracks.append(new_track)
+            self.track_sets.append(track_set)
 
-    def try_attach_track_to_tile(self, tile, i):
-        track = self.tracks[i]
-
-        if tile.try_attach_track(track) == False:
-            return False
-        
-        track.rect.x = tile.rect.left
-        track.rect.y = tile.rect.top
-        return True
-
-    def move_track(self, i, relative_position):
-        self.tracks[i].move_track(relative_position)
+    def find_track_set(self, pos):
+        for set in self.track_sets:
+            if set.is_in_pos(pos): return set
+        return None
     
-    def remove_track(self, i):
-        self.tracks.pop(i)
-        for j in range(i, len(self.tracks)):
-            self.tracks[j].rect.x -= TRACK_SEPERATION
+    def remove_track_set(self, track_set):
+        i = self.track_sets.index(track_set)
+        self.track_sets.remove(track_set)
+        for j in range(i, len(self.track_sets)):
+            track_set = self.track_sets[j]
+            track_set.move((-TRACK_SEPERATION, 0))
 
-    def set_track_to_initial(self, i):
-        self.tracks[i].rect.x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * i
-        self.tracks[i].rect.y = self.rect.centery - EXTRA_HEIGHT
+    def track_set_to_initial(self, track_set):
+        i = self.track_sets.index(track_set)
+        x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * i
+        y = self.rect.centery - EXTRA_HEIGHT
+        track_set.set_position((x, y))
 
     def update(self):
-        self.generate_new_tracks()
+        self.generate_new_track_sets()
 
 
     # Rendering
     def draw(self, game_surf):
         self.draw_track_box(game_surf)
-        self.draw_tracks(game_surf)
+        self.draw_track_sets(game_surf)
 
     def draw_track_box(self, game_surf):
         pygame.draw.rect(game_surf, Colors.black, self.rect)
-    def draw_tracks(self, game_surf):
-        for track in self.tracks:
-            scaled_image = pygame.transform.scale(track.image, (TRACK_WIDTH, TRACK_HEIGHT))
-            game_surf.blit(scaled_image, track.rect)
+    def draw_track_sets(self, game_surf):
+        for track_set in self.track_sets:
+            track_set.draw(game_surf)
