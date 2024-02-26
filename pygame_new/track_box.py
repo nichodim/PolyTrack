@@ -22,7 +22,7 @@ class Trackbox:
     def generate_new_tracks(self):  
         not_enough_tracks = len(self.tracks) < 5
         if not_enough_tracks:
-            track_possibilities = [TrackSprites.horizontal_track, TrackSprites.vertical_track, TrackSprites.right_track, TrackSprites.left_track]
+            track_possibilities = [TrackSprites.horizontal_track, TrackSprites.vertical_track, TrackSprites.right_track, TrackSprites.left_track, TrackSprites.inverted_right, TrackSprites.inverted_left]
             track_x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * len(self.tracks)
             track_y = self.rect.centery - EXTRA_HEIGHT
 

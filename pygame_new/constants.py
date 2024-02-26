@@ -10,6 +10,8 @@ class TrackSprites:
     vertical_track = pygame.image.load('images/vertical_track.png')
     right_track = pygame.image.load('images/right_track.png')
     left_track = pygame.image.load('images/left_track.png')
+    inverted_right = pygame.image.load('images/inverted_right_track.png')
+    inverted_left = pygame.image.load('images/inverted_left_track.png')
 class Colors:
     black = (0, 0, 0)
     white = (255, 255, 255)
