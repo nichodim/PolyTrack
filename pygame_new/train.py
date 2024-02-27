@@ -2,6 +2,7 @@
 
 import pygame
 from constants import *
+import random
 
 class Train:
     def __init__(self, deg, spd, x, y, direction):
@@ -27,7 +28,10 @@ class Train:
         self.surface.set_colorkey(Colors.white)
 
         # train image
-        image = TrackSprites.horizontal_track.convert_alpha()
+        #image = TrackSprites.red_train.convert_alpha()
+        #image = pygame.transform.smoothscale(image, (56, 48)) 
+        #self.surface.blit(image, (0,0))
+        
+        image = random.choice(TrackSprites.random_train_choice).convert_alpha()
         image = pygame.transform.smoothscale(image, (56, 48)) 
         self.surface.blit(image, (0,0))
-        
