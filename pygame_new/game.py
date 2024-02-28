@@ -21,6 +21,7 @@ class Game:
 
         self.track_box = Trackbox()
         self.active_set = None
+        self.active_track_index = None
 
         self.trains = Trains()
 
@@ -35,12 +36,19 @@ class Game:
             elif event.type == pygame.MOUSEMOTION:
                 self.handle_mouse_motion(event)
             elif event.type == pygame.KEYDOWN:
-                if self.active_set: self.handle_rotate()
+                if event.unicode == 'r': self.handle_r_down()
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
     def handle_mouse_down(self, event):
         self.active_set = self.track_box.find_track_set(event.pos)
+        if not self.active_set: return
+        self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
+
+        # Aligns the hovered track with the mosue for easy rotation
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
+        self.active_set.set_position(new_pos, self.active_track_and_index[1])
 
     def handle_mouse_up(self, event):
         if self.active_set != None:
@@ -51,8 +59,9 @@ class Game:
         if self.active_set != None:
             self.active_set.move(event.rel)
     
-    def handle_rotate(self):
-        self.active_set = self.track_box.rotate(self.active_set)
+    def handle_r_down(self):
+        if self.active_set: 
+            self.active_set = self.track_box.rotate(self.active_set, self.active_track_and_index)
     
 
     # Game logic between components

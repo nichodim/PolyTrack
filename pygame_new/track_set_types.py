@@ -8,6 +8,7 @@ TrackOffset = {
     'right': (TRACK_WIDTH + INNER_GAP, 0)
 }
 
+# 1 is the default, the incremented numbers represent the rotated version of the set
 TrackSetTypes = {
     # straight
     'bigstraight-1': [
@@ -19,16 +20,6 @@ TrackSetTypes = {
     'bigstraight-2': [
         ('origin', TrackSprites.horizontal), 
         ('right', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal)
-    ], 
-    'medstraight-1': [
-        ('origin', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical)
-    ], 
-    'medstraight-2': [
-        ('origin', TrackSprites.horizontal), 
         ('right', TrackSprites.horizontal), 
         ('right', TrackSprites.horizontal)
     ], 

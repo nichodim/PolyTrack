@@ -36,6 +36,12 @@ class Trackbox:
         for set in self.track_sets:
             if set.is_in_pos(pos): return set
         return None
+
+    def find_hovered_track_and_index(self, track_set):
+        mouse_pos = pygame.mouse.get_pos()
+        hovered_track = track_set.find_track_in_pos(mouse_pos)
+        hovered_track_index = track_set.tracks.index(hovered_track)
+        return (hovered_track, hovered_track_index)
     
     def remove_track_set(self, track_set):
         i = self.track_sets.index(track_set)
@@ -49,7 +55,7 @@ class Trackbox:
         x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * i
         y = self.rect.centery - EXTRA_HEIGHT
         track_set.set_position((x, y), 0)
-    
+
     # Increments given set type by 1 or resets to first if looped around
     def increment_type(self, set_type):
         type_keys = list(TrackSetTypes.keys())
@@ -64,17 +70,15 @@ class Trackbox:
         return TrackSetTypes[new_key]
     
     # Rotates the track set by replacing it with the incremented type in type_sets
-    def rotate(self, track_set):
+    def rotate(self, track_set, hovered_track_and_index):
+        hovered_track, hovered_index = hovered_track_and_index
         new_type = self.increment_type(track_set.structure)
-        mouse_pos = pygame.mouse.get_pos()
-        hovered_track = track_set.find_track_in_pos(mouse_pos)
-
-        hovered_track_index = track_set.tracks.index(hovered_track)
-        new_pos = (hovered_track.rect.left, hovered_track.rect.top)
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
 
         # Sets position of tracks based on the track that was under the mouse previously
         new_set = TrackSet((0, 0), new_type)
-        new_set.set_position(new_pos, hovered_track_index)
+        new_set.set_position(new_pos, hovered_index)
 
         set_index = self.track_sets.index(track_set)
         self.track_sets[set_index] = new_set
