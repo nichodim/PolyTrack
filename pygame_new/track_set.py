@@ -37,7 +37,13 @@ class TrackSet:
         for track in self.tracks:
             positions.append(track.rect.center)
         return positions
-
+    
+    def find_track_in_pos(self, pos):
+        for track in self.tracks:
+            is_in_pos = track.rect.collidepoint(pos)
+            if is_in_pos: return track
+        return None
+    
     def is_in_pos(self, pos):
         for track in self.tracks:
             if track.rect.collidepoint(pos): return True
@@ -51,11 +57,11 @@ class TrackSet:
             track.rect.y = tile.rect.top
 
     # Moves tracks using direct position
-    def set_position(self, pos):
+    def set_position(self, pos, i):
         x, y = pos
-        origin_track = self.tracks[0]
-        delta_x = x - origin_track.rect.left
-        delta_y = y - origin_track.rect.top
+        primary_track = self.tracks[i]
+        delta_x = x - primary_track.rect.left
+        delta_y = y - primary_track.rect.top
         self.move((delta_x, delta_y))
     # Moves tracks using relative position
     def move(self, relative_position):

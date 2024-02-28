@@ -3,7 +3,7 @@
 import random
 from constants import *
 from track_set import TrackSet
-from track_set_types import TrackSetTypes
+from track_set_types import SpawnTracks, TrackSetTypes
 
 class Trackbox:
     def __init__(self):
@@ -22,8 +22,7 @@ class Trackbox:
     def generate_new_track_sets(self):  
         not_enough_sets = len(self.track_sets) < 5
         if not_enough_sets:
-            set_name = random.choice(list(TrackSetTypes))
-            set_type = TrackSetTypes[set_name]
+            set_type = random.choice(SpawnTracks)
             x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * len(self.track_sets)
             y = self.rect.centery - EXTRA_HEIGHT
 
@@ -49,7 +48,38 @@ class Trackbox:
         i = self.track_sets.index(track_set)
         x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * i
         y = self.rect.centery - EXTRA_HEIGHT
-        track_set.set_position((x, y))
+        track_set.set_position((x, y), 0)
+    
+    # Increments given set type by 1 or resets to first if looped around
+    def increment_type(self, set_type):
+        type_keys = list(TrackSetTypes.keys())
+        types = list(TrackSetTypes.values())
+        type_key = type_keys[types.index(set_type)]
+        key_num = int(type_key[-1:])
+
+        new_key_num = key_num + 1
+        new_key = type_key[:-1] + str(new_key_num)
+
+        if not new_key in type_keys: new_key = type_key[:-1] + '1'
+        return TrackSetTypes[new_key]
+    
+    # Rotates the track set by replacing it with the incremented type in type_sets
+    def rotate(self, track_set):
+        new_type = self.increment_type(track_set.structure)
+        mouse_pos = pygame.mouse.get_pos()
+        hovered_track = track_set.find_track_in_pos(mouse_pos)
+
+        hovered_track_index = track_set.tracks.index(hovered_track)
+        new_pos = (hovered_track.rect.left, hovered_track.rect.top)
+
+        # Sets position of tracks based on the track that was under the mouse previously
+        new_set = TrackSet((0, 0), new_type)
+        new_set.set_position(new_pos, hovered_track_index)
+
+        set_index = self.track_sets.index(track_set)
+        self.track_sets[set_index] = new_set
+        return new_set
+
 
     def update(self):
         self.generate_new_track_sets()

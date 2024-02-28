@@ -34,6 +34,8 @@ class Game:
                 if event.button == 1: self.handle_mouse_up(event)
             elif event.type == pygame.MOUSEMOTION:
                 self.handle_mouse_motion(event)
+            elif event.type == pygame.KEYDOWN:
+                if self.active_set: self.handle_rotate()
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
@@ -48,6 +50,9 @@ class Game:
     def handle_mouse_motion(self, event):
         if self.active_set != None:
             self.active_set.move(event.rel)
+    
+    def handle_rotate(self):
+        self.active_set = self.track_box.rotate(self.active_set)
     
 
     # Game logic between components
