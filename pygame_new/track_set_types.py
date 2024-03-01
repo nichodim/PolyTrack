@@ -61,25 +61,73 @@ TrackSetTypes = {
         ('up', TrackSprites.vertical), 
         ('up', TrackSprites.vertical)
     ], 
-    'smallturn-1': [
+    'medturn-1': [
         ('origin', TrackSprites.vertical), 
         ('up', TrackSprites.left), 
         ('left', TrackSprites.horizontal)
     ], 
-    'smallturn-2': [
+    'medturn-2': [
         ('origin', TrackSprites.horizontal), 
         ('left', TrackSprites.right), 
         ('down', TrackSprites.vertical)
     ], 
-    'smallturn-3': [
+    'medturn-3': [
         ('origin', TrackSprites.vertical), 
         ('down', TrackSprites.inverted_right), 
         ('right', TrackSprites.horizontal)
     ], 
-    'smallturn-4': [
+    'medturn-4': [
         ('origin', TrackSprites.horizontal), 
         ('right', TrackSprites.inverted_left), 
         ('up', TrackSprites.vertical)
+    ], 
+    'smallturn-1': [
+        ('origin', TrackSprites.left)
+    ], 
+    'smallturn-2': [
+        ('origin', TrackSprites.right)
+    ], 
+    'smallturn-3': [
+        ('origin', TrackSprites.inverted_right)
+    ], 
+    'smallturn-4': [
+        ('origin', TrackSprites.inverted_left)
+    ], 
+
+    # u
+    'u-1': [
+        ('origin', TrackSprites.left), 
+        ('left', TrackSprites.right)
+    ], 
+    'u-2': [
+        ('origin', TrackSprites.inverted_left), 
+        ('up', TrackSprites.left)
+    ], 
+    'u-3': [
+        ('origin', TrackSprites.inverted_right), 
+        ('right', TrackSprites.inverted_left)
+    ], 
+    'u-3': [
+        ('origin', TrackSprites.right), 
+        ('down', TrackSprites.inverted_right)
+    ], 
+
+    # hook
+    'hook-1': [
+        ('origin', TrackSprites.left), 
+        ('left', TrackSprites.horizontal)
+    ], 
+    'hook-2': [
+        ('origin', TrackSprites.right), 
+        ('right', TrackSprites.horizontal)
+    ], 
+    'hook-3': [
+        ('origin', TrackSprites.inverted_right), 
+        ('up', TrackSprites.vertical)
+    ], 
+    'hook-4': [
+        ('origin', TrackSprites.inverted_left), 
+        ('down', TrackSprites.vertical)
     ], 
 
     # zigzag
@@ -101,8 +149,15 @@ TrackSetTypes = {
 SpawnTracks = [
     TrackSetTypes['bigstraight-1'], 
     TrackSetTypes['smallstraight-1'], 
+    TrackSetTypes['smallstraight-1'], 
+
     TrackSetTypes['bigturn-1'], 
+    TrackSetTypes['medturn-1'], 
+    TrackSetTypes['medturn-1'], 
     TrackSetTypes['smallturn-1'], 
-    TrackSetTypes['smallturn-1'], 
+
+    TrackSetTypes['u-1'], 
+    TrackSetTypes['hook-1'], 
+    TrackSetTypes['hook-1'], 
     TrackSetTypes['zigzag-1']
 ]

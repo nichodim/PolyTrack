@@ -58,7 +58,7 @@ class Board:
             if side == 'left': return self.tiles[index][0]
             if side == 'right': return self.tiles[index][max_col]
         def find_unused_path_tile(side, path_index):
-            for i in range(200):
+            for i in range(200): # Ardbitrary range to end if fail
                 tile = find_random_tile_on_side(side)
                 if tile.try_set_tile_to_path(path_index): return tile
             return None
@@ -74,8 +74,6 @@ class Board:
         if None in tiles_in_path: return
         self.tile_paths.append(tiles_in_path)
 
-    
-    # TODO calculation does not work on grids that arent 10 by 10
     def find_tile_in_location(self, pos):
         x, y = pos
 
@@ -84,7 +82,6 @@ class Board:
         
         x_no_margin = x - self.rect.left - OUTER_GAP
         col = int((x_no_margin - INNER_GAP * (x_no_margin // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
-        print('row:', row, '-', 'col:', col)
 
         if ( 
             0 <= row <= NUM_ROWS - 1 and # valid row
