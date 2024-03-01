@@ -4,6 +4,7 @@ import pygame
 
 class Images:
     start_img = pygame.image.load('images/start.png')
+    start_hover_img = pygame.image.load('images/start_hover.png')
     quit_img = pygame.image.load('images/quit.png')
 class TrackSprites:
     horizontal = pygame.image.load('images/horizontal_track.png')
