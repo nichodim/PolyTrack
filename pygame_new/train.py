@@ -5,11 +5,12 @@ from constants import *
 import random
 
 class Train:
-    def __init__(self, deg, spd, x, y, direction):
+    def __init__(self, deg, spd, x, y, direction, set):
          # pygame.Surface([width,height]) controls size of the train
-        self.surface = pygame.Surface([60, 48])
+        self.surface = pygame.Surface([60 * (TRACK_WIDTH/50), (TRACK_HEIGHT - 2 * (TRACK_HEIGHT/50))])
         self.degree = deg
         self.speed = spd
+        self.set = set
         
         # center of the train x and y location
         self.x = board_x + OUTER_GAP + pygame.Surface.get_width(self.surface)/2 + x * (TRACK_WIDTH + INNER_GAP)
@@ -33,5 +34,5 @@ class Train:
         #self.surface.blit(image, (0,0))
         
         image = random.choice(TrackSprites.random_train_choice).convert_alpha()
-        image = pygame.transform.smoothscale(image, (56, 48)) 
+        image = pygame.transform.smoothscale(image, [60 * (TRACK_WIDTH/50), 48 * (TRACK_HEIGHT/50)])
         self.surface.blit(image, (0,0))
