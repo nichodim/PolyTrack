@@ -12,7 +12,7 @@ class Board:
         board_width = NUM_COLS * TRACK_WIDTH + INNER_GAP * (NUM_COLS - 1) + OUTER_GAP * 2
         board_height = NUM_ROWS * TRACK_HEIGHT + INNER_GAP * (NUM_ROWS - 1) + OUTER_GAP * 2
         board_x = GAME_WIDTH / 2 - board_width / 2
-        board_y = GAME_HEIGHT * 0.1
+        board_y = GAME_HEIGHT * 0.05
         self.rect = pygame.Rect(board_x, board_y, board_width, board_height)
 
         # Create tiles

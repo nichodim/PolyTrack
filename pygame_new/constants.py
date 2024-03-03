@@ -27,6 +27,7 @@ class Colors:
     light_gray = (70,70,70)
     red = (255, 0, 0)
     sky_blue = (202, 228, 241)
+    green = (0, 255, 0)
 
 # Constant variables - things you would configure
 # Resolution config

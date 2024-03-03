@@ -2,6 +2,7 @@
 
 import random
 from constants import *
+from button_toggle import ButtonToggle
 from track_set_spawner import TrackSetSpawner
 from track_set import TrackSet
 from track_set_types import SpawnTracks, TrackSetTypes
@@ -9,37 +10,29 @@ from track_set_types import SpawnTracks, TrackSetTypes
 class Trackbox:
     def __init__(self):
         # Create track box
-        track_box_width = 5 * TRACK_WIDTH + (TRACK_SEPERATION - TRACK_WIDTH) * (5 - 1) + EXTRA_WIDTH * 4
+        track_box_width = 7 * TRACK_WIDTH + (TRACK_SEPERATION - TRACK_WIDTH) * (5 - 1) + EXTRA_WIDTH * 4
         track_box_height = TRACK_HEIGHT * 3 + EXTRA_HEIGHT * 2
         track_box_x = GAME_WIDTH / 2 - track_box_width / 2
-        track_box_y = GAME_HEIGHT * 0.75
+        track_box_y = GAME_HEIGHT * 0.725
         self.rect = pygame.Rect(track_box_x, track_box_y, track_box_width, track_box_height)
 
         # Create track set spawner
-        spawner_width = TRACK_WIDTH * 5
+        spawner_width = TRACK_WIDTH * 3
         spawner_height = TRACK_HEIGHT * 3
-        spawner_x = self.rect.right - spawner_width / 2
-        spawner_y = self.rect.top - spawner_height / 2
+        spawner_x = self.rect.right - spawner_width - EXTRA_WIDTH / 2
+        spawner_y = self.rect.top + EXTRA_HEIGHT
         spawner_rect = pygame.Rect(spawner_x, spawner_y, spawner_width, spawner_height)
         self.spawner = TrackSetSpawner(spawner_rect)
+        self.spawner_button = ButtonToggle(self.spawner.rect, (Colors.green, Colors.red))
 
         # Create tracks
         self.track_sets = []
 
 
     # Track box game logic
-    def generate_new_track_sets(self):  
-        not_enough_sets = len(self.track_sets) < 5
-        if not_enough_sets:
-            set_type = random.choice(SpawnTracks)
-            x = self.rect.left + EXTRA_WIDTH * 2 + TRACK_SEPERATION * len(self.track_sets)
-            y = self.rect.centery - EXTRA_HEIGHT
-
-            track_set = TrackSet(
-                pos = (x, y), 
-                type = set_type
-            )
-            self.track_sets.append(track_set)
+    def generate_track_set(self):  
+        track_set = self.spawner.spawn_track_set()
+        self.track_sets.append(track_set)
 
     def track_set_over_box(self, track_set):
         positions = track_set.find_pos_of_tracks()
@@ -47,10 +40,16 @@ class Trackbox:
             track_in_box = self.rect.collidepoint(pos)
             if not track_in_box: return False
         return True
+    def find_precise_pos_of_tracks(self):
+        positions = []
+        for track in self.tracks:
+            pos = ((track.rect.left, track.rect.top), (track.rect.right, track.rect.bottom))
+            positions.append(pos)
+        return positions
 
     def find_track_set(self, pos):
-        for set in self.track_sets:
-            if set.is_in_pos(pos): return set
+        for track_set in self.track_sets:
+            if track_set.is_in_pos(pos): return track_set
         return None
 
     def find_hovered_track_and_index(self, track_set):
@@ -94,14 +93,20 @@ class Trackbox:
         self.track_sets[set_index] = new_set
         return new_set
 
-
-    def update(self):
-        self.generate_new_track_sets()
+    def handle_spawn_button(self):
+        if self.spawner_button.clicked():
+            self.generate_track_set()
+    def update_spawner(self, track_set):
+        if track_set != self.spawner.item: return
+        self.spawner.item = None
+        self.spawner_button.untoggle()
 
 
     # Rendering
     def draw(self, game_surf):
         self.draw_track_box(game_surf)
+        self.spawner.draw(game_surf)
+        self.spawner_button.draw(game_surf)
         self.draw_track_sets(game_surf)
 
     def draw_track_box(self, game_surf):

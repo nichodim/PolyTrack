@@ -39,7 +39,7 @@ class Game:
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
-    def handle_mouse_down(self, event):
+    def activate_set(self, event):
         # Find picked up track set and the hovered track/index
         self.active_set = self.track_box.find_track_set(event.pos)
         if not self.active_set: return
@@ -51,6 +51,9 @@ class Game:
         self.active_set.set_position(new_pos, self.active_track_and_index[1])
 
         self.active_set_inital_pos = new_pos
+    def handle_mouse_down(self, event):
+        self.activate_set(event)
+        self.track_box.handle_spawn_button()
 
     def handle_mouse_up(self):
         if self.active_set == None: return
@@ -58,8 +61,10 @@ class Game:
         # Snaps board and finds if track set should be set back to initial position
         set_snapped = self.snap_set_to_board()
         over_box = self.track_box.track_set_over_box(self.active_set)
+        
         if not set_snapped and not over_box: 
             self.active_set.set_position(self.active_set_inital_pos, self.active_track_and_index[1])
+        else: self.track_box.update_spawner(self.active_set)
         
         self.active_set = None
         self.active_track_and_index = None
@@ -108,7 +113,6 @@ class Game:
             self.fps.tick(60)
 
     def update(self):
-        self.track_box.update()
         self.board.update()
         self.trains.update()
         

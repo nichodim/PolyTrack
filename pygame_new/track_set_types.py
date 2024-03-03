@@ -9,6 +9,8 @@ TrackOffset = {
 }
 
 # 1 is the default, the incremented numbers represent the rotated version of the set
+# Be mindful that the track box styling will need adjustment for bigger sizes
+# *** With current styling, keep types at a max of 3 track width/height ***
 TrackSetTypes = {
     # straight
     'bigstraight-1': [
@@ -22,6 +24,16 @@ TrackSetTypes = {
         ('right', TrackSprites.horizontal), 
         ('right', TrackSprites.horizontal), 
         ('right', TrackSprites.horizontal)
+    ], 
+    'medstraight-1': [
+        ('origin', TrackSprites.vertical), 
+        ('down', TrackSprites.vertical), 
+        ('down', TrackSprites.vertical), 
+    ], 
+    'medstraight-2': [
+        ('origin', TrackSprites.horizontal), 
+        ('right', TrackSprites.horizontal), 
+        ('right', TrackSprites.horizontal), 
     ], 
     'smallstraight-1': [
         ('origin', TrackSprites.vertical), 
@@ -147,11 +159,10 @@ TrackSetTypes = {
 
 # Add multiple times to increase chances
 SpawnTracks = [
-    TrackSetTypes['bigstraight-1'], 
+    TrackSetTypes['medstraight-1'], 
     TrackSetTypes['smallstraight-1'], 
     TrackSetTypes['smallstraight-1'], 
 
-    TrackSetTypes['bigturn-1'], 
     TrackSetTypes['medturn-1'], 
     TrackSetTypes['medturn-1'], 
     TrackSetTypes['smallturn-1'], 

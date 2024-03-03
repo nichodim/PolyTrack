@@ -37,6 +37,12 @@ class TrackSet:
         for track in self.tracks:
             positions.append(track.rect.center)
         return positions
+    def find_precise_pos_of_tracks(self):
+        positions = []
+        for track in self.tracks:
+            pos = ((track.rect.left, track.rect.top), (track.rect.right, track.rect.bottom))
+            positions.append(pos)
+        return positions
     
     def find_track_in_pos(self, pos):
         for track in self.tracks:
