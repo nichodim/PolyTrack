@@ -45,12 +45,16 @@ class Game:
         if not self.active_set: return
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
 
-        # Aligns the hovered track with the mosue for easy rotation
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
-        self.active_set.set_position_by_track(new_pos, self.active_track_and_index[1])
+        # # Aligns the hovered track with the mosue for easy rotation
+        # mouse_x, mouse_y = pygame.mouse.get_pos()
+        # new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
+        # self.active_set.set_position_by_track(new_pos, self.active_track_and_index[1])
 
-        self.active_set_inital_pos = new_pos
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        x_diff = self.active_set.rect.centerx - mouse_x
+        y_diff = self.active_set.rect.centery - mouse_y
+        self.active_set_mouse_track_difference = (x_diff, y_diff)
+        self.active_set_inital_pos = self.active_set.rect.center
     def handle_mouse_down(self, event):
         self.activate_set(event)
         self.track_box.handle_spawn_button()
@@ -63,7 +67,7 @@ class Game:
         over_box = self.track_box.track_set_over_box(self.active_set)
         
         if not set_snapped and not over_box: 
-            self.active_set.set_position_by_track(self.active_set_inital_pos, self.active_track_and_index[1])
+            self.active_set.set_position_by_center(self.active_set_inital_pos)
         else: self.track_box.update_spawner(self.active_set)
         
         self.active_set = None
@@ -77,7 +81,11 @@ class Game:
     
     def handle_r_down(self):
         if self.active_set: 
-            self.active_set = self.track_box.rotate(self.active_set, self.active_track_and_index)
+            self.active_set = self.track_box.rotate(
+                track_set = self.active_set, 
+                hovered_track_and_index = self.active_track_and_index, 
+                mouse_track_difference = self.active_set_mouse_track_difference
+            )
     
 
     # Game logic between components

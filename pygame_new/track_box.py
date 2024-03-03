@@ -79,16 +79,24 @@ class Trackbox:
         return TrackSetTypes[new_key]
     
     # Rotates the track set by replacing it with the incremented type in type_sets
-    def rotate(self, track_set, hovered_track_and_index):
+    def rotate(self, track_set, hovered_track_and_index, mouse_track_difference):
         hovered_track, hovered_index = hovered_track_and_index
         new_type = self.increment_type(track_set.structure)
+
+        # Finds position to place new rotated track set
+        # Probably not efficient but moving while rotating breaks easily
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
+        new_x = mouse_x - TRACK_WIDTH // 2 - mouse_track_difference[0]
+        new_y = mouse_y - TRACK_HEIGHT // 2 - mouse_track_difference[1]
+        new_pos = new_x, new_y
 
         # Sets position of tracks based on the track that was under the mouse previously
         new_set = TrackSet((0, 0), new_type)
         new_set.set_position_by_track(new_pos, hovered_index)
 
+        # Replace old track with new track in data
+        # Makes it act as the name track just rotated
+        if track_set == self.spawner.item: self.spawner.item = new_set
         set_index = self.track_sets.index(track_set)
         self.track_sets[set_index] = new_set
         return new_set
