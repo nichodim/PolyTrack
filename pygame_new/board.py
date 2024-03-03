@@ -92,12 +92,13 @@ class Board:
             orientation = 180, 
             id = self.total_paths
         )
-        self.tiles[self.start[1]][self.start[0]].attached = end_station
+        self.tiles[self.end[1]][self.end[0]].attached = end_station
         
         # spawn_train(degree, speed, x, y, direction)
         # direction could be "forward", "clockwise", or "counter-clockwise"
 
         # print(self.tiles[self.start[1]][self.start[0]].attached.data)
+        print(self.tiles[self.start[1]][self.start[0]].attached.orientation)
         Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths)
         self.total_paths += 1
 
