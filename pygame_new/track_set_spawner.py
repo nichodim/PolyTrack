@@ -17,15 +17,18 @@ class TrackSetSpawner:
         return True
 
     def find_valid_track_set(self, set_type):
-        x_range = self.rect.right - self.rect.left
-        y_range = self.rect.bottom - self.rect.top
+        x_boundary = TRACK_WIDTH
+        y_boundary = TRACK_HEIGHT
+
+        x_range = self.rect.right - self.rect.left - x_boundary
+        y_range = self.rect.bottom - self.rect.top - y_boundary
 
         valid_location = False
         while not valid_location:
             offsetx, offsety = random.randrange(x_range), random.randrange(y_range)
             
-            x = self.rect.left + offsetx
-            y = self.rect.top + offsety
+            x = self.rect.left + offsetx + x_boundary / 2
+            y = self.rect.top + offsety + y_boundary / 2
             
             track_set = TrackSet(
                 pos = (x, y), 
