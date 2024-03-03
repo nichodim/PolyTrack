@@ -77,4 +77,3 @@ class TrackSet:
         for track in self.tracks:
             scaled_image = pygame.transform.scale(track.image, (TRACK_WIDTH, TRACK_HEIGHT))
             game_surf.blit(scaled_image, track.rect)
-    
