@@ -3,6 +3,8 @@ import random
 import pygame
 from constants import *
 from tile import Tile
+from object import Object
+from trains import Trains
 
 class Board:
     def __init__(self):
@@ -17,9 +19,10 @@ class Board:
         self.tiles = self.create_grid()
 
         # Create tile paths - TODO creation should be an event
-        self.tile_paths = []
-        self.create_new_path()
-
+        #self.tile_paths = []
+        #self.create_new_path()
+        self.total_set = 0
+        
 
     # Board game logic
     def create_grid(self):
@@ -40,7 +43,71 @@ class Board:
             row_y += row_y_increment
 
         return tiles
+    
+    def update(self):
+        # for trian
+        if self.total_set < 1:
+            self.create_point()
+        Trains().check(tiles = self.tiles)
 
+    def create_point(self):
+        # randomly generate 2 set of coordinate from (0, 0) to (NUM_COLS - 1, NUM_ROWS - 1)
+        '''
+        self.distance = 0
+        self.i = 0
+        while self.distance < 5:
+            self.start_tile_location = (random.randint(0, NUM_COLS - 1 - self.i), random.randint(0 + self.i, NUM_ROWS - 1))
+            self.end_tile_location = (random.randint(0, NUM_COLS - 1 - self.i), random.randint(0 + self.i, NUM_ROWS - 1))
+            self.i += 1
+            if self.i > NUM_COLS - 1:
+                self.i = NUM_COLS - 1
+            self.distance = math.sqrt((self.end_tile_location[0] - self.start_tile_location[0])**2 + (self.end_tile_location[1] - self.start_tile_location[1])**2)
+        '''
+    
+        # determine orientation for locations
+        self.start = (0, 0)
+        self.end = (9, 0)
+
+        # starting location
+        image = TrackSprites.horizontal
+        point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.start[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.start[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
+        #self.data = {"point": "start", "orient": self.train_orient(self.start), "set": self.total_set}
+        self.data = {"point": "start", "orient": 0, "set": self.total_set}
+        self.tiles[self.start[1]][self.start[0]].attached_object = Object(image, point_rect, self.data)
+
+        
+        # ending location
+        point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.end[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.end[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
+        self.data = {"point": "end", "orient": 180, "set": self.total_set}
+        self.tiles[self.end[1]][self.end[0]].attached_object = Object(image, point_rect, self.data)
+        
+        # spawn_train(degree, speed, x, y, direction)
+        # direction could be "forward", "clockwise", or "counter-clockwise"
+
+        print(self.tiles[self.start[1]][self.start[0]].attached_object.data)
+        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached_object.data["orient"], 1, self.start[0], self.start[1], "forward", self.total_set)
+        self.total_set += 1
+
+    def train_orient(self, location):
+        # if x = 0 orient can't be w
+        # if x = 9 orient can't be e
+        # if y = 0 orient can't be n
+        # if y = 9 orient can't be s
+
+        self.orient = [0, 90, 180, 270]
+        if location[0] == 0:
+            self.orient.remove(180)
+        if location[0] == 9:
+            self.orient.remove(0)
+
+        if location[1] == 0:
+            self.orient.remove(90)
+        if location[1] == 9:
+            self.orient.remove(270)
+
+        return self.orient[random.randint(0, len(self.orient) - 1)]
+
+    '''
     def create_new_path(self):
         # Find needed variables
         path_index = len(self.tile_paths)
@@ -73,7 +140,9 @@ class Board:
 
         if None in tiles_in_path: return
         self.tile_paths.append(tiles_in_path)
-
+    '''
+    
+    # TODO calculation does not work on grids that arent 10 by 10
     def find_tile_in_location(self, pos):
         x, y = pos
 
@@ -91,30 +160,31 @@ class Board:
             return self.tiles[row][col]
         return None
     
-
     # Rendering
     def draw(self, game_surf):
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
-        self.draw_path_tiles(game_surf)
+        #self.draw_path_tiles(game_surf)
         self.draw_tracks(game_surf)
         
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
+
     def draw_tiles(self, game_surf):
         for row in self.tiles:
             for tile in row:
                 pygame.draw.rect(game_surf, Colors.white, tile.rect)
-    
+    '''
     def draw_path_tiles(self, game_surf):
         for path in self.tile_paths:
             for tile in path:
                 pygame.draw.rect(game_surf, Colors.red, tile.rect)
+    '''
 
     def draw_tracks(self, game_surf):
         for row in self.tiles:
             for tile in row:
-                if tile.attached_track is not None:
-                    scaled_image_grid = pygame.transform.scale(tile.attached_track.image, (TRACK_WIDTH, TRACK_HEIGHT))
-                    center = tile.attached_track.rect.move(0, 0)
+                if tile.attached_object is not None:
+                    scaled_image_grid = pygame.transform.scale(tile.attached_object.image, (TRACK_WIDTH, TRACK_HEIGHT))
+                    center = tile.attached_object.rect.move(0, 0)
                     game_surf.blit(scaled_image_grid, center)

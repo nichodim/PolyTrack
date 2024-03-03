@@ -52,7 +52,7 @@ class TrackSet:
     def attach_tracks_to_tiles(self, tiles):
         for i in range(len(tiles)):
             tile, track = tiles[i], self.tracks[i]
-            tile.attach_track(track)
+            tile.attach_object(track)
             track.rect.x = tile.rect.left
             track.rect.y = tile.rect.top
 

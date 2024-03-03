@@ -2,10 +2,12 @@
 
 from constants import *
 
-class Track:
-    def __init__(self, image, rect):
+class Object:
+    def __init__(self, image, rect, object_data = None):
         self.image = image
         self.rect = rect
+        self.data = object_data
+
         self.relations = []
 
     # Knows what tracks are next to it in the set
