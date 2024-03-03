@@ -48,7 +48,7 @@ class Game:
         # Aligns the hovered track with the mosue for easy rotation
         mouse_x, mouse_y = pygame.mouse.get_pos()
         new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
-        self.active_set.set_position(new_pos, self.active_track_and_index[1])
+        self.active_set.set_position_by_track(new_pos, self.active_track_and_index[1])
 
         self.active_set_inital_pos = new_pos
     def handle_mouse_down(self, event):
@@ -63,7 +63,7 @@ class Game:
         over_box = self.track_box.track_set_over_box(self.active_set)
         
         if not set_snapped and not over_box: 
-            self.active_set.set_position(self.active_set_inital_pos, self.active_track_and_index[1])
+            self.active_set.set_position_by_track(self.active_set_inital_pos, self.active_track_and_index[1])
         else: self.track_box.update_spawner(self.active_set)
         
         self.active_set = None

@@ -87,7 +87,7 @@ class Trackbox:
 
         # Sets position of tracks based on the track that was under the mouse previously
         new_set = TrackSet((0, 0), new_type)
-        new_set.set_position(new_pos, hovered_index)
+        new_set.set_position_by_track(new_pos, hovered_index)
 
         set_index = self.track_sets.index(track_set)
         self.track_sets[set_index] = new_set

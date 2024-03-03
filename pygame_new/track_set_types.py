@@ -1,11 +1,14 @@
 from constants import *
 
+width_and_gap = TRACK_WIDTH + INNER_GAP
+height_and_gap = TRACK_HEIGHT + INNER_GAP
+
 TrackOffset = {
     'origin': (0, 0), 
-    'up': (0, -TRACK_HEIGHT - INNER_GAP), 
-    'down': (0, TRACK_HEIGHT + INNER_GAP), 
-    'left': (-TRACK_WIDTH - INNER_GAP, 0), 
-    'right': (TRACK_WIDTH + INNER_GAP, 0)
+    'up': (0, -height_and_gap), 
+    'down': (0, height_and_gap), 
+    'left': (-width_and_gap, 0), 
+    'right': (width_and_gap, 0)
 }
 
 # 1 is the default, the incremented numbers represent the rotated version of the set
