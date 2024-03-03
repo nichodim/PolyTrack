@@ -3,14 +3,14 @@
 class Tile:
     def __init__(self, rect):
         self.rect = rect
-        self.attached_object = None
+        self.attached = None
     
     def is_open(self):
-        return not self.attached_object
+        return not self.attached
 
-    def attach_object(self, track):
+    def attach(self, item):
         if self.is_open():
-            self.attached_object = track
+            self.attached = item
             return True
         return False
 

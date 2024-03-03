@@ -24,10 +24,10 @@ class Trains:
             self.tile_x = int((trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains[i].surface)/2))//(TRACK_WIDTH + INNER_GAP))
             self.tile_y = int((trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains[i].surface)/2))//(TRACK_HEIGHT + INNER_GAP))
 
-            if tiles[self.tile_y][self.tile_x].attached_object != None:
-                self.is_set_same = tiles[self.tile_y][self.tile_x].attached_object.data["set"] == trains[i].set
-                self.is_tile_end = tiles[self.tile_y][self.tile_x].attached_object.data["point"] == "end"
-                self.is_direction_right = math.sin(math.radians(trains[i].degree + 180)) == math.sin(math.radians(tiles[self.tile_y][self.tile_x].attached_object.data["orient"]))
+            if tiles[self.tile_y][self.tile_x].attached != None:
+                self.is_set_same = tiles[self.tile_y][self.tile_x].attached.id == trains[i].set
+                self.is_tile_end = tiles[self.tile_y][self.tile_x].attached.point == "end"
+                self.is_direction_right = math.sin(math.radians(trains[i].degree + 180)) == math.sin(math.radians(tiles[self.tile_y][self.tile_x].attached.orientation))
 
                 if self.is_set_same & self.is_tile_end & self.is_direction_right:
                     print("Arrived")

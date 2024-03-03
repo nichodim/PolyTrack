@@ -2,11 +2,10 @@
 
 from constants import *
 
-class Object:
-    def __init__(self, image, rect, object_data = None):
+class Track:
+    def __init__(self, image, rect):
         self.image = image
         self.rect = rect
-        self.data = object_data
 
         self.relations = []
 

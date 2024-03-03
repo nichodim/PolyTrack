@@ -21,8 +21,7 @@ class Game:
 
         self.track_box = Trackbox()
         self.active_set = None
-        self.active_track_index = None
-
+        
         self.trains = Trains()
 
 
@@ -32,7 +31,7 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: self.handle_mouse_down(event)
             elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1: self.handle_mouse_up(event)
+                if event.button == 1: self.handle_mouse_up()
             elif event.type == pygame.MOUSEMOTION:
                 self.handle_mouse_motion(event)
             elif event.type == pygame.KEYDOWN:
@@ -41,6 +40,7 @@ class Game:
                 self.quit_game()
 
     def handle_mouse_down(self, event):
+        # Find picked up track set and the hovered track/index
         self.active_set = self.track_box.find_track_set(event.pos)
         if not self.active_set: return
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
@@ -50,10 +50,21 @@ class Game:
         new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
         self.active_set.set_position(new_pos, self.active_track_and_index[1])
 
-    def handle_mouse_up(self, event):
-        if self.active_set != None:
-            self.snap_set_to_board()
-            self.active_set = None
+        self.active_set_inital_pos = new_pos
+
+    def handle_mouse_up(self):
+        if self.active_set == None: return
+
+        # Snaps board and finds if track set should be set back to initial position
+        set_snapped = self.snap_set_to_board()
+        over_box = self.track_box.track_set_over_box(self.active_set)
+        if not set_snapped and not over_box: 
+            self.active_set.set_position(self.active_set_inital_pos, self.active_track_and_index[1])
+        
+        self.active_set = None
+        self.active_track_and_index = None
+        self.active_set_inital_pos = None
+
 
     def handle_mouse_motion(self, event):
         if self.active_set != None:
@@ -78,11 +89,10 @@ class Game:
 
     def snap_set_to_board(self):
         hovered_tiles = self.find_tiles_under_tracks()
-        if not hovered_tiles: 
-            self.track_box.track_set_to_initial(self.active_set)
-            return
+        if not hovered_tiles: return False
         self.active_set.attach_tracks_to_tiles(hovered_tiles)
         self.track_box.remove_track_set(self.active_set)
+        return True
 
 
     # Boilerplate to functionally update the game

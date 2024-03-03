@@ -1,6 +1,6 @@
 from constants import *
 from track_set_types import *
-from object import Object
+from track import Track
 
 class TrackSet:
     def __init__(self, pos, type):
@@ -23,7 +23,7 @@ class TrackSet:
 
             # Creates new track
             rect = pygame.Rect(x, y, TRACK_WIDTH, TRACK_HEIGHT)
-            track = Object(image, rect)
+            track = Track(image, rect)
             self.tracks.append(track)
 
             # Create relations between tracks
@@ -52,7 +52,7 @@ class TrackSet:
     def attach_tracks_to_tiles(self, tiles):
         for i in range(len(tiles)):
             tile, track = tiles[i], self.tracks[i]
-            tile.attach_object(track)
+            tile.attach(track)
             track.rect.x = tile.rect.left
             track.rect.y = tile.rect.top
 

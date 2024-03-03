@@ -3,7 +3,7 @@ import random
 import pygame
 from constants import *
 from tile import Tile
-from object import Object
+from station import Station
 from trains import Trains
 
 class Board:
@@ -21,7 +21,7 @@ class Board:
         # Create tile paths - TODO creation should be an event
         #self.tile_paths = []
         #self.create_new_path()
-        self.total_set = 0
+        self.total_paths = 0
         
 
     # Board game logic
@@ -46,7 +46,7 @@ class Board:
     
     def update(self):
         # for trian
-        if self.total_set < 1:
+        if self.total_paths < 1:
             self.create_point()
         Trains().check(tiles = self.tiles)
 
@@ -71,22 +71,35 @@ class Board:
         # starting location
         image = TrackSprites.horizontal
         point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.start[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.start[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
-        #self.data = {"point": "start", "orient": self.train_orient(self.start), "set": self.total_set}
-        self.data = {"point": "start", "orient": 0, "set": self.total_set}
-        self.tiles[self.start[1]][self.start[0]].attached_object = Object(image, point_rect, self.data)
+        #self.data = {"point": "start", "orient": self.train_orient(self.start), "set": self.total_paths}
+
+        start_station = Station(
+            image = image, 
+            rect = point_rect, 
+            point = 'start', 
+            orientation = 0, 
+            id = self.total_paths
+        )
+        self.tiles[self.start[1]][self.start[0]].attached = start_station
 
         
         # ending location
         point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.end[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.end[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
-        self.data = {"point": "end", "orient": 180, "set": self.total_set}
-        self.tiles[self.end[1]][self.end[0]].attached_object = Object(image, point_rect, self.data)
+        end_station = Station(
+            image = image, 
+            rect = point_rect, 
+            point = 'end', 
+            orientation = 180, 
+            id = self.total_paths
+        )
+        self.tiles[self.start[1]][self.start[0]].attached = end_station
         
         # spawn_train(degree, speed, x, y, direction)
         # direction could be "forward", "clockwise", or "counter-clockwise"
 
-        print(self.tiles[self.start[1]][self.start[0]].attached_object.data)
-        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached_object.data["orient"], 1, self.start[0], self.start[1], "forward", self.total_set)
-        self.total_set += 1
+        # print(self.tiles[self.start[1]][self.start[0]].attached.data)
+        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths)
+        self.total_paths += 1
 
     def train_orient(self, location):
         # if x = 0 orient can't be w
@@ -184,7 +197,7 @@ class Board:
     def draw_tracks(self, game_surf):
         for row in self.tiles:
             for tile in row:
-                if tile.attached_object is not None:
-                    scaled_image_grid = pygame.transform.scale(tile.attached_object.image, (TRACK_WIDTH, TRACK_HEIGHT))
-                    center = tile.attached_object.rect.move(0, 0)
+                if tile.attached is not None:
+                    scaled_image_grid = pygame.transform.scale(tile.attached.image, (TRACK_WIDTH, TRACK_HEIGHT))
+                    center = tile.attached.rect.move(0, 0)
                     game_surf.blit(scaled_image_grid, center)
