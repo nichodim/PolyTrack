@@ -9,10 +9,6 @@ from trains import Trains
 class Board:
     def __init__(self):
         # Create board
-        board_width = NUM_COLS * TRACK_WIDTH + INNER_GAP * (NUM_COLS - 1) + OUTER_GAP * 2
-        board_height = NUM_ROWS * TRACK_HEIGHT + INNER_GAP * (NUM_ROWS - 1) + OUTER_GAP * 2
-        board_x = GAME_WIDTH / 2 - board_width / 2
-        board_y = GAME_HEIGHT * 0.05
         self.rect = pygame.Rect(board_x, board_y, board_width, board_height)
 
         # Create tiles
@@ -98,7 +94,7 @@ class Board:
         # direction could be "forward", "clockwise", or "counter-clockwise"
 
         # print(self.tiles[self.start[1]][self.start[0]].attached.data)
-        print(self.tiles[self.start[1]][self.start[0]].attached.orientation)
+        print(self.start[0], self.start[1])
         Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths)
         self.total_paths += 1
 
