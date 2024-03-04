@@ -13,35 +13,10 @@ class Trains:
         pass
         
     def spawn_train(self, deg, spd, x, y, direction, set):
-        trains.append(Train(deg, spd/10, x, y, direction, set))
+        trains.append(Train(deg, spd, x, y, direction, set))
 
     def update(self):
         self.movement()
-
-    def check(self, tiles):
-        for i in range(len(trains)):
-            # train check tile
-            
-            # train's back tile
-            self.back_x = int((trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains[i].surface)/2) + pygame.Surface.get_width(trains[i].surface) * ((-math.cos(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_WIDTH + INNER_GAP))
-            self.back_y = int((trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains[i].surface)/2) + pygame.Surface.get_width(trains[i].surface) * ((math.sin(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_HEIGHT + INNER_GAP))
-
-            # train's front tile
-            self.front_x = int((trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains[i].surface)/2) + (pygame.Surface.get_width(trains[i].surface) * (math.cos(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_WIDTH + INNER_GAP))
-            self.front_y = int((trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains[i].surface)/2) + pygame.Surface.get_width(trains[i].surface) * ((-math.sin(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_HEIGHT + INNER_GAP))
-
-
-            print(self.back_x, self.back_y)
-            '''
-            # detect if train enter the station
-            if tiles[self.back_y][self.back_x].attached != None:
-                self.is_set_same = tiles[self.back_y][self.back_x].attached.id == trains[i].set
-                self.is_tile_end = tiles[self.back_y][self.back_x].attached.point == "end"
-                self.is_direction_right = math.sin(math.radians(trains[i].degree + 180)) == math.sin(math.radians(tiles[self.back_y][self.back_x].attached.orientation))
-
-                if self.is_set_same & self.is_tile_end & self.is_direction_right:
-                    print("Arrived")
-            '''
 
     def movement(self):
         for i in range(len(trains)):
