@@ -86,8 +86,8 @@ class Trackbox:
         # Finds position to place new rotated track set
         # Probably not efficient but moving while rotating breaks easily
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        new_x = mouse_x - TRACK_WIDTH // 2 - mouse_track_difference[0]
-        new_y = mouse_y - TRACK_HEIGHT // 2 - mouse_track_difference[1]
+        new_x = mouse_x - mouse_track_difference[0]
+        new_y = mouse_y - mouse_track_difference[1]
         new_pos = new_x, new_y
 
         # Sets position of tracks based on the track that was under the mouse previously

@@ -29,10 +29,10 @@ class Train:
         self.surface.set_colorkey(Colors.white)
 
         # train image
-        #image = TrackSprites.red_train.convert_alpha()
+        #image = TrainSprites.red_train.convert_alpha()
         #image = pygame.transform.smoothscale(image, (56, 48)) 
         #self.surface.blit(image, (0,0))
         
-        image = random.choice(TrackSprites.random_train_choice).convert_alpha()
+        image = random.choice(TrainSprites.random_train_choice).convert_alpha()
         image = pygame.transform.smoothscale(image, [60 * (TRACK_WIDTH/50), 48 * (TRACK_HEIGHT/50)])
         self.surface.blit(image, (0,0))

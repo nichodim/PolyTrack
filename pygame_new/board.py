@@ -3,6 +3,7 @@ import random
 import pygame
 from constants import *
 from tile import Tile
+from obstacle import Obstacle
 from station import Station
 from trains import Trains
 
@@ -13,6 +14,7 @@ class Board:
 
         # Create tiles
         self.tiles = self.create_grid()
+        self.generate_obstacles(random.randint(2, 6))
 
         # Create tile paths - TODO creation should be an event
         #self.tile_paths = []
@@ -39,6 +41,16 @@ class Board:
             row_y += row_y_increment
 
         return tiles
+    
+    def generate_obstacles(self, num):
+        for n in range(num):
+            for m in range(100):
+                row = random.randrange(NUM_ROWS)
+                col = random.randrange(NUM_COLS)
+                tile = self.tiles[row][col]
+
+                attached = tile.attach(Obstacle())
+                if attached: break
     
     def update(self):
         # for trian
@@ -95,9 +107,9 @@ class Board:
 
         # print(self.tiles[self.start[1]][self.start[0]].attached.data)
         print(self.tiles[self.start[1]][self.start[0]].attached.orientation)
-        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, .2, self.start[0], self.start[1], "forward", self.total_paths)
+        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, .01, self.start[0], self.start[1], "forward", self.total_paths)
         print(self.start[0], self.start[1])
-        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths)
+        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, .01, self.start[0], self.start[1], "forward", self.total_paths)
         self.total_paths += 1
 
     def train_orient(self, location):
@@ -177,7 +189,7 @@ class Board:
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
         #self.draw_path_tiles(game_surf)
-        self.draw_tracks(game_surf)
+        self.draw_tile_items(game_surf)
         
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
@@ -186,17 +198,15 @@ class Board:
         for row in self.tiles:
             for tile in row:
                 pygame.draw.rect(game_surf, Colors.white, tile.rect)
+
+    def draw_tile_items(self, game_surf):
+        for row in self.tiles:
+            for tile in row:
+                tile.draw_attached(game_surf)
+
     '''
     def draw_path_tiles(self, game_surf):
         for path in self.tile_paths:
             for tile in path:
                 pygame.draw.rect(game_surf, Colors.red, tile.rect)
     '''
-
-    def draw_tracks(self, game_surf):
-        for row in self.tiles:
-            for tile in row:
-                if tile.attached is not None:
-                    scaled_image_grid = pygame.transform.scale(tile.attached.image, (TRACK_WIDTH, TRACK_HEIGHT))
-                    center = tile.attached.rect.move(0, 0)
-                    game_surf.blit(scaled_image_grid, center)

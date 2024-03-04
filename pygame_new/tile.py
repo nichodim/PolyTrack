@@ -1,5 +1,7 @@
 # Handles tiles
 
+from constants import *
+
 class Tile:
     def __init__(self, rect):
         self.rect = rect
@@ -21,3 +23,8 @@ class Tile:
         self.in_path = i
         return True
     '''
+
+    def draw_attached(self, game_surf):
+        if self.attached:
+            scaled_image_grid = pygame.transform.scale(self.attached.image, (TRACK_WIDTH, TRACK_HEIGHT))
+            game_surf.blit(scaled_image_grid, self.rect.topleft)

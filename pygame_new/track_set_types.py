@@ -122,26 +122,42 @@ TrackSetTypes = {
         ('origin', TrackSprites.inverted_right), 
         ('right', TrackSprites.inverted_left)
     ], 
-    'u-3': [
+    'u-4': [
         ('origin', TrackSprites.right), 
         ('down', TrackSprites.inverted_right)
     ], 
 
     # hook
-    'hook-1': [
+    'lefthook-1': [
         ('origin', TrackSprites.left), 
         ('left', TrackSprites.horizontal)
     ], 
-    'hook-2': [
+    'lefthook-2': [
+        ('origin', TrackSprites.inverted_left), 
+        ('up', TrackSprites.vertical)
+    ], 
+    'lefthook-3': [
+        ('origin', TrackSprites.inverted_right), 
+        ('right', TrackSprites.horizontal)
+    ], 
+    'lefthook-4': [
+        ('origin', TrackSprites.right), 
+        ('down', TrackSprites.vertical)
+    ], 
+    'righthook-1': [
         ('origin', TrackSprites.right), 
         ('right', TrackSprites.horizontal)
     ], 
-    'hook-3': [
+    'righthook-2': [
         ('origin', TrackSprites.inverted_right), 
         ('up', TrackSprites.vertical)
     ], 
-    'hook-4': [
+    'righthook-3': [
         ('origin', TrackSprites.inverted_left), 
+        ('left', TrackSprites.horizontal)
+    ], 
+    'righthook-4': [
+        ('origin', TrackSprites.left), 
         ('down', TrackSprites.vertical)
     ], 
 
@@ -178,7 +194,7 @@ TrackSetTypes = {
         ('right', TrackSprites.inverted_left),
         ('up', TrackSprites.right)
     ],
-        'diagonal-4': [
+    'diagonal-4': [
         ('origin', TrackSprites.inverted_right),
         ('up', TrackSprites.left),
         ('left', TrackSprites.inverted_right),
@@ -190,19 +206,15 @@ TrackSetTypes = {
 SpawnTracks = [
     TrackSetTypes['medstraight-1'], 
     TrackSetTypes['smallstraight-1'], 
-    TrackSetTypes['smallstraight-1'], 
+    TrackSetTypes['smallstraight-2'], 
 
     TrackSetTypes['medturn-1'], 
     TrackSetTypes['medturn-1'], 
     TrackSetTypes['smallturn-1'], 
 
     TrackSetTypes['u-1'], 
-    TrackSetTypes['hook-1'], 
-    TrackSetTypes['hook-1'], 
+    TrackSetTypes['lefthook-1'], 
+    TrackSetTypes['righthook-1'], 
     TrackSetTypes['zigzag-1'],
     TrackSetTypes['diagonal-1'],
-    TrackSetTypes['diagonal-2'],
-    TrackSetTypes['diagonal-3'],
-    TrackSetTypes['diagonal-4'],
-
 ]

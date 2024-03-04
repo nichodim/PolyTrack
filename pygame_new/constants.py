@@ -13,6 +13,8 @@ class TrackSprites:
     left = pygame.image.load('images/left_track.png')
     inverted_right = pygame.image.load('images/inverted_right_track.png')
     inverted_left = pygame.image.load('images/inverted_left_track.png')
+
+class TrainSprites:
     red_train = pygame.image.load('images/red_train.png')
     gray_cargo = pygame.image.load('images/gray_cargo.png')
     red_cargo = pygame.image.load('images/red_cargo.png')
@@ -20,6 +22,14 @@ class TrackSprites:
     rock_cargo = pygame.image.load('images/rock_cargo.png')
     propane_cargo = pygame.image.load('images/propane_cargo.png')
     random_train_choice = ([red_train, gray_cargo, red_cargo, blue_cargo, rock_cargo, propane_cargo])
+
+class ObstacleSprites:
+    rock = pygame.image.load('images/rock.png')
+    sandrock = pygame.image.load('images/sandrock.png')
+    sadrock = pygame.image.load('images/sadrock.png')
+    tree = pygame.image.load('images/tree.png')
+    woodshack = pygame.image.load('images/woodshack.png')
+
 class Colors:
     black = (0, 0, 0)
     white = (255, 255, 255)
@@ -38,7 +48,7 @@ GAME_HEIGHT = 900
 OUTER_BORDER_SIZE = 150
 NUM_ROWS = 10
 NUM_COLS = 10
-INNER_GAP = 0
+INNER_GAP = 1
 OUTER_GAP = 35
 
 # Trackbox config

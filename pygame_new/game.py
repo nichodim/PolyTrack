@@ -45,14 +45,12 @@ class Game:
         if not self.active_set: return
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
 
-        # # Aligns the hovered track with the mosue for easy rotation
-        # mouse_x, mouse_y = pygame.mouse.get_pos()
-        # new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
-        # self.active_set.set_position_by_track(new_pos, self.active_track_and_index[1])
-
+        # Save difference between mouse pos and hovered track
+        # Needed for a more seemless rotation
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        x_diff = self.active_set.rect.centerx - mouse_x
-        y_diff = self.active_set.rect.centery - mouse_y
+        x_diff = mouse_x - self.active_track_and_index[0].rect.left
+        y_diff = mouse_y - self.active_track_and_index[0].rect.top
+
         self.active_set_mouse_track_difference = (x_diff, y_diff)
         self.active_set_inital_pos = self.active_set.rect.center
     def handle_mouse_down(self, event):
@@ -89,7 +87,7 @@ class Game:
     
 
     # Game logic between components
-    def find_tiles_under_tracks(self):
+    def find_open_tiles_under_tracks(self):
         track_positions = self.active_set.find_pos_of_tracks()
         tiles = []
         for position in track_positions:
@@ -101,7 +99,7 @@ class Game:
         return tiles
 
     def snap_set_to_board(self):
-        hovered_tiles = self.find_tiles_under_tracks()
+        hovered_tiles = self.find_open_tiles_under_tracks()
         if not hovered_tiles: return False
         self.active_set.attach_tracks_to_tiles(hovered_tiles)
         self.track_box.remove_track_set(self.active_set)
