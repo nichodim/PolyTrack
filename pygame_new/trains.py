@@ -13,7 +13,7 @@ class Trains:
         pass
         
     def spawn_train(self, deg, spd, x, y, direction, set):
-        trains.append(Train(deg, spd, x, y, direction, set))
+        trains.append(Train(deg, spd/10, x, y, direction, set))
 
     def update(self):
         self.movement()
@@ -21,38 +21,49 @@ class Trains:
     def check(self, tiles):
         for i in range(len(trains)):
             # train check tile
-            self.tile_x = int((trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains[i].surface)/2))//(TRACK_WIDTH + INNER_GAP))
-            self.tile_y = int((trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains[i].surface)/2))//(TRACK_HEIGHT + INNER_GAP))
+            
+            # train's back tile
+            self.back_x = int((trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains[i].surface)/2) + pygame.Surface.get_width(trains[i].surface) * ((-math.cos(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_WIDTH + INNER_GAP))
+            self.back_y = int((trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains[i].surface)/2) + pygame.Surface.get_width(trains[i].surface) * ((math.sin(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_HEIGHT + INNER_GAP))
 
-            if tiles[self.tile_y][self.tile_x].attached != None:
-                self.is_set_same = tiles[self.tile_y][self.tile_x].attached.id == trains[i].set
-                self.is_tile_end = tiles[self.tile_y][self.tile_x].attached.point == "end"
-                self.is_direction_right = math.sin(math.radians(trains[i].degree + 180)) == math.sin(math.radians(tiles[self.tile_y][self.tile_x].attached.orientation))
+            # train's front tile
+            self.front_x = int((trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains[i].surface)/2) + (pygame.Surface.get_width(trains[i].surface) * (math.cos(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_WIDTH + INNER_GAP))
+            self.front_y = int((trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains[i].surface)/2) + pygame.Surface.get_width(trains[i].surface) * ((-math.sin(math.radians(trains[i].degree)) + 1)//2)) // (TRACK_HEIGHT + INNER_GAP))
+
+
+            print(self.back_x, self.back_y)
+            '''
+            # detect if train enter the station
+            if tiles[self.back_y][self.back_x].attached != None:
+                self.is_set_same = tiles[self.back_y][self.back_x].attached.id == trains[i].set
+                self.is_tile_end = tiles[self.back_y][self.back_x].attached.point == "end"
+                self.is_direction_right = math.sin(math.radians(trains[i].degree + 180)) == math.sin(math.radians(tiles[self.back_y][self.back_x].attached.orientation))
 
                 if self.is_set_same & self.is_tile_end & self.is_direction_right:
                     print("Arrived")
-        
+            '''
 
     def movement(self):
         for i in range(len(trains)):
-            self.x_correction = ((TRACK_WIDTH - pygame.Surface.get_width(trains[i].surface)) / 2) * abs(math.sin(math.radians(trains[i].degree)))
+            self.x_correction = (((TRACK_WIDTH - pygame.Surface.get_width(trains[i].surface)) / 2) - ((TRACK_HEIGHT - pygame.Surface.get_height(trains[i].surface)) / 2)) * abs(math.sin(math.radians(trains[i].degree)))
             self.y_correction = ((TRACK_HEIGHT - pygame.Surface.get_height(trains[i].surface)) / 2) * abs(math.cos(math.radians(trains[i].degree)))
             
             # turning
             # clockwise
             #print(trains[i].direction)
-            self.period = (2 * math.pi * (INNER_GAP + TRACK_WIDTH)) / trains[i].speed 
-            if trains[i].direction == "clockwise":
-                trains[i].degree -= 360 / self.period #  minus degree since it going counter-clockwise
+            if trains[i].direction == "clockwise" or trains[i].direction == "counter-clockwise":
+                self.period = (2 * math.pi * (INNER_GAP + TRACK_WIDTH)) / trains[i].speed 
+                if trains[i].direction == "clockwise":
+                    trains[i].degree -= 360 / self.period #  minus degree since it going counter-clockwise
 
-            # counter-clockwise
-            if trains[i].direction == "counter-clockwise":
-                trains[i].degree += 360 / self.period # add degree since it going counter-clockwise
-            
-            # the following if statement is used it case the speed is a number that not a factor of 90            
-            if round(trains[i].degree % 90, 5) < round(360 / self.period, 5): # check when it close full turns
-                trains[i].direction = "foward" # stop it from turning
-                trains[i].degree -= trains[i].degree % 90 # correct it
+                # counter-clockwise
+                if trains[i].direction == "counter-clockwise":
+                    trains[i].degree += 360 / self.period # add degree since it going counter-clockwise
+                
+                # the following if statement is used it case the speed is a number that not a factor of 90            
+                if round(trains[i].degree % 90, 5) < round(360 / self.period, 5): # check when it close full turns
+                    trains[i].direction = "foward" # stop it from turning
+                    trains[i].degree -= trains[i].degree % 90 # correct it
 
 
             # update the turn on screen

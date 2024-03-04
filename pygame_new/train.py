@@ -3,6 +3,7 @@
 import pygame
 from constants import *
 import random
+import math
 
 class Train:
     def __init__(self, deg, spd, x, y, direction, set):
@@ -13,8 +14,10 @@ class Train:
         self.set = set
         
         # center of the train x and y location
-        self.x = board_x + OUTER_GAP + pygame.Surface.get_width(self.surface)/2 + x * (TRACK_WIDTH + INNER_GAP)
-        self.y = board_y + OUTER_GAP + pygame.Surface.get_height(self.surface)/2 + y * (TRACK_HEIGHT + INNER_GAP) 
+        self.x = board_x + OUTER_GAP + pygame.Surface.get_width(self.surface)/2 + x * (TRACK_WIDTH + INNER_GAP) - ((pygame.Surface.get_width(self.surface) - TRACK_WIDTH) * ((-math.cos(math.radians(self.degree)) + 1)//2))
+        
+        print((pygame.Surface.get_width(self.surface) - TRACK_WIDTH) * ((-math.cos(math.radians(self.degree)) + 1)//2))
+        self.y = board_y + OUTER_GAP + pygame.Surface.get_height(self.surface)/2 + y * (TRACK_HEIGHT + INNER_GAP) - ((pygame.Surface.get_width(self.surface) - TRACK_HEIGHT)/2 * ((math.sin(math.radians(self.degree)) + 1)//2))
 
         # there are three option for this "foward", clockwise", and "counter-clockwise"
         # "foward" makes the train keep moving in the direction its facing
