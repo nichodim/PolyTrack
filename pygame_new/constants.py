@@ -38,7 +38,7 @@ GAME_HEIGHT = 900
 OUTER_BORDER_SIZE = 150
 NUM_ROWS = 10
 NUM_COLS = 10
-INNER_GAP = 2
+INNER_GAP = 0
 OUTER_GAP = 35
 
 # Trackbox config
@@ -54,4 +54,4 @@ NUMBER_OF_TRACKS = 0
 board_width = NUM_COLS * TRACK_WIDTH + INNER_GAP * (NUM_COLS - 1) + OUTER_GAP * 2
 board_height = NUM_ROWS * TRACK_HEIGHT + INNER_GAP * (NUM_ROWS - 1) + OUTER_GAP * 2
 board_x = GAME_WIDTH / 2 - board_width / 2
-board_y = GAME_HEIGHT * 0.1
+board_y = GAME_HEIGHT * 0.05
