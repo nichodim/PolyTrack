@@ -61,9 +61,9 @@ class Board:
             self.front_x = int((trains.trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains.trains[i].surface)/2) + pygame.Surface.get_width(trains.trains[i].surface) * ((math.cos(math.radians(trains.trains[i].degree)) + 1)//2)) // (TRACK_WIDTH + INNER_GAP))
             self.front_y = int((trains.trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains.trains[i].surface)/2) + pygame.Surface.get_width(trains.trains[i].surface) * ((-math.sin(math.radians(trains.trains[i].degree)) + 1)//2)) // (TRACK_HEIGHT + INNER_GAP))
 
-
+            self.valid_index = (0 <= self.back_y <= NUM_ROWS - 1) and (0 <= self.back_x <= NUM_COLS - 1)
             # detect if train enter the station
-            if self.tiles[self.back_y][self.back_x].attached != None:
+            if self.valid_index and self.tiles[self.back_y][self.back_x].attached != None:
 
                 if self.tiles[self.back_y][self.back_x].attached.type == "station":
                     self.is_set_same = self.tiles[self.back_y][self.back_x].attached.id == trains.trains[i].set
@@ -79,7 +79,18 @@ class Board:
                         self.tiles[self.y][self.x].attached = None
                         trains.trains.pop(i)
                         self.total_paths -= 1
-
+        
+            self.valid_index = (0 <= self.front_y <= NUM_ROWS - 1) and (0 <= self.front_x <= NUM_COLS - 1)
+            if self.valid_index and self.tiles[self.front_y][self.front_x].attached != None:
+                if self.tiles[self.front_y][self.front_x].attached.type == "track":
+                    if trains.trains[i].degree == 0:
+                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d0
+                    elif trains.trains[i].degree == 90:
+                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d90
+                    elif trains.trains[i].degree == 180:
+                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d180
+                    elif trains.trains[i].degree == 270:
+                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d270
 
     def create_point(self):
         # randomly generate 2 set of coordinate from (0, 0) to (NUM_COLS - 1, NUM_ROWS - 1)
@@ -87,14 +98,13 @@ class Board:
         self.distance = 0
         self.i = 0
         while self.distance < 5:
-            self.start_tile_location = (random.randint(0, NUM_COLS - 1 - self.i), random.randint(0 + self.i, NUM_ROWS - 1))
-            self.end_tile_location = (random.randint(0, NUM_COLS - 1 - self.i), random.randint(0 + self.i, NUM_ROWS - 1))
+            self.start = (random.randint(0, NUM_COLS - 1 - self.i), random.randint(0 + self.i, NUM_ROWS - 1))
+            self.end = (random.randint(0, NUM_COLS - 1 - self.i), random.randint(0 + self.i, NUM_ROWS - 1))
             self.i += 1
             if self.i > NUM_COLS - 1:
                 self.i = NUM_COLS - 1
-            self.distance = math.sqrt((self.end_tile_location[0] - self.start_tile_location[0])**2 + (self.end_tile_location[1] - self.start_tile_location[1])**2)
+            self.distance = math.sqrt((self.end[0] - self.start[0])**2 + (self.end[1] - self.start[1])**2)
         '''
-    
         # determine orientation for locations
         self.start = (0, 0)
         self.end = (0, 9)

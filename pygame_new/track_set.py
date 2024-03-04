@@ -46,7 +46,7 @@ class TrackSet:
         positions = []
         for instruction in self.structure:
             direction = instruction[0]
-            image = instruction[1]
+            data = instruction[1]
 
             # offset coordinates based on direction moved
             x += TrackOffset[direction][0]
@@ -54,7 +54,7 @@ class TrackSet:
 
             # Creates new track
             rect = pygame.Rect(x, y, TRACK_WIDTH, TRACK_HEIGHT)
-            track = Track(image, rect)
+            track = Track(data.image, rect, data.d0, data.d90, data.d180, data.d270)
             self.tracks.append(track)
             positions.append(((rect.left, rect.top), direction))
 

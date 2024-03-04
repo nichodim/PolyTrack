@@ -12,8 +12,8 @@ class Trains:
         #self.spawn_train(180, 1, 5, 5, "counter-clockwise")
         pass
         
-    def spawn_train(self, deg, spd, x, y, direction, set):
-        trains.append(Train(deg, spd, x, y, direction, set))
+    def spawn_train(self, deg, spd, x, y, direction, set, start, end):
+        trains.append(Train(deg, spd, x, y, direction, set, start, end))
 
     def update(self):
         self.movement()
@@ -45,8 +45,9 @@ class Trains:
             trains[i].rotate = pygame.transform.rotate(trains[i].surface, trains[i].degree)
 
             # movement
-            trains[i].x += trains[i].speed * math.cos(math.radians(trains[i].degree)) 
-            trains[i].y += trains[i].speed * -math.sin(math.radians(trains[i].degree))
+            if trains[i].direction != "crash":
+                trains[i].x += trains[i].speed * math.cos(math.radians(trains[i].degree)) 
+                trains[i].y += trains[i].speed * -math.sin(math.radians(trains[i].degree))
 
     def draw(self, game_surf):
         for i in range(len(trains)):

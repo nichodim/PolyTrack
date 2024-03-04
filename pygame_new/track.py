@@ -3,9 +3,14 @@
 from constants import *
 
 class Track:
-    def __init__(self, image, rect):
+    def __init__(self, image, rect, d0, d90, d180, d270):
+        self.type = "track"
         self.image = image
         self.rect = rect
+        self.d0 = d0
+        self.d90 = d90
+        self.d180 = d180
+        self.d270 = d270
 
         self.relations = []
 
