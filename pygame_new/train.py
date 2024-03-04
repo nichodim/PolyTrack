@@ -6,7 +6,7 @@ import random
 import math
 
 class Train:
-    def __init__(self, deg, spd, x, y, direction, set):
+    def __init__(self, deg, spd, x, y, direction, set, start, end):
          # pygame.Surface([width,height]) controls size of the train
         self.surface = pygame.Surface([60 * (TRACK_WIDTH/50), (TRACK_HEIGHT - 2 * (TRACK_HEIGHT/50))])
         self.degree = deg
@@ -17,7 +17,11 @@ class Train:
         self.x = board_x + OUTER_GAP + pygame.Surface.get_width(self.surface)/2 + x * (TRACK_WIDTH + INNER_GAP) - ((pygame.Surface.get_width(self.surface) - TRACK_WIDTH) * ((-math.cos(math.radians(self.degree)) + 1)//2))
         
         print((pygame.Surface.get_width(self.surface) - TRACK_WIDTH) * ((-math.cos(math.radians(self.degree)) + 1)//2))
-        self.y = board_y + OUTER_GAP + pygame.Surface.get_height(self.surface)/2 + y * (TRACK_HEIGHT + INNER_GAP) - ((pygame.Surface.get_width(self.surface) - TRACK_HEIGHT)/2 * ((math.sin(math.radians(self.degree)) + 1)//2))
+        self.y = board_y + OUTER_GAP + pygame.Surface.get_height(self.surface)/2 + y * (TRACK_HEIGHT + INNER_GAP) - ((pygame.Surface.get_width(self.surface) - TRACK_HEIGHT)/2 * math.sin(math.radians(self.degree))//1)
+
+        # start and end location
+        self.start = start
+        self.end = end
 
         # there are three option for this "foward", clockwise", and "counter-clockwise"
         # "foward" makes the train keep moving in the direction its facing

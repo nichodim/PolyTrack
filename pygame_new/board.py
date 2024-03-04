@@ -64,12 +64,22 @@ class Board:
 
             # detect if train enter the station
             if self.tiles[self.back_y][self.back_x].attached != None:
-                self.is_set_same = self.tiles[self.back_y][self.back_x].attached.id == trains.trains[i].set
-                self.is_tile_end = self.tiles[self.back_y][self.back_x].attached.point == "end"
-                self.is_direction_right = round(math.sin(math.radians(trains.trains[i].degree + 180)), 5) == round(math.sin(math.radians(self.tiles[self.back_y][self.back_x].attached.orientation)), 5)
 
-                if self.is_set_same & self.is_tile_end & self.is_direction_right:
-                    print("Arrived")
+                if self.tiles[self.back_y][self.back_x].attached.type == "station":
+                    self.is_set_same = self.tiles[self.back_y][self.back_x].attached.id == trains.trains[i].set
+                    self.is_tile_end = self.tiles[self.back_y][self.back_x].attached.point == "end"
+                    self.is_direction_right = round(math.sin(math.radians(trains.trains[i].degree + 180)), 5) == round(math.sin(math.radians(self.tiles[self.back_y][self.back_x].attached.orientation)), 5)
+
+                    if self.is_set_same & self.is_tile_end & self.is_direction_right:
+                        print("Arrived")
+                        # remove train and stations and respawn it somewhere else on the board
+                        self.x, self.y = trains.trains[i].start
+                        self.tiles[self.y][self.x].attached = None
+                        self.x, self.y = trains.trains[i].end
+                        self.tiles[self.y][self.x].attached = None
+                        trains.trains.pop(i)
+                        self.total_paths -= 1
+
 
     def create_point(self):
         # randomly generate 2 set of coordinate from (0, 0) to (NUM_COLS - 1, NUM_ROWS - 1)
@@ -95,6 +105,7 @@ class Board:
         #self.data = {"point": "start", "orient": self.train_orient(self.start), "set": self.total_paths}
 
         start_station = Station(
+            type = "station",
             image = image, 
             rect = point_rect, 
             point = 'start', 
@@ -107,6 +118,7 @@ class Board:
         # ending location
         point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.end[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.end[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
         end_station = Station(
+            type = "station",
             image = image, 
             rect = point_rect, 
             point = 'end', 
@@ -119,7 +131,7 @@ class Board:
         # direction could be "forward", "clockwise", or "counter-clockwise"
 
         # print(self.tiles[self.start[1]][self.start[0]].attached.data)
-        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths)
+        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths, self.start, self.end)
         self.total_paths += 1
 
     def train_orient(self, location):
