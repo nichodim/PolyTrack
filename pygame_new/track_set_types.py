@@ -157,7 +157,33 @@ TrackSetTypes = {
         ('right', TrackSprites.inverted_left), 
         ('up', TrackSprites.right), 
         ('right', TrackSprites.horizontal)
-    ]
+    ],
+
+    # Diagonal 
+    'diagonal-1': [
+        ('origin', TrackSprites.right),
+        ('right', TrackSprites.inverted_left),
+        ('up', TrackSprites.right),
+        ('right', TrackSprites.inverted_left)
+    ],
+    'diagonal-2': [
+        ('origin', TrackSprites.left),
+        ('left', TrackSprites.inverted_right),
+        ('up', TrackSprites.left),
+        ('left', TrackSprites.inverted_right)
+    ],
+    'diagonal-3': [
+        ('origin', TrackSprites.inverted_left),
+        ('up', TrackSprites.right),
+        ('right', TrackSprites.inverted_left),
+        ('up', TrackSprites.right)
+    ],
+        'diagonal-4': [
+        ('origin', TrackSprites.inverted_right),
+        ('up', TrackSprites.left),
+        ('left', TrackSprites.inverted_right),
+        ('up', TrackSprites.left)
+    ],
 }
 
 # Add multiple times to increase chances
@@ -173,5 +199,10 @@ SpawnTracks = [
     TrackSetTypes['u-1'], 
     TrackSetTypes['hook-1'], 
     TrackSetTypes['hook-1'], 
-    TrackSetTypes['zigzag-1']
+    TrackSetTypes['zigzag-1'],
+    TrackSetTypes['diagonal-1'],
+    TrackSetTypes['diagonal-2'],
+    TrackSetTypes['diagonal-3'],
+    TrackSetTypes['diagonal-4'],
+
 ]

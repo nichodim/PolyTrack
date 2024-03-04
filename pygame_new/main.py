@@ -4,6 +4,7 @@ import pygame
 from button import Button
 from game import Game
 from constants import *
+import sys
 
 main_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 
@@ -13,7 +14,7 @@ def main():
     game = Game()
 
     # Set buttons
-    image_scale = 3.5
+    image_scale = 6
     button_x = GAME_WIDTH / 2 - (Images.start_img.get_width() * image_scale / 2)
     start_button = Button(button_x, 400, Images.start_img, image_scale)
     quit_button = Button(button_x, 500, Images.quit_img, image_scale)
@@ -42,9 +43,14 @@ def main():
         # Check for end event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                quit_game()
+                
         
         pygame.display.update()
+
+def quit_game():
+    pygame.quit()
+    sys.exit()
     
 if __name__ == "__main__":
     main()
