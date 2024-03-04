@@ -61,8 +61,8 @@ class Board:
         '''
     
         # determine orientation for locations
-        self.start = (0, 0)
-        self.end = (9, 0)
+        self.start = (5, 5)
+        self.end = (0, 0)
 
         # starting location
         image = TrackSprites.horizontal
@@ -73,7 +73,7 @@ class Board:
             image = image, 
             rect = point_rect, 
             point = 'start', 
-            orientation = 0, 
+            orientation = 270, 
             id = self.total_paths
         )
         self.tiles[self.start[1]][self.start[0]].attached = start_station
@@ -85,7 +85,7 @@ class Board:
             image = image, 
             rect = point_rect, 
             point = 'end', 
-            orientation = 180, 
+            orientation = 0, 
             id = self.total_paths
         )
         self.tiles[self.end[1]][self.end[0]].attached = end_station
@@ -97,7 +97,7 @@ class Board:
         print(self.tiles[self.start[1]][self.start[0]].attached.orientation)
         Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, .2, self.start[0], self.start[1], "forward", self.total_paths)
         print(self.start[0], self.start[1])
-        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths)
+        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 0, self.start[0], self.start[1], "forward", self.total_paths)
         self.total_paths += 1
 
     def train_orient(self, location):
