@@ -1,4 +1,5 @@
 from constants import *
+from track_data import Track_data
 
 width_and_gap = TRACK_WIDTH + INNER_GAP
 height_and_gap = TRACK_HEIGHT + INNER_GAP
@@ -11,194 +12,202 @@ TrackOffset = {
     'right': (width_and_gap, 0)
 }
 
+# base case for tracks
+vertical = Track_data(TrackSprites.vertical, "crash", "forward", "crash", "forward")
+horizontal = Track_data(TrackSprites.horizontal, "forward", "crash", "forward", "crash")
+left = Track_data(TrackSprites.left, "clockwise", "counter-clockwise", "crash", "crash")
+right = Track_data(TrackSprites.right, "crash", "clockwise", "counter-clockwise", "crash")
+ileft = Track_data(TrackSprites.inverted_left, "counter-clockwise", "crash", "crash", "clockwise")
+iright = Track_data(TrackSprites.inverted_right, "crash", "crash", "clockwise", "counter-clockwise")
+
 # 1 is the default, the incremented numbers represent the rotated version of the set
 # Be mindful that the track box styling will need adjustment for bigger sizes
 # *** With current styling, keep types at a max of 3 track width/height ***
 TrackSetTypes = {
     # straight
     'bigstraight-1': [
-        ('origin', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical)
+        ('origin', vertical), 
+        ('down', vertical), 
+        ('down', vertical), 
+        ('down', vertical)
     ], 
     'bigstraight-2': [
-        ('origin', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal)
+        ('origin', horizontal), 
+        ('right', horizontal), 
+        ('right', horizontal), 
+        ('right', horizontal)
     ], 
     'medstraight-1': [
-        ('origin', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical), 
+        ('origin', vertical), 
+        ('down', vertical), 
+        ('down', vertical), 
     ], 
     'medstraight-2': [
-        ('origin', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal), 
+        ('origin', horizontal), 
+        ('right', horizontal), 
+        ('right', horizontal), 
     ], 
     'smallstraight-1': [
-        ('origin', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical)
+        ('origin', vertical), 
+        ('down', vertical)
     ], 
     'smallstraight-2': [
-        ('origin', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal)
+        ('origin', horizontal), 
+        ('right', horizontal)
     ], 
 
     # turn
     'bigturn-1': [
-        ('origin', TrackSprites.vertical), 
-        ('up', TrackSprites.vertical), 
-        ('up', TrackSprites.left), 
-        ('left', TrackSprites.horizontal), 
-        ('left', TrackSprites.horizontal)
+        ('origin', vertical), 
+        ('up', vertical), 
+        ('up', left), 
+        ('left', horizontal), 
+        ('left', horizontal)
     ], 
     'bigturn-2': [
-        ('origin', TrackSprites.horizontal), 
-        ('left', TrackSprites.horizontal), 
-        ('left', TrackSprites.right), 
-        ('down', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical)
+        ('origin', horizontal), 
+        ('left', horizontal), 
+        ('left', right), 
+        ('down', vertical), 
+        ('down', vertical)
     ], 
     'bigturn-3': [
-        ('origin', TrackSprites.vertical), 
-        ('down', TrackSprites.vertical), 
-        ('down', TrackSprites.inverted_right), 
-        ('right', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal)
+        ('origin', vertical), 
+        ('down', vertical), 
+        ('down', iright), 
+        ('right', horizontal), 
+        ('right', horizontal)
     ], 
     'bigturn-4': [
-        ('origin', TrackSprites.horizontal), 
-        ('right', TrackSprites.horizontal), 
-        ('right', TrackSprites.inverted_left), 
-        ('up', TrackSprites.vertical), 
-        ('up', TrackSprites.vertical)
+        ('origin', horizontal), 
+        ('right', horizontal), 
+        ('right', ileft), 
+        ('up', vertical), 
+        ('up', vertical)
     ], 
     'medturn-1': [
-        ('origin', TrackSprites.vertical), 
-        ('up', TrackSprites.left), 
-        ('left', TrackSprites.horizontal)
+        ('origin', vertical), 
+        ('up', left), 
+        ('left', horizontal)
     ], 
     'medturn-2': [
-        ('origin', TrackSprites.horizontal), 
-        ('left', TrackSprites.right), 
-        ('down', TrackSprites.vertical)
+        ('origin', horizontal), 
+        ('left', right), 
+        ('down', vertical)
     ], 
     'medturn-3': [
-        ('origin', TrackSprites.vertical), 
-        ('down', TrackSprites.inverted_right), 
-        ('right', TrackSprites.horizontal)
+        ('origin', vertical), 
+        ('down', iright), 
+        ('right', horizontal)
     ], 
     'medturn-4': [
-        ('origin', TrackSprites.horizontal), 
-        ('right', TrackSprites.inverted_left), 
-        ('up', TrackSprites.vertical)
+        ('origin', horizontal), 
+        ('right', ileft), 
+        ('up', vertical)
     ], 
     'smallturn-1': [
-        ('origin', TrackSprites.left)
+        ('origin', left)
     ], 
     'smallturn-2': [
-        ('origin', TrackSprites.right)
+        ('origin', right)
     ], 
     'smallturn-3': [
-        ('origin', TrackSprites.inverted_right)
+        ('origin', iright)
     ], 
     'smallturn-4': [
-        ('origin', TrackSprites.inverted_left)
+        ('origin', ileft)
     ], 
 
     # u
     'u-1': [
-        ('origin', TrackSprites.left), 
-        ('left', TrackSprites.right)
+        ('origin', left), 
+        ('left', right)
     ], 
     'u-2': [
-        ('origin', TrackSprites.inverted_left), 
-        ('up', TrackSprites.left)
+        ('origin', ileft), 
+        ('up', left)
     ], 
     'u-3': [
-        ('origin', TrackSprites.inverted_right), 
-        ('right', TrackSprites.inverted_left)
+        ('origin', iright), 
+        ('right', ileft)
     ], 
     'u-4': [
-        ('origin', TrackSprites.right), 
-        ('down', TrackSprites.inverted_right)
+        ('origin', right), 
+        ('down', iright)
     ], 
 
     # hook
     'lefthook-1': [
-        ('origin', TrackSprites.left), 
-        ('left', TrackSprites.horizontal)
+        ('origin', left), 
+        ('left', horizontal)
     ], 
     'lefthook-2': [
-        ('origin', TrackSprites.inverted_left), 
-        ('up', TrackSprites.vertical)
+        ('origin', ileft), 
+        ('up', vertical)
     ], 
     'lefthook-3': [
-        ('origin', TrackSprites.inverted_right), 
-        ('right', TrackSprites.horizontal)
+        ('origin', iright), 
+        ('right', horizontal)
     ], 
     'lefthook-4': [
-        ('origin', TrackSprites.right), 
-        ('down', TrackSprites.vertical)
+        ('origin', iright), 
+        ('down', vertical)
     ], 
     'righthook-1': [
-        ('origin', TrackSprites.right), 
-        ('right', TrackSprites.horizontal)
+        ('origin', right), 
+        ('right', horizontal)
     ], 
     'righthook-2': [
-        ('origin', TrackSprites.inverted_right), 
-        ('up', TrackSprites.vertical)
+        ('origin', iright), 
+        ('up', vertical)
     ], 
     'righthook-3': [
-        ('origin', TrackSprites.inverted_left), 
-        ('left', TrackSprites.horizontal)
+        ('origin', ileft), 
+        ('left', horizontal)
     ], 
     'righthook-4': [
-        ('origin', TrackSprites.left), 
-        ('down', TrackSprites.vertical)
+        ('origin', left), 
+        ('down', vertical)
     ], 
 
     # zigzag
     'zigzag-1': [
-        ('origin', TrackSprites.vertical), 
-        ('down', TrackSprites.inverted_right), 
-        ('right', TrackSprites.left), 
-        ('down', TrackSprites.vertical)
+        ('origin', vertical), 
+        ('down', iright), 
+        ('right', left), 
+        ('down', vertical)
     ], 
     'zigzag-2': [
-        ('origin', TrackSprites.horizontal), 
-        ('right', TrackSprites.inverted_left), 
-        ('up', TrackSprites.right), 
-        ('right', TrackSprites.horizontal)
+        ('origin', horizontal), 
+        ('right', ileft), 
+        ('up', right), 
+        ('right', horizontal)
     ],
 
     # Diagonal 
     'diagonal-1': [
-        ('origin', TrackSprites.right),
-        ('right', TrackSprites.inverted_left),
-        ('up', TrackSprites.right),
-        ('right', TrackSprites.inverted_left)
+        ('origin', right),
+        ('right', ileft),
+        ('up', right),
+        ('right', ileft)
     ],
     'diagonal-2': [
-        ('origin', TrackSprites.left),
-        ('left', TrackSprites.inverted_right),
-        ('up', TrackSprites.left),
-        ('left', TrackSprites.inverted_right)
+        ('origin', left),
+        ('left', iright),
+        ('up', left),
+        ('left', iright)
     ],
     'diagonal-3': [
-        ('origin', TrackSprites.inverted_left),
-        ('up', TrackSprites.right),
-        ('right', TrackSprites.inverted_left),
-        ('up', TrackSprites.right)
+        ('origin', ileft),
+        ('up', right),
+        ('right', ileft),
+        ('up', right)
     ],
     'diagonal-4': [
-        ('origin', TrackSprites.inverted_right),
-        ('up', TrackSprites.left),
-        ('left', TrackSprites.inverted_right),
-        ('up', TrackSprites.left)
+        ('origin', iright),
+        ('up', left),
+        ('left', iright),
+        ('up', left)
     ],
 }
 
