@@ -94,6 +94,8 @@ class Board:
         # direction could be "forward", "clockwise", or "counter-clockwise"
 
         # print(self.tiles[self.start[1]][self.start[0]].attached.data)
+        print(self.tiles[self.start[1]][self.start[0]].attached.orientation)
+        Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, .2, self.start[0], self.start[1], "forward", self.total_paths)
         print(self.start[0], self.start[1])
         Trains().spawn_train(self.tiles[self.start[1]][self.start[0]].attached.orientation, 1, self.start[0], self.start[1], "forward", self.total_paths)
         self.total_paths += 1
