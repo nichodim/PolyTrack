@@ -39,7 +39,12 @@ def main():
             start_button.setImage(Images.start_hover_img)
         else:
             start_button.setImage(Images.start_img)
-        
+
+        if quit_button.hovered():
+            quit_button.setImage(Images.quit_hover_img)
+        else:
+            quit_button.setImage(Images.quit_img)
+
         # Check for end event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
