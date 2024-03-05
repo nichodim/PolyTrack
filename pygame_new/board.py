@@ -18,6 +18,7 @@ class Board:
         # Create tiles
         self.tiles = self.create_grid()
         self.generate_obstacles(random.randint(2, 6))
+        self.highlighted_tiles = []
 
         # Create tile paths - TODO creation should be an event
         #self.tile_paths = []
@@ -54,6 +55,17 @@ class Board:
 
                 attached = tile.attach(Obstacle())
                 if attached: break
+    
+    def unhighlight(self):
+        for tile in self.highlighted_tiles:
+            tile.highlighted = False
+        self.highlighted_tiles = []
+    def highlight(self, tiles):
+        self.unhighlight()
+
+        for tile in tiles:
+            tile.highlighted = True
+            self.highlighted_tiles.append(tile)
     
     def update(self):
         # for trian
@@ -241,7 +253,10 @@ class Board:
     def draw_tiles(self, game_surf):
         for row in self.tiles:
             for tile in row:
-                pygame.draw.rect(game_surf, Colors.white, tile.rect)
+                if tile.highlighted:
+                    pygame.draw.rect(game_surf, Colors.green, tile.rect)
+                else: 
+                    pygame.draw.rect(game_surf, Colors.white, tile.rect)
 
     def draw_tile_items(self, game_surf):
         for row in self.tiles:

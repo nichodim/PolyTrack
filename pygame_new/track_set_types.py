@@ -57,54 +57,48 @@ TrackSetTypes = {
     ], 
 
     # turn
-    'bigturn-1': [
-        ('origin', vertical), 
-        ('up', vertical), 
-        ('up', left), 
-        ('left', horizontal), 
-        ('left', horizontal)
-    ], 
-    'bigturn-2': [
-        ('origin', horizontal), 
-        ('left', horizontal), 
-        ('left', right), 
-        ('down', vertical), 
-        ('down', vertical)
-    ], 
-    'bigturn-3': [
-        ('origin', vertical), 
-        ('down', vertical), 
-        ('down', iright), 
-        ('right', horizontal), 
-        ('right', horizontal)
-    ], 
-    'bigturn-4': [
-        ('origin', horizontal), 
-        ('right', horizontal), 
-        ('right', ileft), 
-        ('up', vertical), 
-        ('up', vertical)
-    ], 
-    'medturn-1': [
+    'leftturn-1': [
         ('origin', vertical), 
         ('up', left), 
         ('left', horizontal)
     ], 
-    'medturn-2': [
+    'leftturn-2': [
         ('origin', horizontal), 
         ('left', right), 
         ('down', vertical)
     ], 
-    'medturn-3': [
+    'leftturn-3': [
         ('origin', vertical), 
         ('down', iright), 
         ('right', horizontal)
     ], 
-    'medturn-4': [
+    'leftturn-4': [
         ('origin', horizontal), 
         ('right', ileft), 
         ('up', vertical)
     ], 
+
+    'rightturn-1': [
+        ('origin', vertical), 
+        ('up', right), 
+        ('right', horizontal)
+    ], 
+    'rightturn-2': [
+        ('origin', horizontal), 
+        ('right', left), 
+        ('down', vertical)
+    ], 
+    'rightturn-3': [
+        ('origin', vertical), 
+        ('down', ileft), 
+        ('left', horizontal)
+    ], 
+    'rightturn-4': [
+        ('origin', horizontal), 
+        ('left', iright), 
+        ('up', vertical)
+    ], 
+
     'smallturn-1': [
         ('origin', left)
     ], 
@@ -150,7 +144,7 @@ TrackSetTypes = {
         ('right', horizontal)
     ], 
     'lefthook-4': [
-        ('origin', iright), 
+        ('origin', right), 
         ('down', vertical)
     ], 
     'righthook-1': [
@@ -217,8 +211,8 @@ SpawnTracks = [
     TrackSetTypes['smallstraight-1'], 
     TrackSetTypes['smallstraight-2'], 
 
-    TrackSetTypes['medturn-1'], 
-    TrackSetTypes['medturn-1'], 
+    TrackSetTypes['leftturn-1'], 
+    TrackSetTypes['rightturn-1'], 
     TrackSetTypes['smallturn-1'], 
 
     TrackSetTypes['u-1'], 

@@ -68,14 +68,15 @@ class Game:
             self.active_set.set_position_by_center(self.active_set_inital_pos)
         else: self.track_box.update_spawner(self.active_set)
         
+        self.board.unhighlight()
         self.active_set = None
         self.active_track_and_index = None
         self.active_set_inital_pos = None
 
-
     def handle_mouse_motion(self, event):
         if self.active_set != None:
             self.active_set.move(event.rel)
+            self.try_highlight_tiles()
     
     def handle_r_down(self):
         if self.active_set: 
@@ -84,9 +85,16 @@ class Game:
                 hovered_track_and_index = self.active_track_and_index, 
                 mouse_track_difference = self.active_set_mouse_track_difference
             )
+            self.try_highlight_tiles()
     
 
     # Game logic between components
+    def try_highlight_tiles(self):
+        tiles = self.find_open_tiles_under_tracks()
+        if not tiles: 
+            self.board.unhighlight()
+            return
+        self.board.highlight(tiles)
     def find_open_tiles_under_tracks(self):
         track_positions = self.active_set.find_pos_of_tracks()
         tiles = []

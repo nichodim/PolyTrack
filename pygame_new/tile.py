@@ -6,6 +6,7 @@ class Tile:
     def __init__(self, rect):
         self.rect = rect
         self.attached = None
+        self.highlighted = False
     
     def is_open(self):
         return not self.attached
