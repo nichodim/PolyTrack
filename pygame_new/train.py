@@ -14,10 +14,15 @@ class Train:
         self.set = set
         
         # center of the train x and y location
-        self.x = board_x + OUTER_GAP + pygame.Surface.get_width(self.surface)/2 + x * (TRACK_WIDTH + INNER_GAP) - ((pygame.Surface.get_width(self.surface) - TRACK_WIDTH) * ((-math.cos(math.radians(self.degree)) + 1)//2))
+        self.x_center_adjustment = abs(pygame.Surface.get_width(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_height(self.surface) / 2 * math.sin(math.radians(self.degree)))
+        self.y_center_adjustment = abs(pygame.Surface.get_height(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_width(self.surface) / 2 * math.sin(math.radians(self.degree)))
         
-        print((pygame.Surface.get_width(self.surface) - TRACK_WIDTH) * ((-math.cos(math.radians(self.degree)) + 1)//2))
-        self.y = board_y + OUTER_GAP + pygame.Surface.get_height(self.surface)/2 + y * (TRACK_HEIGHT + INNER_GAP) - ((pygame.Surface.get_width(self.surface) - TRACK_HEIGHT)/2 * math.sin(math.radians(self.degree))//1)
+        self.x = board_x + OUTER_GAP + x * (TRACK_WIDTH + INNER_GAP) + self.x_center_adjustment
+        self.y = board_y + OUTER_GAP + y * (TRACK_HEIGHT + INNER_GAP) + self.y_center_adjustment
+        if self.degree == 180:
+            self.x -= pygame.Surface.get_width(self.surface) - TRACK_WIDTH - INNER_GAP
+        if self.degree == 90:
+            self.y -= pygame.Surface.get_width(self.surface) - TRACK_HEIGHT - INNER_GAP
 
         # start and end location
         self.start = start

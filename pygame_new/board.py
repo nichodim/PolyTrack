@@ -63,15 +63,27 @@ class Board:
 
     def check(self):
         for i in range(len(trains.trains)):
+            # declear some helpful variables
+            self.train_width = pygame.Surface.get_width(trains.trains[i].surface)
+            self.happens_at_0deg = ((math.cos(math.radians(trains.trains[i].degree)) + 1)//2)
+            self.happens_at_90deg = ((math.sin(math.radians(trains.trains[i].degree)) + 1)//2)
+            self.happens_at_180deg = ((-math.cos(math.radians(trains.trains[i].degree)) + 1)//2)
+            self.happens_at_270deg = ((-math.sin(math.radians(trains.trains[i].degree)) + 1)//2)
+            self.happens_at_vertical = ((abs(math.sin(math.radians(trains.trains[i].degree))) + 1)//2)
+            self.happens_at_horizontal = ((abs(math.cos(math.radians(trains.trains[i].degree))) + 1)//2)
             # train check tile
             
-            # train's back tile
-            self.back_x = int((trains.trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains.trains[i].surface)/2) + pygame.Surface.get_width(trains.trains[i].surface) * ((-math.cos(math.radians(trains.trains[i].degree)) + 1)//2)) // (TRACK_WIDTH + INNER_GAP))
-            self.back_y = int((trains.trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains.trains[i].surface)/2) + pygame.Surface.get_width(trains.trains[i].surface) * ((math.sin(math.radians(trains.trains[i].degree)) + 1)//2)) // (TRACK_HEIGHT + INNER_GAP))
-
             # train's front tile
-            self.front_x = int((trains.trains[i].x - (board_x + OUTER_GAP + pygame.Surface.get_width(trains.trains[i].surface)/2) + pygame.Surface.get_width(trains.trains[i].surface) * ((math.cos(math.radians(trains.trains[i].degree)) + 1)//2)) // (TRACK_WIDTH + INNER_GAP))
-            self.front_y = int((trains.trains[i].y - (board_y + OUTER_GAP + pygame.Surface.get_height(trains.trains[i].surface)/2) + pygame.Surface.get_width(trains.trains[i].surface) * ((-math.sin(math.radians(trains.trains[i].degree)) + 1)//2)) // (TRACK_HEIGHT + INNER_GAP))
+            self.front_x = int((trains.trains[i].x - (board_x + OUTER_GAP + trains.trains[i].x_center_adjustment) + trains.trains[i].y_center_adjustment * self.happens_at_vertical + self.train_width * self.happens_at_0deg) // (TRACK_WIDTH + INNER_GAP))
+            self.front_y = int((trains.trains[i].y - (board_y + OUTER_GAP + trains.trains[i].y_center_adjustment) + trains.trains[i].y_center_adjustment * self.happens_at_horizontal +  self.train_width * self.happens_at_270deg) // (TRACK_HEIGHT + INNER_GAP))
+            
+            self.back_x = int((trains.trains[i].x - (board_x + OUTER_GAP + trains.trains[i].x_center_adjustment) + self.train_width * self.happens_at_180deg) // (TRACK_WIDTH + INNER_GAP))
+            self.back_y = int((trains.trains[i].y - (board_y + OUTER_GAP + trains.trains[i].y_center_adjustment) + self.train_width * self.happens_at_90deg) // (TRACK_HEIGHT + INNER_GAP))
+            
+            # train's center tile
+            self.center_x = int((trains.trains[i].x - (board_x + OUTER_GAP + trains.trains[i].x_center_adjustment) + trains.trains[i].y_center_adjustment * self.happens_at_vertical + self.train_width/2 * self.happens_at_0deg) // (TRACK_WIDTH + INNER_GAP))
+            self.center_y = int((trains.trains[i].y - (board_y + OUTER_GAP + trains.trains[i].y_center_adjustment) + self.train_width/2 * self.happens_at_270deg) // (TRACK_HEIGHT + INNER_GAP))
+            print("center:", self.center_x, self.center_y)
 
             self.valid_index = (0 <= self.back_y <= NUM_ROWS - 1) and (0 <= self.back_x <= NUM_COLS - 1)
             # detect if train enter the station
@@ -92,17 +104,22 @@ class Board:
                         trains.trains.pop(i)
                         self.total_paths -= 1
         
-            self.valid_index = (0 <= self.front_y <= NUM_ROWS - 1) and (0 <= self.front_x <= NUM_COLS - 1)
-            if self.valid_index and self.tiles[self.front_y][self.front_x].attached != None:
-                if self.tiles[self.front_y][self.front_x].attached.type == "track":
-                    if trains.trains[i].degree == 0:
-                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d0
-                    elif trains.trains[i].degree == 90:
-                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d90
-                    elif trains.trains[i].degree == 180:
-                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d180
-                    elif trains.trains[i].degree == 270:
-                        trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d270
+            self.valid_index = (0 <= self.center_y <= NUM_ROWS - 1) and (0 <= self.center_x <= NUM_COLS - 1)
+            if self.valid_index and self.tiles[self.center_y][self.center_x].attached != None:
+                if self.tiles[self.center_y][self.center_x].attached.type == "track":
+                    #print(trains.trains[i].degree)
+                    if trains.trains[i].degree % 360 == 0:
+                        trains.trains[i].direction = self.tiles[self.center_y][self.center_x].attached.d0
+                        #print(self.tiles[self.center_y][self.center_x].attached.d0)
+                    elif trains.trains[i].degree % 360 == 90:
+                        trains.trains[i].direction = self.tiles[self.center_y][self.center_x].attached.d90
+                        #print(self.tiles[self.center_y][self.center_x].attached.d90)
+                    elif trains.trains[i].degree % 360 == 180:
+                        trains.trains[i].direction = self.tiles[self.center_y][self.center_x].attached.d180
+                        #print(self.tiles[self.center_y][self.center_x].attached.d180)
+                    elif trains.trains[i].degree % 360 == 270:
+                        trains.trains[i].direction = self.tiles[self.center_y][self.center_x].attached.d270
+                        #print(self.tiles[self.center_y][self.center_x].attached.d270)
 
     def create_point(self):
         # randomly generate 2 set of coordinate from (0, 0) to (NUM_COLS - 1, NUM_ROWS - 1)

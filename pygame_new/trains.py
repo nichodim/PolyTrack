@@ -13,21 +13,18 @@ class Trains:
         pass
         
     def spawn_train(self, deg, spd, x, y, direction, set, start, end):
-        trains.append(Train(deg, spd, x, y, direction, set, start, end))
+        trains.append(Train(deg, spd/5, x, y, direction, set, start, end))
 
     def update(self):
         self.movement()
 
     def movement(self):
         for i in range(len(trains)):
-            self.x_correction = (((TRACK_WIDTH - pygame.Surface.get_width(trains[i].surface)) / 2) - ((TRACK_HEIGHT - pygame.Surface.get_height(trains[i].surface)) / 2)) * abs(math.sin(math.radians(trains[i].degree)))
-            self.y_correction = ((TRACK_HEIGHT - pygame.Surface.get_height(trains[i].surface)) / 2) * abs(math.cos(math.radians(trains[i].degree)))
-            
             # turning
             # clockwise
             #print(trains[i].direction)
             if trains[i].direction == "clockwise" or trains[i].direction == "counter-clockwise":
-                self.period = (2 * math.pi * (INNER_GAP + TRACK_WIDTH)) / trains[i].speed 
+                self.period = (2 * math.pi * (TRACK_WIDTH/2)) / trains[i].speed 
                 if trains[i].direction == "clockwise":
                     trains[i].degree -= 360 / self.period #  minus degree since it going counter-clockwise
 
@@ -52,5 +49,8 @@ class Trains:
     def draw(self, game_surf):
         for i in range(len(trains)):
             # draws train on screen
-            trains[i].rotate_rect = trains[i].rotate.get_rect(center = (trains[i].x + self.x_correction, trains[i].y + self.y_correction))
+            
+            self.y_correction = (TRACK_HEIGHT - pygame.Surface.get_height(trains[i].surface)) / 2 * abs(math.cos(math.radians(trains[i].degree)))
+
+            trains[i].rotate_rect = trains[i].rotate.get_rect(center = (trains[i].x, trains[i].y + self.y_correction))
             game_surf.blit(trains[i].rotate, trains[i].rotate_rect)
