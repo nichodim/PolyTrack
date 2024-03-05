@@ -3,6 +3,7 @@ import random
 import pygame
 from constants import *
 from tile import Tile
+from track import Track
 from obstacle import Obstacle
 from station import Station
 from trains import Trains
@@ -88,8 +89,8 @@ class Board:
             self.valid_index = (0 <= self.back_y <= NUM_ROWS - 1) and (0 <= self.back_x <= NUM_COLS - 1)
             # detect if train enter the station
             if self.valid_index and self.tiles[self.back_y][self.back_x].attached != None:
-
-                if self.tiles[self.back_y][self.back_x].attached.type == "station":
+                attached_item = self.tiles[self.back_y][self.back_x].attached
+                if isinstance(attached_item, Station):
                     self.is_set_same = self.tiles[self.back_y][self.back_x].attached.id == trains.trains[i].set
                     self.is_tile_end = self.tiles[self.back_y][self.back_x].attached.point == "end"
                     self.is_direction_right = round(math.sin(math.radians(trains.trains[i].degree + 180)), 5) == round(math.sin(math.radians(self.tiles[self.back_y][self.back_x].attached.orientation)), 5)
@@ -106,7 +107,8 @@ class Board:
         
             self.valid_index = (0 <= self.front_y <= NUM_ROWS - 1) and (0 <= self.front_x <= NUM_COLS - 1)
             if self.valid_index and self.tiles[self.front_y][self.front_x].attached != None:
-                if self.tiles[self.front_y][self.front_x].attached.type == "track":
+                attached_item = self.tiles[self.front_y][self.front_x].attached
+                if isinstance(attached_item, Track):
                     if trains.trains[i].degree == 0:
                         trains.trains[i].direction = self.tiles[self.front_y][self.front_x].attached.d0
                     elif trains.trains[i].degree == 90:
@@ -139,7 +141,6 @@ class Board:
         #self.data = {"point": "start", "orient": self.train_orient(self.start), "set": self.total_paths}
 
         start_station = Station(
-            type = "station",
             image = image, 
             rect = point_rect, 
             point = 'start', 
@@ -152,7 +153,6 @@ class Board:
         # ending location
         point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.end[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.end[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
         end_station = Station(
-            type = "station",
             image = image, 
             rect = point_rect, 
             point = 'end', 

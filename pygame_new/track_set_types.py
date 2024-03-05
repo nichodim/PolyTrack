@@ -1,5 +1,4 @@
 from constants import *
-from track_data import Track_data
 
 width_and_gap = TRACK_WIDTH + INNER_GAP
 height_and_gap = TRACK_HEIGHT + INNER_GAP
@@ -13,12 +12,30 @@ TrackOffset = {
 }
 
 # base case for tracks
-vertical = Track_data(TrackSprites.vertical, "crash", "forward", "crash", "forward")
-horizontal = Track_data(TrackSprites.horizontal, "forward", "crash", "forward", "crash")
-left = Track_data(TrackSprites.left, "clockwise", "counter-clockwise", "crash", "crash")
-right = Track_data(TrackSprites.right, "crash", "clockwise", "counter-clockwise", "crash")
-ileft = Track_data(TrackSprites.inverted_left, "counter-clockwise", "crash", "crash", "clockwise")
-iright = Track_data(TrackSprites.inverted_right, "crash", "crash", "clockwise", "counter-clockwise")
+vertical = {
+    'sprite': TrackSprites.vertical, 
+    'directions': ["crash", "forward", "crash", "forward"]
+}
+horizontal = {
+    'sprite': TrackSprites.horizontal, 
+    'directions': ["forward", "crash", "forward", "crash"]
+}
+left = {
+    'sprite': TrackSprites.left, 
+    'directions': ["clockwise", "counter-clockwise", "crash", "crash"]
+}
+right = {
+    'sprite': TrackSprites.right, 
+    'directions': ["crash", "clockwise", "counter-clockwise", "crash"]
+}
+ileft = {
+    'sprite': TrackSprites.inverted_left, 
+    'directions': ["counter-clockwise", "crash", "crash", "clockwise"]
+}
+iright = {
+    'sprite': TrackSprites.inverted_right, 
+    'directions': ["crash", "crash", "clockwise", "counter-clockwise"]
+}
 
 # 1 is the default, the incremented numbers represent the rotated version of the set
 # Be mindful that the track box styling will need adjustment for bigger sizes

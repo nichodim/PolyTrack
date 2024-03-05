@@ -54,7 +54,7 @@ class TrackSet:
 
             # Creates new track
             rect = pygame.Rect(x, y, TRACK_WIDTH, TRACK_HEIGHT)
-            track = Track(data.image, rect, data.d0, data.d90, data.d180, data.d270)
+            track = Track(rect, data)
             self.tracks.append(track)
             positions.append(((rect.left, rect.top), direction))
 
