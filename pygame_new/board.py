@@ -122,7 +122,7 @@ class Board:
         self.end = (0, 9)
 
         # starting location
-        image = TrackSprites.horizontal
+        image = TrackSprites.train_station
         point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.start[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.start[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
         #self.data = {"point": "start", "orient": self.train_orient(self.start), "set": self.total_paths}
 

@@ -7,6 +7,7 @@ class Images:
     start_hover_img = pygame.image.load('images/start_hover.png')
     quit_img = pygame.image.load('images/quit.png')
     quit_hover_img = pygame.image.load('images/quit_hover.png')
+    
 class TrackSprites:
     horizontal = pygame.image.load('images/horizontal_track.png')
     vertical = pygame.image.load('images/vertical_track.png')
@@ -14,6 +15,7 @@ class TrackSprites:
     left = pygame.image.load('images/left_track.png')
     inverted_right = pygame.image.load('images/inverted_right_track.png')
     inverted_left = pygame.image.load('images/inverted_left_track.png')
+    train_station = pygame.image.load('images/train_station.png')
 
 class TrainSprites:
     red_train = pygame.image.load('images/red_train.png')
