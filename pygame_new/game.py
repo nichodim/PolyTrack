@@ -69,7 +69,7 @@ class Game:
         else: self.track_box.update_spawner(self.active_set)
         
         if set_snapped: random.choice([SFX.smalldrill, SFX.smalldrill, SFX.doubledrill]).play()
-        elif over_box: random.choice([SFX.small_metal_drop, SFX.med_metal_drop]).play()
+        elif over_box: random.choice([SFX.small_metal_drop, SFX.small_metal_drop, SFX.med_metal_drop]).play()
         
         self.board.unhighlight()
         self.active_set = None
