@@ -5,6 +5,7 @@ from constants import *
 class Track:
     def __init__(self, rect, data):
         self.rect = rect
+        self.data = data
         self.image = data['sprite']
         self.d0 = data['directions'][0]
         self.d90 = data['directions'][1]

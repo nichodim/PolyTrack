@@ -13,26 +13,32 @@ TrackOffset = {
 
 # base case for tracks
 vertical = {
+    'name': 'vertical', 
     'sprite': TrackSprites.vertical, 
     'directions': ["crash", "forward", "crash", "forward"]
 }
 horizontal = {
+    'name': 'horizontal', 
     'sprite': TrackSprites.horizontal, 
     'directions': ["forward", "crash", "forward", "crash"]
 }
 left = {
+    'name': 'left', 
     'sprite': TrackSprites.left, 
     'directions': ["clockwise", "counter-clockwise", "crash", "crash"]
 }
 right = {
+    'name': 'right', 
     'sprite': TrackSprites.right, 
     'directions': ["crash", "clockwise", "counter-clockwise", "crash"]
 }
 ileft = {
+    'name': 'ileft', 
     'sprite': TrackSprites.inverted_left, 
     'directions': ["counter-clockwise", "crash", "crash", "clockwise"]
 }
 iright = {
+    'name': 'iright', 
     'sprite': TrackSprites.inverted_right, 
     'directions': ["crash", "crash", "clockwise", "counter-clockwise"]
 }
