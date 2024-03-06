@@ -68,7 +68,7 @@ class Game:
             self.active_set.set_position_by_center(self.active_set_inital_pos)
         else: self.track_box.update_spawner(self.active_set)
         
-        if set_snapped: random.choice([SFX.smalldrill, SFX.doubledrill]).play()
+        if set_snapped: random.choice([SFX.smalldrill, SFX.smalldrill, SFX.doubledrill]).play()
         elif over_box: random.choice([SFX.small_metal_drop, SFX.med_metal_drop]).play()
         
         self.board.unhighlight()
