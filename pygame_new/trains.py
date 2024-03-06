@@ -13,7 +13,7 @@ class Trains:
         pass
         
     def spawn_train(self, deg, spd, x, y, direction, set, start, end):
-        trains.append(Train(deg, spd/5, x, y, direction, set, start, end))
+        trains.append(Train(deg, spd, x, y, direction, set, start, end))
 
     def update(self):
         self.movement()
@@ -24,7 +24,7 @@ class Trains:
             # clockwise
             #print(trains[i].direction)
             if trains[i].direction == "clockwise" or trains[i].direction == "counter-clockwise":
-                self.period = (2 * math.pi * (TRACK_WIDTH/2)) / trains[i].speed 
+                self.period = (2 * math.pi * (TRACK_WIDTH/2)*(50/50)) / trains[i].speed 
                 if trains[i].direction == "clockwise":
                     trains[i].degree -= 360 / self.period #  minus degree since it going counter-clockwise
 

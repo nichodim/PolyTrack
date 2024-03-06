@@ -44,14 +44,14 @@ class Game:
         self.active_set = self.track_box.find_track_set(event.pos)
         if not self.active_set: return
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
+        SFX.metal_move.play()
 
-        # Save difference between mouse pos and hovered track
-        # Needed for a more seemless rotation
+        # Aligns the hovered track with the mouse for easy rotation
+        # Very difficult to naturally rotate without this
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        x_diff = mouse_x - self.active_track_and_index[0].rect.left
-        y_diff = mouse_y - self.active_track_and_index[0].rect.top
+        new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
+        self.active_set.set_position_by_track(new_pos, self.active_track_and_index[1])
 
-        self.active_set_mouse_track_difference = (x_diff, y_diff)
         self.active_set_inital_pos = self.active_set.rect.center
     def handle_mouse_down(self, event):
         self.activate_set(event)
@@ -68,25 +68,42 @@ class Game:
             self.active_set.set_position_by_center(self.active_set_inital_pos)
         else: self.track_box.update_spawner(self.active_set)
         
+        if set_snapped: random.choice([SFX.smalldrill, SFX.smalldrill, SFX.doubledrill]).play()
+        elif over_box: random.choice([SFX.small_metal_drop, SFX.small_metal_drop, SFX.med_metal_drop]).play()
+        
+        self.board.unhighlight()
         self.active_set = None
         self.active_track_and_index = None
         self.active_set_inital_pos = None
 
-
     def handle_mouse_motion(self, event):
         if self.active_set != None:
             self.active_set.move(event.rel)
+            self.try_highlight_tiles()
     
     def handle_r_down(self):
         if self.active_set: 
+            SFX.tick.play()
+
             self.active_set = self.track_box.rotate(
                 track_set = self.active_set, 
                 hovered_track_and_index = self.active_track_and_index, 
-                mouse_track_difference = self.active_set_mouse_track_difference
             )
+            
+            track_index = self.active_track_and_index[1]
+            self.active_track_and_index = (self.active_set.tracks[track_index], track_index)
+
+            self.try_highlight_tiles()
     
 
     # Game logic between components
+    def try_highlight_tiles(self):
+        tiles = self.find_open_tiles_under_tracks()
+        if not tiles: 
+            self.board.unhighlight()
+            return
+        self.board.highlight(tiles)
+
     def find_open_tiles_under_tracks(self):
         track_positions = self.active_set.find_pos_of_tracks()
         tiles = []
@@ -119,8 +136,8 @@ class Game:
             self.fps.tick(60)
 
     def update(self):
-        self.board.update()
         self.trains.update()
+        
         
     def render(self):
         self.game_surf.fill(Colors.dark_gray)
@@ -128,5 +145,7 @@ class Game:
         self.board.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
         self.trains.draw(self.game_surf)
+        
+        self.board.update(self.game_surf)
 
         pygame.display.update()
