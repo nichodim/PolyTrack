@@ -2,6 +2,28 @@
 
 import pygame
 
+pygame.init()
+
+class SFX:
+    pop = pygame.mixer.Sound('sfx/pop.mp3')
+    ping = pygame.mixer.Sound('sfx/ping.mp3')
+    metal_move = pygame.mixer.Sound('sfx/metal_move.mp3')
+    small_metal_drop = pygame.mixer.Sound('sfx/small_metal_drop.mp3')
+    med_metal_drop = pygame.mixer.Sound('sfx/med_metal_drop.mp3')
+    smalldrill = pygame.mixer.Sound('sfx/smalldrill.mp3')
+    doubledrill = pygame.mixer.Sound('sfx/doubledrill.mp3')
+    drill = pygame.mixer.Sound('sfx/drill.mp3')
+    pickup = pygame.mixer.Sound('sfx/pickup.mp3')
+    tick = pygame.mixer.Sound('sfx/tick.mp3')
+
+# Mixer
+SFX.metal_move.set_volume(0.2)
+SFX.small_metal_drop.set_volume(0.4)
+SFX.med_metal_drop.set_volume(0.4)
+SFX.smalldrill.set_volume(0.4)
+SFX.doubledrill.set_volume(0.4)
+SFX.tick.set_volume(0.15)
+
 class Images:
     start_img = pygame.image.load('images/start.png')
     start_hover_img = pygame.image.load('images/start_hover.png')

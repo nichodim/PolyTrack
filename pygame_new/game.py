@@ -44,6 +44,7 @@ class Game:
         self.active_set = self.track_box.find_track_set(event.pos)
         if not self.active_set: return
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
+        SFX.metal_move.play()
 
         # Aligns the hovered track with the mouse for easy rotation
         # Very difficult to naturally rotate without this
@@ -67,6 +68,9 @@ class Game:
             self.active_set.set_position_by_center(self.active_set_inital_pos)
         else: self.track_box.update_spawner(self.active_set)
         
+        if set_snapped: random.choice([SFX.smalldrill, SFX.doubledrill]).play()
+        elif over_box: random.choice([SFX.small_metal_drop, SFX.med_metal_drop]).play()
+        
         self.board.unhighlight()
         self.active_set = None
         self.active_track_and_index = None
@@ -79,6 +83,8 @@ class Game:
     
     def handle_r_down(self):
         if self.active_set: 
+            SFX.tick.play()
+
             self.active_set = self.track_box.rotate(
                 track_set = self.active_set, 
                 hovered_track_and_index = self.active_track_and_index, 
