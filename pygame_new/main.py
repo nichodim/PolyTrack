@@ -6,9 +6,8 @@ from game import Game
 from constants import *
 import sys
 
-main_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
-
 pygame.mixer.music.load(SFX.theme_song)
+pygame.mixer.music.set_volume(0.015)
 pygame.mixer.music.play(-1)
 
 def main():
