@@ -8,6 +8,9 @@ import sys
 
 main_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 
+pygame.mixer.music.load(SFX.theme_song)
+pygame.mixer.music.play(-1)
+
 def main():
     # Initialize main
     pygame.init()
@@ -52,6 +55,7 @@ def main():
                 
         
         pygame.display.update()
+    pygame.mixer.music.stop()
 
 def quit_game():
     pygame.quit()
