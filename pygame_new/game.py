@@ -46,35 +46,50 @@ class Game:
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
         SFX.metal_move.play()
 
+        self.active_set_inital_pos = self.active_set.rect.center
+
         # Aligns the hovered track with the mouse for easy rotation
         # Very difficult to naturally rotate without this
         mouse_x, mouse_y = pygame.mouse.get_pos()
         new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
         self.active_set.set_position_by_track(new_pos, self.active_track_and_index[1])
-
-        self.active_set_inital_pos = self.active_set.rect.center
     def handle_mouse_down(self, event):
         self.activate_set(event)
         self.track_box.handle_spawn_button()
 
     def handle_mouse_up(self):
+        def clear_active_set():
+            self.board.unhighlight()
+            self.active_set = None
+            self.active_track_and_index = None
+            self.active_set_inital_pos = None
+
         if self.active_set == None: return
 
         # Snaps board and finds if track set should be set back to initial position
         set_snapped = self.snap_set_to_board()
-        over_box = self.track_box.track_set_over_box(self.active_set)
+        over_track_spawner = self.active_set.track_set_at_all_over_rect(self.track_box.spawner.rect)
+        over_track_box = self.active_set.track_set_over_rect(self.track_box.rect)
         
-        if not set_snapped and not over_box: 
-            self.active_set.set_position_by_center(self.active_set_inital_pos)
-        else: self.track_box.update_spawner(self.active_set)
+        print('snapped:', set_snapped)
+        print('over_spawner:', over_track_spawner)
+        print('over track box:', over_track_box)
+        print()
+
+        if set_snapped: 
+            self.track_box.update_spawner(self.active_set)
+            random.choice([SFX.smalldrill, SFX.smalldrill, SFX.doubledrill]).play()
+            clear_active_set()
+            return
+
+        if over_track_box and not over_track_spawner: 
+            self.track_box.update_spawner(self.active_set)
+            random.choice([SFX.small_metal_drop, SFX.small_metal_drop, SFX.med_metal_drop]).play()
+            clear_active_set()
+            return
         
-        if set_snapped: random.choice([SFX.smalldrill, SFX.smalldrill, SFX.doubledrill]).play()
-        elif over_box: random.choice([SFX.small_metal_drop, SFX.small_metal_drop, SFX.med_metal_drop]).play()
-        
-        self.board.unhighlight()
-        self.active_set = None
-        self.active_track_and_index = None
-        self.active_set_inital_pos = None
+        self.active_set.set_position_by_center(self.active_set_inital_pos)
+        clear_active_set()
 
     def handle_mouse_motion(self, event):
         if self.active_set != None:

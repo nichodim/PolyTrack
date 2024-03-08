@@ -34,12 +34,6 @@ class Trackbox:
         track_set = self.spawner.spawn_track_set()
         self.track_sets.append(track_set)
 
-    def track_set_over_box(self, track_set):
-        positions = track_set.find_pos_of_tracks()
-        for pos in positions:
-            track_in_box = self.rect.collidepoint(pos)
-            if not track_in_box: return False
-        return True
     def find_precise_pos_of_tracks(self):
         positions = []
         for track in self.tracks:

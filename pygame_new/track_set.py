@@ -74,7 +74,7 @@ class TrackSet:
     def find_precise_pos_of_tracks(self):
         positions = []
         for track in self.tracks:
-            pos = ((track.rect.left, track.rect.top), (track.rect.right, track.rect.bottom))
+            pos = (track.rect.topleft, track.rect.bottomright)
             positions.append(pos)
         return positions
     
@@ -87,6 +87,29 @@ class TrackSet:
     def is_in_pos(self, pos):
         for track in self.tracks:
             if track.rect.collidepoint(pos): return True
+        return False
+    
+    def track_set_over_rect(self, rect):
+        positions = [ self.rect.topright, self.rect.topleft, self.rect.bottomright, self.rect.bottomleft ]
+
+        for pos in positions:
+            side_in_rect = rect.collidepoint(pos)
+            if not side_in_rect: return False
+        return True
+    def tracks_over_rect(self, rect):
+        positions = self.find_pos_of_tracks()
+        
+        for pos in positions:
+            track_in_rect = rect.collidepoint(pos)
+            if not track_in_rect: return False
+        return True
+    
+    def track_set_at_all_over_rect(self, rect):
+        positions = [ self.rect.topright, self.rect.topleft, self.rect.bottomright, self.rect.bottomleft ]
+
+        for pos in positions:
+            side_in_rect = rect.collidepoint(pos)
+            if side_in_rect: return True
         return False
 
     def attach_tracks_to_tiles(self, tiles):
