@@ -159,7 +159,7 @@ class Board:
         self.tiles[self.start[1]][self.start[0]].attached = start_station
 
         # add initial track
-        self.initial_track((int(self.start[0] + math.cos(math.radians(start_station.orientation))), int(self.start[1] - math.sin(math.radians(start_station.orientation)))), start_station.orientation)
+        self.initial_track((int(round(self.start[0] + math.cos(math.radians(start_station.orientation)), 1)), int(round(self.start[1] - math.sin(math.radians(start_station.orientation)), 1))), start_station.orientation)
         
         # ending location
         point_rect = pygame.Rect(self.rect.left + OUTER_GAP + self.end[0] * (TRACK_WIDTH + INNER_GAP), self.rect.top + OUTER_GAP + self.end[1] * (TRACK_HEIGHT + INNER_GAP) , TRACK_WIDTH, TRACK_HEIGHT)
@@ -173,7 +173,7 @@ class Board:
         self.tiles[self.end[1]][self.end[0]].attached = end_station
         
         # add initial track
-        self.initial_track((int(self.end[0] + math.cos(math.radians(end_station.orientation))), int(self.end[1] - math.sin(math.radians(end_station.orientation)))), end_station.orientation)
+        self.initial_track((int(round(self.end[0] + math.cos(math.radians(end_station.orientation)), 1)), int(round(self.end[1] - math.sin(math.radians(end_station.orientation)), 1))), end_station.orientation)
 
         # spawn_train(degree, speed, x, y, direction)
         # direction could be "forward", "clockwise", or "counter-clockwise"
@@ -217,7 +217,7 @@ class Board:
             self.possible_tracks.remove(track_set_types.right)
         if location[0] == NUM_ROWS - 1 or location[1] == 0 or deg == 0 or deg == 90:
             self.possible_tracks.remove(track_set_types.iright)
-        print(location)
+        print(location, deg)
         
         self.track_rect = pygame.Rect(self.tiles[location[1]][location[0]].rect.left, self.tiles[location[1]][location[0]].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
         self.track = Track(self.track_rect, self.possible_tracks[random.randint(0, len(self.possible_tracks) - 1)])
