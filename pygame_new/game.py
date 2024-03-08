@@ -21,6 +21,7 @@ class Game:
 
         self.track_box = Trackbox()
         self.active_set = None
+        self.active_track_and_index = None
         
         self.trains = Trains()
 
@@ -42,8 +43,13 @@ class Game:
     def activate_set(self, event):
         # Find picked up track set and the hovered track/index
         self.active_set = self.track_box.find_track_set(event.pos)
-        if not self.active_set: return
+        if not self.active_set: return False
+
+        # Something crazy is going on with the pickup so cancel before crash
+        # Likely because mouse pos cannot find track and index (wild movement)
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
+        if self.active_track_and_index == None: return False
+
         SFX.metal_move.play()
 
         self.active_set_inital_pos = self.active_set.rect.center
@@ -53,8 +59,15 @@ class Game:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         new_pos = (mouse_x - TRACK_WIDTH // 2, mouse_y - TRACK_HEIGHT // 2)
         self.active_set.set_position_by_track(new_pos, self.active_track_and_index[1])
+        return True
+    
     def handle_mouse_down(self, event):
-        self.activate_set(event)
+        # Activates new set and track/index, if failed, abort
+        activated = self.activate_set(event)
+        if not activated: 
+            self.active_set == None
+            self.active_track_and_index == None
+        
         self.track_box.handle_spawn_button()
 
     def handle_mouse_up(self):
@@ -68,13 +81,8 @@ class Game:
 
         # Snaps board and finds if track set should be set back to initial position
         set_snapped = self.snap_set_to_board()
-        over_track_spawner = self.active_set.track_set_at_all_over_rect(self.track_box.spawner.rect)
+        over_track_spawner = self.active_set.track_set_over_rect(self.track_box.spawner.rect)
         over_track_box = self.active_set.track_set_over_rect(self.track_box.rect)
-        
-        print('snapped:', set_snapped)
-        print('over_spawner:', over_track_spawner)
-        print('over track box:', over_track_box)
-        print()
 
         if set_snapped: 
             self.track_box.update_spawner(self.active_set)
@@ -97,7 +105,7 @@ class Game:
             self.try_highlight_tiles()
     
     def handle_r_down(self):
-        if self.active_set: 
+        if self.active_set and self.active_track_and_index: 
             SFX.tick.play()
 
             self.active_set = self.track_box.rotate(
@@ -134,7 +142,7 @@ class Game:
         hovered_tiles = self.find_open_tiles_under_tracks()
         if not hovered_tiles: return False
         self.active_set.attach_tracks_to_tiles(hovered_tiles)
-        self.track_box.remove_track_set(self.active_set)
+        self.track_box.track_sets.remove(self.active_set)
         return True
 
 

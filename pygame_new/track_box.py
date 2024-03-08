@@ -34,6 +34,8 @@ class Trackbox:
         track_set = self.spawner.spawn_track_set()
         self.track_sets.append(track_set)
 
+        print(self.track_sets)
+
     def find_precise_pos_of_tracks(self):
         positions = []
         for track in self.tracks:
@@ -47,17 +49,16 @@ class Trackbox:
         return None
 
     def find_hovered_track_and_index(self, track_set):
-        mouse_pos = pygame.mouse.get_pos()
-        hovered_track = track_set.find_track_in_pos(mouse_pos)
-        hovered_track_index = track_set.tracks.index(hovered_track)
-        return (hovered_track, hovered_track_index)
+        for i in range(100):
+            mouse_pos = pygame.mouse.get_pos()
+            hovered_track = track_set.find_track_in_pos(mouse_pos)
+            if hovered_track != None: 
+                hovered_track_index = track_set.tracks.index(hovered_track)
+                return (hovered_track, hovered_track_index)
+        return None
     
     def remove_track_set(self, track_set):
-        i = self.track_sets.index(track_set)
         self.track_sets.remove(track_set)
-        for j in range(i, len(self.track_sets)):
-            track_set = self.track_sets[j]
-            track_set.move((-TRACK_SEPERATION, 0))
 
     # Increments given set type by 1 or resets to first if looped around
     def increment_type(self, set_type):
