@@ -99,7 +99,6 @@ class Board:
 
         # Tell the game that the board has end condition
         self.end_call(condition)
-        print('done reacting in board')
 
         if len(self.paths) < 1:
             self.create_path()

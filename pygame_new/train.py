@@ -3,7 +3,6 @@
 import pygame
 from constants import *
 from board_item_types import TrainTypes
-import random
 import math
 
 class Train:
@@ -12,10 +11,9 @@ class Train:
         self.image, self.speed = data['image'], data['speed']
         self.direction, self.degree = direction, degree
 
-        # Make expanding image with transparent background
+        # Make expanding surface/image with transparent background
         self.surface = pygame.Surface([60 * (TRACK_WIDTH/50), (TRACK_HEIGHT - 2 * (TRACK_HEIGHT/50))])
         self.surface.set_colorkey(Colors.white)
-
         self.image = pygame.transform.smoothscale(self.image, [60 * (TRACK_WIDTH/50), 48 * (TRACK_HEIGHT/50)])
         self.surface.blit(self.image, (0,0))
 
@@ -24,6 +22,7 @@ class Train:
         self.rotate = pygame.transform.rotate(self.surface, self.degree)
         self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y))
 
+    # Uses tile location + angle to find x, y coordinates
     def set_pos(self, tile_location):
         col, row = tile_location
         self.x_center_adjustment = abs(pygame.Surface.get_width(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_height(self.surface) / 2 * math.sin(math.radians(self.degree)))
@@ -37,11 +36,12 @@ class Train:
             self.y -= pygame.Surface.get_width(self.surface) - TRACK_HEIGHT - INNER_GAP
     
 
-    # Update
+    # Update Section
     def update(self):
         self.update_speed()
         self.move()
 
+    # Sappropriately alters speed if the train is turning
     def update_speed(self):
         if self.direction == 'forward' or self.direction == 'crash': return
 
@@ -61,6 +61,7 @@ class Train:
 
         # update the turn on screen
         self.rotate = pygame.transform.rotate(self.surface, self.degree)
+    
     def move(self):
         self.x += self.speed * math.cos(math.radians(self.degree)) 
         self.y += self.speed * -math.sin(math.radians(self.degree))

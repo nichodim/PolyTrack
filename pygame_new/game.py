@@ -19,7 +19,7 @@ class Game:
         self.active_set = None
         self.active_track_and_index = None
 
-        self.lives = 5
+        self.lives = 50
         print('lives:', self.lives)
 
 
