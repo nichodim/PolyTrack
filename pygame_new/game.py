@@ -6,10 +6,6 @@ import random
 from constants import *
 from board import Board
 from track_box import Trackbox
-from trains import Trains
-
-from track_set_types import TrackSetTypes
-from track_set import TrackSet
 
 class Game:
     def __init__(self):
@@ -17,13 +13,14 @@ class Game:
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
 
-        self.board = Board()
+        self.board = Board(self.handle_board_end)
 
         self.track_box = Trackbox()
         self.active_set = None
         self.active_track_and_index = None
-        
-        self.trains = Trains()
+
+        self.lives = 5
+        print('lives:', self.lives)
 
 
     # Event control 
@@ -117,6 +114,18 @@ class Game:
             self.active_track_and_index = (self.active_set.tracks[track_index], track_index)
 
             self.try_highlight_tiles()
+
+    def handle_board_end(self, win):
+        if not win: self.lives -= 1
+        if win: 
+            self.lives += 1
+            print('noice ;)')
+
+        print('lives:', self.lives)
+
+        if self.lives <= 0:
+            print('you lost')
+            self.quit_game()
     
 
     # Game logic between components
@@ -159,7 +168,7 @@ class Game:
             self.fps.tick(60)
 
     def update(self):
-        self.trains.update()
+        self.board.update()
         
         
     def render(self):
@@ -167,8 +176,7 @@ class Game:
         
         self.board.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
-        self.trains.draw(self.game_surf)
         
-        self.board.update(self.game_surf)
+        self.board.update()
 
         pygame.display.update()

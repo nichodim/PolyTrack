@@ -1,4 +1,5 @@
 from constants import *
+from track_set_types import *
 
 # Data for attached items to tiles and board in general
 # Use these to build logic around the board
@@ -9,13 +10,13 @@ TerrainTypes = {
     'water': None
 }
 
-TrackTypes = {
-    'horizontal': {'open': ('left', 'right'), 'sprite': TrackSprites.horizontal},
-    'vertical': {'open': ('bottom', 'top'), 'sprite': TrackSprites.vertical},
-    'right': {'open': ('bottom', 'right'), 'sprite': TrackSprites.right},
-    'left': {'open': ('bottom', 'left'), 'sprite': TrackSprites.left},
-    'inverted_right': {'open': ('top', 'right'), 'sprite': TrackSprites.inverted_right},
-    'inverted_left': {'open': ('top', 'left'), 'sprite': TrackSprites.inverted_left},
+TrackTypes = [vertical, horizontal, left, right, ileft, iright]
+
+TrainTypes = {
+    'default': {
+        'image': TrainSprites.red_train,
+        'speed': 0.2
+    }
 }
 
 ObstacleTypes = {
