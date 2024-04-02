@@ -15,7 +15,7 @@ TrackTypes = [vertical, horizontal, left, right, ileft, iright]
 TrainTypes = {
     'default': {
         'image': TrainSprites.red_train,
-        'speed': 1.5
+        'speed': 0.15
     }
 }
 
