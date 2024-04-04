@@ -20,13 +20,21 @@ def main():
     button_x = GAME_WIDTH / 2 - (Images.start_img.get_width() * image_scale / 2)
     start_button = Button(button_x, 400, Images.start_img, image_scale)
     quit_button = Button(button_x, 500, Images.quit_img, image_scale)
-    
+
+    # Set title
+    image_scale = 2
+    title_image_width, title_image_height = Images.title_img.get_size()
+    title_button_x = (GAME_WIDTH - title_image_width * image_scale) / 2
+    title_button_y = (GAME_HEIGHT - title_image_height * image_scale) / 2 - 170
+    title_button = Button(title_button_x, title_button_y, Images.title_img, image_scale)
+
     run = True
     while run:
         # Draw menu
         main_surf.fill(Colors.sky_blue)
         start_button.draw(main_surf)
         quit_button.draw(main_surf)
+        title_button.draw(main_surf)
         
         # Check buttons
         for event in pygame.event.get():

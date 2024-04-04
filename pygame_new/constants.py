@@ -58,6 +58,7 @@ class Images:
     start_hover_img = pygame.image.load('images/button_images/start_hover.png').convert_alpha()
     quit_img = pygame.image.load('images/button_images/quit.png').convert_alpha()
     quit_hover_img = pygame.image.load('images/button_images/quit_hover.png').convert_alpha()
+    title_img = pygame.image.load('images/button_images/PolyTracks.png').convert_alpha()
     
 class TrackSprites:
     horizontal = pygame.image.load('images/track_images/horizontal_track.png').convert_alpha()
