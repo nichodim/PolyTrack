@@ -70,7 +70,7 @@ class TrackSprites:
     train_station = pygame.image.load('images/track_images/train_station.png').convert_alpha()
 
 class TerrainSprites: # temp sprites, change out
-    grass = pygame.image.load('images/placeholders/green.jpg').convert_alpha()
+    grass = pygame.image.load('images/placeholders/soft_green.png').convert_alpha()
     water = pygame.image.load('images/placeholders/blue.png').convert_alpha()
 
 class ObstacleSprites:

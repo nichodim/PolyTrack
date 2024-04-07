@@ -47,7 +47,6 @@ class Path:
             if distance < new_distance: 
                 start, end, distance = new_start, new_end, new_distance
                 i += 30
-        print(distance)
 
         image = TrackSprites.train_station
 
