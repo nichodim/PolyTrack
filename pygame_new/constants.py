@@ -4,7 +4,7 @@ import pygame
 
 # Constant variables - things you would configure
 # Resolution config
-GAME_WIDTH = 1200
+GAME_WIDTH = 1700
 GAME_HEIGHT = 900
 
 # Board config
@@ -69,6 +69,17 @@ class TrackSprites:
     inverted_left = pygame.image.load('images/track_images/inverted_left_track.png').convert_alpha()
     train_station = pygame.image.load('images/track_images/train_station.png').convert_alpha()
 
+class TerrainSprites: # temp sprites, change out
+    grass = pygame.image.load('images/placeholders/green.jpg').convert_alpha()
+    water = pygame.image.load('images/placeholders/blue.png').convert_alpha()
+
+class ObstacleSprites:
+    rock = pygame.image.load('images/obstacle_images/rock.png').convert_alpha()
+    sandrock = pygame.image.load('images/obstacle_images/sandrock.png').convert_alpha()
+    sadrock = pygame.image.load('images/obstacle_images/sadrock.png').convert_alpha()
+    tree = pygame.image.load('images/obstacle_images/tree.png').convert_alpha()
+    woodshack = pygame.image.load('images/obstacle_images/woodshack.png').convert_alpha()
+
 class TrainSprites:
     red_train = pygame.image.load('images/train_images/red_train.png').convert_alpha()
     gray_cargo = pygame.image.load('images/train_images/gray_cargo.png').convert_alpha()
@@ -77,13 +88,6 @@ class TrainSprites:
     rock_cargo = pygame.image.load('images/train_images/rock_cargo.png').convert_alpha()
     propane_cargo = pygame.image.load('images/train_images/propane_cargo.png').convert_alpha()
     random_train_choice = ([red_train, gray_cargo, red_cargo, blue_cargo, rock_cargo, propane_cargo])
-
-class ObstacleSprites:
-    rock = pygame.image.load('images/obstacle_images/rock.png').convert_alpha()
-    sandrock = pygame.image.load('images/obstacle_images/sandrock.png').convert_alpha()
-    sadrock = pygame.image.load('images/obstacle_images/sadrock.png').convert_alpha()
-    tree = pygame.image.load('images/obstacle_images/tree.png').convert_alpha()
-    woodshack = pygame.image.load('images/obstacle_images/woodshack.png').convert_alpha()
 
 class Colors:
     black = (0, 0, 0)

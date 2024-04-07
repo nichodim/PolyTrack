@@ -113,24 +113,23 @@ class Board:
     def draw(self, game_surf):
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
-        self.draw_tile_items(game_surf)
         self.draw_paths(game_surf)
         
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
 
     def draw_tiles(self, game_surf):
-        for row in self.tiles:
-            for tile in row:
-                if tile.highlighted:
-                    pygame.draw.rect(game_surf, Colors.green, tile.rect)
-                else: 
-                    pygame.draw.rect(game_surf, Colors.white, tile.rect)
+        
 
-    def draw_tile_items(self, game_surf):
         for row in self.tiles:
             for tile in row:
                 tile.draw_attached(game_surf)
+                if tile.highlighted: 
+                    # rect(tile.rect.left, tile.rect.top, tile.rect.right, tile.rect.bottom, 10)
+                    highlight_surf = pygame.Surface((TRACK_WIDTH,TRACK_HEIGHT), pygame.SRCALPHA)
+                    r, g, b = Colors.green
+                    highlight_surf.fill((r,g,b,128))
+                    game_surf.blit(highlight_surf, tile.rect.topleft)
     
     def draw_paths(self, game_surf):
         for path in self.paths:

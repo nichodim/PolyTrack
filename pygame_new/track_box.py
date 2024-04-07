@@ -34,8 +34,6 @@ class Trackbox:
         track_set = self.spawner.spawn_track_set()
         self.track_sets.append(track_set)
 
-        print(self.track_sets)
-
     def find_precise_pos_of_tracks(self):
         positions = []
         for track in self.tracks:

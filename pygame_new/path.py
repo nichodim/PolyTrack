@@ -25,6 +25,7 @@ class Path:
         # Maintains initial path logic
         self.current_tile = None
         self.path_initated = True
+        self.train_passed_start = False
 
     # Creates start and end stations and saves their locations
     # start and end arent positions but are actually tile locatons (col, row)
@@ -46,6 +47,7 @@ class Path:
             if distance < new_distance: 
                 start, end, distance = new_start, new_end, new_distance
                 i += 30
+        print(distance)
 
         image = TrackSprites.train_station
 
@@ -143,34 +145,6 @@ class Path:
         center_x = int((x_no_margin - INNER_GAP * (x_no_margin // (TRACK_HEIGHT + INNER_GAP))) // TRACK_HEIGHT)
         center_y = int((y_no_margin - INNER_GAP * (y_no_margin // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
 
-        # Checks next tile for direction
-        # Also finds end conditions: True is a failure to find a direction that should not end the path
-        def find_new_direction():
-            valid_index = (0 <= center_y <= NUM_ROWS - 1) and (0 <= center_x <= NUM_COLS - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x, self.train.y) 
-            if not valid_index: return (True, 'invalid location')
-            
-            tile = self.board_tiles[center_y][center_x]
-            if tile == self.current_tile: return (True, 'still on same tile')
-
-            attached_item = tile.attached
-            if isinstance(attached_item, Station): return (True, 'is on top of station')
-            if not isinstance(attached_item, Track): return (False, 'not a track or station')
-
-            new_direction_index = int(round((self.train.degree % 360) / 90))
-            if new_direction_index >= len(attached_item.directions): return (False, 'degree math couldnt find correct direction')
-
-            new_direction = attached_item.directions[new_direction_index]
-            if new_direction == 'crash': return (False, 'direction found was not correct for train')
-
-            self.train.direction = new_direction
-            self.current_tile = self.board_tiles[center_y][center_x]
-            return (True, 'found new track direction')
-        
-        still_fine, condition = find_new_direction()
-        if not still_fine: 
-            self.end_call(self, False)
-            return
-
         # Only cares to end game if train reaches end station
         def find_if_under_station():
             valid_index = (0 <= back_y <= NUM_ROWS - 1) and (0 <= back_x <= NUM_COLS - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x - x_correction, self.train.y + y_correction)
@@ -184,6 +158,37 @@ class Path:
             
             self.end_call(self, True)
         find_if_under_station()
+
+        # Checks next tile for direction
+        # Also finds end conditions: True is a failure to find a direction that should not end the path
+        def find_new_direction():
+            valid_index = (0 <= center_y <= NUM_ROWS - 1) and (0 <= center_x <= NUM_COLS - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x, self.train.y) 
+            if not valid_index: return (True, 'invalid location')
+            
+            tile = self.board_tiles[center_y][center_x]
+            if tile == self.current_tile: return (True, 'still on same tile')
+
+            attached_item = tile.attached
+            if isinstance(attached_item, Station):
+                if (attached_item == self.start_station and self.train_passed_start 
+                    and attached_item != self.end_station): return (False, 'is on top of station (not supposed to be)')
+                else: return (True, 'is on top of station (supposed to be)')
+            self.train_passed_start = True
+
+            if not isinstance(attached_item, Track): return (False, 'not a track or station')
+
+            new_direction_index = int(round((self.train.degree % 360) / 90))
+            if new_direction_index >= len(attached_item.directions): return (False, 'degree math couldnt find correct direction')
+
+            new_direction = attached_item.directions[new_direction_index]
+            if new_direction == 'crash': return (False, 'direction found was not correct for train')
+
+            self.train.direction = new_direction
+            self.current_tile = self.board_tiles[center_y][center_x]
+            return (True, 'found new track direction')
+        
+        still_fine, condition = find_new_direction()
+        if not still_fine: self.end_call(self, False)
     
     # Dont look here
     def train_orient(self, location):
