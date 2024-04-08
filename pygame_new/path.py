@@ -149,10 +149,13 @@ class Path:
 
         # Only cares to end game if train reaches end station
         def find_if_under_station():
-            valid_index = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x - x_correction, self.train.y + y_correction)
-            if not valid_index: 
-                # TODO the last condition is weird and it needs to be fixed to fail the train when the train goes past the edge
-                return
+            index_in_bounds = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1)
+            if not index_in_bounds: return
+
+            try:
+                valid_tile = self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x - x_correction, self.train.y + y_correction)
+                if not valid_tile: return
+            except: return
 
             attached_item = self.board_tiles[back_y][back_x].attached
             if attached_item != self.end_station: return
@@ -166,8 +169,13 @@ class Path:
         # Checks next tile for direction
         # Also finds end conditions: True is a failure to find a direction that should not end the path
         def find_new_direction():
-            valid_index = (0 <= center_y <= self.grid_rows - 1) and (0 <= center_x <= self.grid_cols - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x, self.train.y) 
-            if not valid_index: return (True, 'invalid location') # Change this to detetc off the map
+            index_in_bounds = (0 <= center_y <= self.grid_rows - 1) and (0 <= center_x <= self.grid_cols - 1)
+            if not index_in_bounds: return (False, 'invalid location: out of bounds')
+
+            try:
+                valid_tile = self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x, self.train.y)
+                if not valid_tile: return (True, 'invalid location')
+            except: return (False, 'invalid location: out of bounds')
             
             tile = self.board_tiles[center_y][center_x]
             if tile == self.current_tile: return (True, 'still on same tile')
@@ -192,7 +200,6 @@ class Path:
             return (True, 'found new track direction')
         
         still_fine, condition = find_new_direction()
-        if still_fine: print(condition)
         if not still_fine: self.end_call(self, False)
     
     # Dont look here

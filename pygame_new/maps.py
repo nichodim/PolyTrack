@@ -44,7 +44,7 @@ VanillaMap = {
             [(2, 3), [df, df]], 
         ], 
         [ 
-            [(4, 6), [df]], # rounds
+            [(4, 6), [df]],
             [(3, 5), [df, df, df, df, df, df, df, df, df, df]], 
             [(2, 3), [df, bul]], 
         ], 

@@ -55,7 +55,7 @@ class Board:
     def new_round(self):
         self.round += 1
 
-        # Check level, if done all rounds...
+        # Check level, if done all rounds (or first)...
         if self.level == -1 or len(self.levels[self.level]) <= self.round: 
             # Go to next one
             self.level += 1
