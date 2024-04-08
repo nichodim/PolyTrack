@@ -8,9 +8,10 @@ GAME_WIDTH = 1700
 GAME_HEIGHT = 900
 
 # Board config
+# Number of cols, rows has been depracated - determined by map
 OUTER_BORDER_SIZE = 150
-NUM_ROWS = 10
-NUM_COLS = 10
+# NUM_ROWS = 10
+# NUM_COLS = 10
 INNER_GAP = 1
 OUTER_GAP = 35
 
@@ -20,14 +21,6 @@ TRACK_HEIGHT = 50
 TRACK_SEPERATION = TRACK_WIDTH * 2
 EXTRA_WIDTH = TRACK_WIDTH * 0.75
 EXTRA_HEIGHT = TRACK_HEIGHT / 2
-
-NUMBER_OF_TRACKS = 0
-
-# Board Size
-board_width = NUM_COLS * TRACK_WIDTH + INNER_GAP * (NUM_COLS - 1) + OUTER_GAP * 2
-board_height = NUM_ROWS * TRACK_HEIGHT + INNER_GAP * (NUM_ROWS - 1) + OUTER_GAP * 2
-board_x = GAME_WIDTH / 2 - board_width / 2
-board_y = GAME_HEIGHT * 0.05
 
 main_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 pygame.init()

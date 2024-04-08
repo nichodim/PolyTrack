@@ -8,7 +8,7 @@ from track import Track
 from train import Train
 
 class Path:
-    def __init__(self, board_tiles, board_rect, end_call):
+    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions):
         # Prevents updates on nonexisting game objects
         self.path_initated = False
 
@@ -16,6 +16,8 @@ class Path:
         self.board_tiles = board_tiles
         self.board_rect = board_rect
         self.end_call = end_call
+        self.train_type = train_type
+        self.grid_rows, self.grid_cols = grid_dimensions
 
         # Create path objects
         self.create_stations()
@@ -35,8 +37,8 @@ class Path:
         distance = 0
         start, end = (0, 0), (0, 0)
         for i in range(100):
-            new_start = (random.randint(0, NUM_COLS - 1), random.randint(0, NUM_ROWS - 1))
-            new_end = (random.randint(0, NUM_COLS - 1), random.randint(0, NUM_ROWS - 1))
+            new_start = (random.randint(0, self.grid_cols - 1), random.randint(0, self.grid_rows - 1))
+            new_end = (random.randint(0, self.grid_cols - 1), random.randint(0, self.grid_rows - 1))
             new_distance = math.sqrt((new_end[0] - new_start[0])**2 + (new_end[1] - new_start[1])**2)
 
             if distance == 0:
@@ -89,19 +91,19 @@ class Path:
     # Crazy logic I didnt read (thank you Kelvin)
     def create_station_track(self, location, deg):
         possible_tracks = [track_set_types.vertical, track_set_types.horizontal, track_set_types.left, track_set_types.right, track_set_types.ileft, track_set_types.iright]
-        if location[0] == 0 or location[0] == NUM_ROWS - 1 or deg == 90 or deg == 270:
+        if location[0] == 0 or location[0] == self.grid_rows - 1 or deg == 90 or deg == 270:
             possible_tracks.remove(track_set_types.horizontal)
-        if location[1] == 0 or location[1] == NUM_ROWS - 1 or deg == 0 or deg == 180:
+        if location[1] == 0 or location[1] == self.grid_rows - 1 or deg == 0 or deg == 180:
             possible_tracks.remove(track_set_types.vertical)
 
-        if location[0] == 0 or location[1] == NUM_ROWS - 1 or deg == 180 or deg == 270:
+        if location[0] == 0 or location[1] == self.grid_rows - 1 or deg == 180 or deg == 270:
             possible_tracks.remove(track_set_types.left)
         if location[0] == 0 or location[1] == 0 or deg == 90 or deg == 180:
             possible_tracks.remove(track_set_types.ileft)
 
-        if location[0] == NUM_ROWS - 1 or location[1] == NUM_ROWS - 1 or deg == 0 or deg == 270:
+        if location[0] == self.grid_rows - 1 or location[1] == self.grid_rows - 1 or deg == 0 or deg == 270:
             possible_tracks.remove(track_set_types.right)
-        if location[0] == NUM_ROWS - 1 or location[1] == 0 or deg == 0 or deg == 90:
+        if location[0] == self.grid_rows - 1 or location[1] == 0 or deg == 0 or deg == 90:
             possible_tracks.remove(track_set_types.iright)
         
         track_rect = pygame.Rect(self.board_tiles[location[1]][location[0]].rect.left, self.board_tiles[location[1]][location[0]].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
@@ -111,7 +113,8 @@ class Path:
     def create_train(self):
         starting_orient = self.board_tiles[self.start[1]][self.start[0]].attached.orientation
         self.train = Train(
-            type = 'default', 
+            type = self.train_type, 
+            board_rect = self.board_rect,
             degree = starting_orient, 
             tile_location = self.start
         )
@@ -146,8 +149,10 @@ class Path:
 
         # Only cares to end game if train reaches end station
         def find_if_under_station():
-            valid_index = (0 <= back_y <= NUM_ROWS - 1) and (0 <= back_x <= NUM_COLS - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x - x_correction, self.train.y + y_correction)
-            if not valid_index: return
+            valid_index = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x - x_correction, self.train.y + y_correction)
+            if not valid_index: 
+                # TODO the last condition is weird and it needs to be fixed to fail the train when the train goes past the edge
+                return
 
             attached_item = self.board_tiles[back_y][back_x].attached
             if attached_item != self.end_station: return
@@ -161,8 +166,8 @@ class Path:
         # Checks next tile for direction
         # Also finds end conditions: True is a failure to find a direction that should not end the path
         def find_new_direction():
-            valid_index = (0 <= center_y <= NUM_ROWS - 1) and (0 <= center_x <= NUM_COLS - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x, self.train.y) 
-            if not valid_index: return (True, 'invalid location')
+            valid_index = (0 <= center_y <= self.grid_rows - 1) and (0 <= center_x <= self.grid_cols - 1) and self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x, self.train.y) 
+            if not valid_index: return (True, 'invalid location') # Change this to detetc off the map
             
             tile = self.board_tiles[center_y][center_x]
             if tile == self.current_tile: return (True, 'still on same tile')
@@ -187,6 +192,7 @@ class Path:
             return (True, 'found new track direction')
         
         still_fine, condition = find_new_direction()
+        if still_fine: print(condition)
         if not still_fine: self.end_call(self, False)
     
     # Dont look here
@@ -194,12 +200,12 @@ class Path:
         orient = [0, 90, 180, 270]
         if location[0] == 0:
             orient.remove(180)
-        if location[0] == NUM_ROWS - 1:
+        if location[0] == self.grid_rows - 1:
             orient.remove(0)
 
         if location[1] == 0:
             orient.remove(90)
-        if location[1] == NUM_COLS - 1:
+        if location[1] == self.grid_cols - 1:
             orient.remove(270)
 
         return orient[random.randint(0, len(orient) - 1)]

@@ -8,12 +8,12 @@ from board import Board
 from track_box import Trackbox
 
 class Game:
-    def __init__(self):
+    def __init__(self, map):
         pygame.init()
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
 
-        self.board = Board(self.handle_board_end)
+        self.board = Board(map, self.handle_board_end, self.handle_complete_map)
 
         self.track_box = Trackbox()
         self.active_set = None
@@ -126,6 +126,10 @@ class Game:
         if self.lives <= 0:
             print('you lost')
             self.quit_game()
+    
+    def handle_complete_map(self):
+        print('You finished the map!')
+        self.quit_game()
     
 
     # Game logic between components

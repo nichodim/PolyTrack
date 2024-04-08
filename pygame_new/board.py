@@ -7,34 +7,44 @@ from obstacle import Obstacle
 from path import Path
 
 class Board:
-    def __init__(self, end_call):
+    def __init__(self, map, end_call, complete_map):
+        # Find custom map values
+        grid_layout = map['board']
+        self.type, self.obstacles, self.levels = map['type'], map['obstacles'], map['levels']
+        self.rows, self.cols = len(grid_layout), len(grid_layout[0])
+        self.end_call, self.complete_map = end_call, complete_map
+
         # Create board
+        board_width = self.cols * TRACK_WIDTH + INNER_GAP * (self.cols - 1) + OUTER_GAP * 2
+        board_height = self.rows * TRACK_HEIGHT + INNER_GAP * (self.rows - 1) + OUTER_GAP * 2
+        board_x = GAME_WIDTH / 2 - board_width / 2
+        board_y = GAME_HEIGHT * 0.05
         self.rect = pygame.Rect(board_x, board_y, board_width, board_height)
 
         # Create tiles
-        self.tiles = self.create_grid()
-        self.generate_obstacles(random.randint(2, 6))
-        self.highlighted_tiles = []
+        self.tiles = self.create_grid(grid_layout)
 
-        self.end_call = end_call
+        self.highlighted_tiles = []
         self.paths = []
 
-        self.create_path()
+        # Start levels
+        self.level, self.round = -1, -1
+        self.new_round()
 
 
     # Board Creation
-    def create_grid(self):
+    def create_grid(self, grid_layout):
         tiles = []
         row_y_increment = TRACK_HEIGHT + INNER_GAP
         row_y = self.rect.top + OUTER_GAP
 
-        for row in range(NUM_ROWS):
+        for row in grid_layout:
             tile_x = OUTER_GAP
             row_list = []
             
-            for col in range(NUM_COLS):
+            for col in row:
                 tile_rect = pygame.Rect(self.rect.left + tile_x, row_y, TRACK_WIDTH, TRACK_HEIGHT)
-                row_list.append(Tile(tile_rect))
+                row_list.append(Tile(tile_rect, col))
                 tile_x += TRACK_WIDTH + INNER_GAP
 
             tiles.append(row_list)
@@ -42,21 +52,52 @@ class Board:
 
         return tiles
     
-    def generate_obstacles(self, num):
+    def new_round(self):
+        self.round += 1
+
+        # Check level, if done all rounds...
+        if self.level == -1 or len(self.levels[self.level]) <= self.round: 
+            # Go to next one
+            self.level += 1
+            self.round = 0
+
+            # Check if done all levels
+            if len(self.levels) <= self.level: self.complete_map()
+
+            # Reset board
+            for row in self.tiles:
+                for tile in row:
+                    tile.attached = None
+            
+            # Generate new obstacles
+            obstacle_range = self.levels[self.level][self.round][0]
+            print(obstacle_range)
+            self.generate_obstacles(obstacle_range)
+        
+        # Add new trains
+        trains_to_spawn = self.levels[self.level][self.round][1]
+        for train_type in trains_to_spawn:
+            self.create_path(train_type)
+
+    def generate_obstacles(self, possible_range):
+        a, b = possible_range
+        num = random.randint(a, b)
         for n in range(num):
             for m in range(100):
-                row = random.randrange(NUM_ROWS)
-                col = random.randrange(NUM_COLS)
+                row = random.randrange(self.rows)
+                col = random.randrange(self.cols)
                 tile = self.tiles[row][col]
 
-                attached = tile.attach(Obstacle())
+                attached = tile.attach(Obstacle(self.obstacles))
                 if attached: break
     
-    def create_path(self):
+    def create_path(self, train_type):
         new_path = Path(
             board_tiles = self.tiles, 
             board_rect = self.rect, 
-            end_call = self.path_call
+            end_call = self.path_call, 
+            train_type = train_type,
+            grid_dimensions = (self.rows, self.cols)
         )
         self.paths.append(new_path)
     
@@ -83,8 +124,8 @@ class Board:
         col = int((x_no_margin - INNER_GAP * (x_no_margin // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
 
         if ( 
-            0 <= row <= NUM_ROWS - 1 and # valid row
-            0 <= col <= NUM_COLS - 1 and # valid column
+            0 <= row <= self.rows - 1 and # valid row
+            0 <= col <= self.cols - 1 and # valid column
             self.tiles[row][col].rect.collidepoint(pos) # over tile
         ):
             return self.tiles[row][col]
@@ -100,8 +141,7 @@ class Board:
         # Tell the game that the board has end condition
         self.end_call(condition)
 
-        if len(self.paths) < 1:
-            self.create_path()
+        if len(self.paths) == 0: self.new_round()
     
     def update(self):
         # for trian
@@ -123,7 +163,7 @@ class Board:
             for tile in row:
                 tile.draw_attached(game_surf)
                 if not tile.highlighted: continue
-                
+
                 highlight_surf = pygame.Surface((TRACK_WIDTH,TRACK_HEIGHT), pygame.SRCALPHA)
                 r, g, b = Colors.green
                 highlight_surf.fill((r,g,b,128))

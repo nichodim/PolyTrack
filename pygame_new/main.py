@@ -4,6 +4,7 @@ import pygame
 from button import Button
 from game import Game
 from constants import *
+import maps
 import sys
 
 pygame.mixer.music.load(SFX.theme_song)
@@ -13,7 +14,7 @@ pygame.mixer.music.play(-1)
 def main():
     # Initialize main
     pygame.init()
-    game = Game()
+    game = Game(maps.VanillaMap) # TODO make this choosable in menu
 
     # Set buttons
     image_scale = 6

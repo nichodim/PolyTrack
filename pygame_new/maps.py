@@ -3,6 +3,8 @@
 # Map builder explanation
 '''
 MapName = {
+    'type': Type of map, this is used to determine logic specific to a type of map like water freezing
+            Allows for easy variation like small, medium, and large variants
     'board': Grid of tile terrain. Must have uniform row and col number
     'obstacles': List of spawnable obstacles on map (good for themes)
     'levels': Contains list of each level
@@ -18,17 +20,18 @@ df, bul = 'default', 'bullet'
 
 # Maps
 VanillaMap = {
+    'type': 'vanilla',
     'board': [ # map of board terrain
         [g,g,g,g,g,g,g,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
+        [g,g,w,g,g,g,w,g,g,g], 
+        [g,g,g,g,g,g,g,g,g,g], 
+        [g,g,w,w,w,w,w,g,g,g], 
+        [g,g,g,g,g,g,g,g,g,g], 
+        [g,g,g,g,g,w,g,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,g,g,g,g,g,g,g,g], 
+        [g,g,g,g,g,g,g,w,w,w], 
     ], 
     'obstacles': [ # obstacles to choose from
         'rock', 'sandrock', 'sadrock', 
@@ -39,6 +42,11 @@ VanillaMap = {
             [(3, 4), [df]], # rounds
             [(3, 5), [df]], 
             [(2, 3), [df, df]], 
+        ], 
+        [ 
+            [(4, 6), [df]], # rounds
+            [(3, 5), [df, df, df, df, df, df, df, df, df, df]], 
+            [(2, 3), [df, bul]], 
         ], 
     ]
 }

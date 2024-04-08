@@ -6,8 +6,9 @@ from board_item_types import TrainTypes
 import math
 
 class Train:
-    def __init__(self, type, degree, tile_location, direction = 'forward'):
+    def __init__(self, type, board_rect, degree, tile_location, direction = 'forward'):
         data = TrainTypes[type]
+        self.board_rect = board_rect
         self.image, self.speed = data['image'], data['speed']
         self.direction, self.degree = direction, degree
 
@@ -28,8 +29,8 @@ class Train:
         self.x_center_adjustment = abs(pygame.Surface.get_width(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_height(self.surface) / 2 * math.sin(math.radians(self.degree)))
         self.y_center_adjustment = abs(pygame.Surface.get_height(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_width(self.surface) / 2 * math.sin(math.radians(self.degree)))
         
-        self.x = board_x + OUTER_GAP + col * (TRACK_WIDTH + INNER_GAP) + self.x_center_adjustment
-        self.y = board_y + OUTER_GAP + row * (TRACK_HEIGHT + INNER_GAP) + self.y_center_adjustment
+        self.x = self.board_rect.left + OUTER_GAP + col * (TRACK_WIDTH + INNER_GAP) + self.x_center_adjustment
+        self.y = self.board_rect.top + OUTER_GAP + row * (TRACK_HEIGHT + INNER_GAP) + self.y_center_adjustment
         if self.degree == 180:
             self.x -= pygame.Surface.get_width(self.surface) - TRACK_WIDTH - INNER_GAP
         if self.degree == 90:
