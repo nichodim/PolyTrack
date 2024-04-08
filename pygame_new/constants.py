@@ -4,7 +4,7 @@ import pygame
 
 # Constant variables - things you would configure
 # Resolution config
-GAME_WIDTH = 1700
+GAME_WIDTH = 1400
 GAME_HEIGHT = 900
 
 # Board config
@@ -63,7 +63,8 @@ class TrackSprites:
     train_station = pygame.image.load('images/track_images/train_station.png').convert_alpha()
 
 class TerrainSprites: # temp sprites, change out
-    grass = pygame.image.load('images/placeholders/soft_green.png').convert_alpha()
+    grass = pygame.image.load('images/tile_assets/grass_tiles/grass_tile1.png').convert_alpha()
+    grass1 = pygame.image.load('images/tile_assets/grass_tiles/grass_tile2.png').convert_alpha()
     water = pygame.image.load('images/placeholders/blue.png').convert_alpha()
 
 class ObstacleSprites:

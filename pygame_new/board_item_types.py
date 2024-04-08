@@ -6,6 +6,7 @@ from track_set_types import *
 
 TerrainTypes = {
     'grass': TerrainSprites.grass,
+    'grass1': TerrainSprites.grass1,
     'water': TerrainSprites.water
 }
 

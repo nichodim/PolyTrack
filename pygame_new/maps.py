@@ -15,16 +15,16 @@ MapName = {
 
 # Abreviate anything to make larger maps easier (terrain should be uniform letter count)
 from board_item_types import *
-g, w = 'grass', 'water'
+g, g1, w = 'grass', 'grass1', 'water'
 df, bul = 'default', 'bullet'
 
 # Maps
 VanillaMap = {
     'type': 'vanilla',
     'board': [ # map of board terrain
+        [g1,g1,g1,g,g,g,g,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,w,g,g,g,w,g,g,g], 
+        [g,g,w,g,g1,g,w,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
         [g,g,w,w,w,w,w,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
