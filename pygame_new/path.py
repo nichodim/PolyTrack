@@ -215,7 +215,6 @@ class Path:
         # Also finds end conditions: True is a failure to find a direction that should not end the path
         def find_new_direction():
             if (center_x, center_y) == cart.current_tile: 
-                print((center_x, center_y), cart.current_tile)
                 return (True, 'same tile')
 
             tile = self.board_tiles[center_y][center_x]
