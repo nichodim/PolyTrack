@@ -6,11 +6,12 @@ from board_item_types import TrainTypes
 import math
 
 class Train:
-    def __init__(self, type, board_rect, degree, tile_location, direction = 'forward'):
+    def __init__(self, type, board_rect, degree, start, relative_position = "body"):
         data = TrainTypes[type]
         self.board_rect = board_rect
         self.image, self.speed = data['image'], data['speed']
-        self.direction, self.degree = direction, degree
+        self.direction, self.degree = "forward", degree
+        self.current_tile = start
 
         # Make expanding surface/image with transparent background
         self.surface = pygame.Surface([60 * (TRACK_WIDTH/50), (TRACK_HEIGHT - 2 * (TRACK_HEIGHT/50))])
@@ -18,14 +19,17 @@ class Train:
         self.image = pygame.transform.smoothscale(self.image, [60 * (TRACK_WIDTH/50), 48 * (TRACK_HEIGHT/50)])
         self.surface.blit(self.image, (0,0))
 
-        self.set_pos(tile_location)
+
+        self.relative_position = relative_position
+        
+        self.set_pos(start)
 
         self.rotate = pygame.transform.rotate(self.surface, self.degree)
         self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y))
 
     # Uses tile location + angle to find x, y coordinates
-    def set_pos(self, tile_location):
-        col, row = tile_location
+    def set_pos(self, start):
+        col, row = start
         self.x_center_adjustment = abs(pygame.Surface.get_width(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_height(self.surface) / 2 * math.sin(math.radians(self.degree)))
         self.y_center_adjustment = abs(pygame.Surface.get_height(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_width(self.surface) / 2 * math.sin(math.radians(self.degree)))
         
@@ -66,7 +70,6 @@ class Train:
     def move(self):
         self.x += self.speed * math.cos(math.radians(self.degree)) 
         self.y += self.speed * -math.sin(math.radians(self.degree))
-
 
     # Rendering
     def draw(self, game_surf):

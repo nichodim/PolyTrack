@@ -21,13 +21,14 @@ class Path:
 
         # Create path objects
         self.create_stations()
-        self.create_train()
         self.create_station_tracks()
+        self.create_train()
+        
 
         # Maintains initial path logic
-        self.current_tile = None
-        self.path_initated = True
-        self.train_passed_start = False
+        #self.current_tile = None
+        #self.path_initated = True
+        #self.train_passed_start = False
 
     # Creates start and end stations and saves their locations
     # start and end arent positions but are actually tile locatons (col, row)
@@ -111,97 +112,141 @@ class Path:
         self.board_tiles[location[1]][location[0]].attached = track
     
     def create_train(self):
-        starting_orient = self.board_tiles[self.start[1]][self.start[0]].attached.orientation
-        self.train = Train(
-            type = self.train_type, 
-            board_rect = self.board_rect,
-            degree = starting_orient, 
-            tile_location = self.start
+        starting_orient = self.start_station.orientation
+
+        # create a list for the train that will store in each cart
+        self.train = []
+        # build the head for the train
+        self.train.append(
+            Train(
+                type = 'default', 
+                board_rect = self.board_rect,
+                degree = starting_orient, 
+                start = self.start,
+                relative_position = "head",
+            )
         )
+
+        # multiple cart
+        self.total_cart = 5
+        self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) // self.train[0].speed
+        self.timer = self.time
+
 
 
     # Update
     def update(self):
-        if self.path_initated and self.train:
-            self.check()
-            self.train.update()
+        starting_orient = self.start_station.orientation
+        #if self.current_tile and self.train:
+        for cart in self.train:
+            self.check(cart)
+            cart.update()
+        
+        if self.total_cart > 0:
+            self.timer -= 1
+            if self.timer == 0:
+                self.total_cart -= 1
+                self.timer = self.time
+
+                if self.total_cart == 0:
+                    self.train.append(
+                        Train(
+                            type = 'default', 
+                            board_rect = self.board_rect,
+                            degree = starting_orient, 
+                            start = self.start,
+                            relative_position = "tail"
+                        )
+                    )
+
+                else:
+                    self.train.append(
+                        Train(
+                            type = 'default', 
+                            board_rect = self.board_rect,
+                            degree = starting_orient, 
+                            start = self.start
+                        )
+                    )
+
 
     # Continusly called: checks what to do based on new tiles
-    def check(self):
+    def check(self, cart):
         # declare some helpful variables
-        train_width = pygame.Surface.get_width(self.train.surface)
-        train_height = pygame.Surface.get_height(self.train.surface)
-        x_no_margin = self.train.x - self.board_rect.left - OUTER_GAP
-        y_no_margin = self.train.y - self.board_rect.top - OUTER_GAP
+        train_width = pygame.Surface.get_width(cart.surface)
+        train_height = pygame.Surface.get_height(cart.surface)
+        x_no_margin = cart.x - self.board_rect.left - OUTER_GAP
+        y_no_margin = cart.y - self.board_rect.top - OUTER_GAP
 
-        x_correction = (train_width/2) * math.cos(math.radians(self.train.degree))
-        y_correction = (train_width/2) * math.sin(math.radians(self.train.degree))        
+        x_correction = (train_width/2) * math.cos(math.radians(cart.degree))
+        y_correction = (train_width/2) * math.sin(math.radians(cart.degree))        
 
         # find tile indexes corresponding to train
         front_x = int((x_no_margin + x_correction - INNER_GAP * ((x_no_margin + x_correction) // (TRACK_HEIGHT + INNER_GAP))) // TRACK_HEIGHT)
-        front_y = int((y_no_margin -  y_correction - INNER_GAP * ((y_no_margin - y_correction) // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
+        front_y = int((y_no_margin - y_correction - INNER_GAP * ((y_no_margin - y_correction) // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
 
         back_x = int((x_no_margin - x_correction - INNER_GAP * ((x_no_margin - x_correction) // (TRACK_HEIGHT + INNER_GAP))) // TRACK_HEIGHT)
-        back_y = int((y_no_margin +  y_correction - INNER_GAP * ((y_no_margin +  y_correction) // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
+        back_y = int((y_no_margin + y_correction - INNER_GAP * ((y_no_margin +  y_correction) // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
         
         center_x = int((x_no_margin - INNER_GAP * (x_no_margin // (TRACK_HEIGHT + INNER_GAP))) // TRACK_HEIGHT)
         center_y = int((y_no_margin - INNER_GAP * (y_no_margin // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
 
+
         # Only cares to end game if train reaches end station
         def find_if_under_station():
-            index_in_bounds = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1)
-            if not index_in_bounds: return
-
-            try:
-                valid_tile = self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x - x_correction, self.train.y + y_correction)
-                if not valid_tile: return
-            except: return
+            tile = self.board_tiles[center_y][center_x]
+            valid_index = (0 <= back_y <= self.grid_cols - 1) and (0 <= back_x <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            if not valid_index: return
 
             attached_item = self.board_tiles[back_y][back_x].attached
             if attached_item != self.end_station: return
 
-            correct_direction = round(math.sin(math.radians(self.train.degree + 180)), 5) == round(math.sin(math.radians(attached_item.orientation)), 5)
+            correct_direction = round(math.sin(math.radians(cart.degree + 180)), 5) == round(math.sin(math.radians(attached_item.orientation)), 5)
             if not correct_direction: return
-            
-            self.end_call(self, True)
+            if cart.relative_position == "tail":
+                self.end_call(self, True)
+                print("Delete all")
+            else: 
+                print("Delete one")
+                self.train.remove(cart)
         find_if_under_station()
 
         # Checks next tile for direction
         # Also finds end conditions: True is a failure to find a direction that should not end the path
         def find_new_direction():
-            index_in_bounds = (0 <= center_y <= self.grid_rows - 1) and (0 <= center_x <= self.grid_cols - 1)
-            if not index_in_bounds: return (False, 'invalid location: out of bounds')
+            if (center_x, center_y) == cart.current_tile: 
+                print((center_x, center_y), cart.current_tile)
+                return (True, 'same tile')
 
-            try:
-                valid_tile = self.board_tiles[center_y][center_x].rect.collidepoint(self.train.x, self.train.y)
-                if not valid_tile: return (True, 'invalid location')
-            except: return (False, 'invalid location: out of bounds')
-            
             tile = self.board_tiles[center_y][center_x]
-            if tile == self.current_tile: return (True, 'still on same tile')
-
+            #if tile == self.current_tile: return (True, 'still on same tile')
             attached_item = tile.attached
-            if isinstance(attached_item, Station):
-                if (attached_item == self.start_station and self.train_passed_start 
-                    and attached_item != self.end_station): return (False, 'is on top of station (not supposed to be)')
-                else: return (True, 'is on top of station (supposed to be)')
-            self.train_passed_start = True
 
-            if not isinstance(attached_item, Track): return (False, 'not a track or station')
+            # check if train is on the board and on a tile and not within the gaps
+            valid_index = (0 <= center_y <= self.grid_cols - 1) and (0 <= center_x <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x, cart.y) 
+            
 
-            new_direction_index = int(round((self.train.degree % 360) / 90))
-            if new_direction_index >= len(attached_item.directions): return (False, 'degree math couldnt find correct direction')
-
-            new_direction = attached_item.directions[new_direction_index]
+            #print(self.board_tiles[center_y][center_x].rect.collidepoint(cart.x, cart.y))
+            if not valid_index: return (True, 'invalid location')            
+            
+            if attached_item == None: return (False, 'not a track or station')
+            
+            if cart.direction == "forward":
+                new_direction = attached_item.directions[int(cart.degree % 360 / 90)]            
+                
+            else:
+                return (True, 'turning')
             if new_direction == 'crash': return (False, 'direction found was not correct for train')
 
-            self.train.direction = new_direction
-            self.current_tile = self.board_tiles[center_y][center_x]
-            return (True, 'found new track direction')
-        
+            cart.direction = new_direction
+            cart.current_tile = (center_x, center_y)
+            #self.current_tile = self.board_tiles[center_y][center_x]
+            return(True, 'found new track direction')
+
         still_fine, condition = find_new_direction()
-        if not still_fine: self.end_call(self, False)
-    
+        if not still_fine: 
+            self.end_call(self, False)
+
     # Dont look here
     def train_orient(self, location):
         orient = [0, 90, 180, 270]
@@ -230,4 +275,5 @@ class Path:
 
     # Rendering
     def draw(self, game_surf):
-        self.train.draw(game_surf)
+        for cart in self.train:
+            cart.draw(game_surf)
