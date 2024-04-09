@@ -261,6 +261,8 @@ SpawnTracks = [
     TrackSetTypes['tinystraight-1'], 
 
     TrackSetTypes['leftturn-1'], 
+    TrackSetTypes['leftturn-1'], 
+    TrackSetTypes['rightturn-1'], 
     TrackSetTypes['rightturn-1'], 
     TrackSetTypes['smallturn-1'], 
     TrackSetTypes['smallturn-1'], 
