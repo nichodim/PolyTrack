@@ -74,6 +74,9 @@ class ObstacleSprites:
     tree = pygame.image.load('images/obstacle_images/tree.png').convert_alpha()
     woodshack = pygame.image.load('images/obstacle_images/woodshack.png').convert_alpha()
 
+class EventSprites:
+    snowflake_icon = pygame.image.load('images/event_images/snowflake_icon.png').convert_alpha()
+
 class TrainSprites:
     red_train = pygame.image.load('images/train_images/red_train.png').convert_alpha()
     gray_cargo = pygame.image.load('images/train_images/gray_cargo.png').convert_alpha()

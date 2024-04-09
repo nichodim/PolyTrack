@@ -47,7 +47,7 @@ class Game:
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
         if self.active_track_and_index == None: return False
 
-        SFX.metal_move.play()
+        #SFX.metal_move.play()
 
         self.active_set_inital_pos = self.active_set.rect.center
 

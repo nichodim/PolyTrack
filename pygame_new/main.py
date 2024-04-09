@@ -7,6 +7,7 @@ from constants import *
 import maps
 import sys
 
+pygame.init()
 pygame.mixer.music.load(SFX.theme_song)
 pygame.mixer.music.set_volume(0.015)
 pygame.mixer.music.play(-1)
@@ -59,13 +60,11 @@ def main():
         # Check for end event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit_game()
-                
-        
-        pygame.display.update()
+                quit()
+        pygame.display.update()        
     pygame.mixer.music.stop()
 
-def quit_game():
+def quit():
     pygame.quit()
     sys.exit()
     
