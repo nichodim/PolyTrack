@@ -84,11 +84,13 @@ class Path:
         start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
         self.create_station_track((start_x, start_y), start_orient)
 
+        '''
         end_orient = self.end_station.orientation
         end_x = int(round(self.end[0] + math.cos(math.radians(end_orient)), 1))
         end_y = int(round(self.end[1] - math.sin(math.radians(end_orient)), 1))
         self.create_station_track((end_x, end_y), end_orient)
-
+        '''
+    
     # Crazy logic I didnt read (thank you Kelvin)
     def create_station_track(self, location, deg):
         possible_tracks = [track_set_types.vertical, track_set_types.horizontal, track_set_types.left, track_set_types.right, track_set_types.ileft, track_set_types.iright]
@@ -201,8 +203,9 @@ class Path:
             attached_item = self.board_tiles[back_y][back_x].attached
             if attached_item != self.end_station: return
 
-            correct_direction = round(math.sin(math.radians(cart.degree + 180)), 5) == round(math.sin(math.radians(attached_item.orientation)), 5)
-            if not correct_direction: return
+            #correct_direction = round(math.sin(math.radians(cart.degree + 180)), 5) == round(math.sin(math.radians(attached_item.orientation)), 5)
+            #if not correct_direction: return
+
             if cart.relative_position == "tail":
                 self.end_call(self, True)
                 print("Delete all")
@@ -229,7 +232,8 @@ class Path:
             if not valid_index: return (True, 'invalid location')            
             
             if attached_item == None: return (False, 'not a track or station')
-            
+            if attached_item == self.end_station: return (True, 'ending station')
+
             if cart.direction == "forward":
                 new_direction = attached_item.directions[int(cart.degree % 360 / 90)]            
                 
