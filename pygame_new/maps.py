@@ -8,23 +8,23 @@ MapName = {
     'board': Grid of tile terrain. Must have uniform row and col number
     'obstacles': List of spawnable obstacles on map (good for themes)
     'levels': Contains list of each level
-              Each level contains a list of rounds
-              Each round constains... [obstacle spawn range, list of trains]
+              Each level contains an obstacle range and list of rounds
+              Each round contains a list of trains to spawn
 }
 '''
 
 # Abreviate anything to make larger maps easier (terrain should be uniform letter count)
 from board_item_types import *
-g, g1, w = 'grass', 'grass1', 'water'
+g, t, w = 'grass', 'tallgrass', 'water'
 df, bul = 'default', 'bullet'
 
 # Maps
 VanillaMap = {
     'type': 'vanilla',
     'board': [ # map of board terrain
-        [g1,g1,g1,g,g,g,g,g,g,g], 
+        [t,t,t,g,g,g,g,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
-        [g,g,w,g,g1,g,w,g,g,g], 
+        [g,g,w,g,t,g,w,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
         [g,g,w,w,w,w,w,g,g,g], 
         [g,g,g,g,g,g,g,g,g,g], 
@@ -38,15 +38,11 @@ VanillaMap = {
         'tree', 'woodshack'
     ],
     'levels': [
-        [ # level
-            [(3, 4), [df]], # rounds
-            [(3, 5), [df]], 
-            [(2, 3), [df, df]], 
-        ], 
-        [ 
-            [(4, 6), [df]],
-            [(3, 5), [df, df, df, df, df, df, df, df, df, df]], 
-            [(2, 3), [df, bul]], 
-        ], 
+        { # level
+            'obstacle_range': (3, 4),
+            'rounds': [
+                [df], [df], [df, df]
+            ]
+        }
     ]
 }

@@ -57,7 +57,7 @@ class Board:
 
         # Check level, if done all rounds (or first)...
         if self.level == -1 or len(self.levels[self.level]) <= self.round: 
-            # Go to next one
+            # Go to next level
             self.level += 1
             self.round = 0
 
@@ -70,12 +70,11 @@ class Board:
                     tile.attached = None
             
             # Generate new obstacles
-            obstacle_range = self.levels[self.level][self.round][0]
-            print(obstacle_range)
+            obstacle_range = self.levels[self.level]['obstacle_range']
             self.generate_obstacles(obstacle_range)
         
         # Add new trains
-        trains_to_spawn = self.levels[self.level][self.round][1]
+        trains_to_spawn = self.levels[self.level]['rounds'][self.round]
         for train_type in trains_to_spawn:
             self.create_path(train_type)
 
