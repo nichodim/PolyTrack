@@ -18,6 +18,7 @@ class Game:
         self.track_box = Trackbox()
         self.active_set = None
         self.active_track_and_index = None
+        self.paused = False
 
         self.lives = 50
         print('lives:', self.lives)
@@ -26,6 +27,12 @@ class Game:
     # Event control 
     def handle_events(self):
         for event in pygame.event.get():
+            # Events allowed when paused
+            if self.paused: 
+                if event.type == pygame.KEYDOWN:
+                    if event.unicode == 'p': self.handle_p_down()
+                return
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: self.handle_mouse_down(event)
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -34,6 +41,7 @@ class Game:
                 self.handle_mouse_motion(event)
             elif event.type == pygame.KEYDOWN:
                 if event.unicode == 'r': self.handle_r_down()
+                if event.unicode == 'p': self.handle_p_down()
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
@@ -115,6 +123,10 @@ class Game:
 
             self.try_highlight_tiles()
 
+    def handle_p_down(self):
+        if self.active_set: return
+        self.paused = not self.paused
+
     def handle_board_end(self, win):
         if not win: self.lives -= 1
         if win: 
@@ -167,7 +179,7 @@ class Game:
     def run(self):
         while True:
             self.handle_events()
-            self.update()
+            if not self.paused: self.update()
             self.render()
             self.fps.tick(60)
 
@@ -180,7 +192,12 @@ class Game:
         
         self.board.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
-        
-        self.board.update()
+
+        # Paused render
+        if self.paused:
+            highlight_surf = pygame.Surface((GAME_WIDTH, GAME_HEIGHT), pygame.SRCALPHA)
+            r, g, b = Colors.light_gray
+            highlight_surf.fill((r,g,b,128))
+            self.game_surf.blit(highlight_surf, (0,0))
 
         pygame.display.update()
