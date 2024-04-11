@@ -42,10 +42,8 @@ class Path:
             new_end = (random.randint(0, self.grid_cols - 1), random.randint(0, self.grid_rows - 1))
             new_distance = math.sqrt((new_end[0] - new_start[0])**2 + (new_end[1] - new_start[1])**2)
 
-            if distance == 0:
-                if new_distance < 4: i -= 1
-                else: start, end, distance = new_start, new_end, new_distance
-                continue
+            if distance == 0 and new_distance > 4:
+                start, end, distance = new_start, new_end, new_distance
 
             if distance < new_distance: 
                 start, end, distance = new_start, new_end, new_distance
@@ -80,9 +78,9 @@ class Path:
     # Tracks that spawn next to the station based on orientation
     def create_station_tracks(self):
         start_orient = self.start_station.orientation
-        start_x = int(round(self.start[0] + math.cos(math.radians(start_orient)), 1))
-        start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
-        self.create_station_track((start_x, start_y), start_orient)
+        self.start_x = int(round(self.start[0] + math.cos(math.radians(start_orient)), 1))
+        self.start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
+        self.create_station_track((self.start_x, self.start_y), start_orient)
 
         '''
         end_orient = self.end_station.orientation
@@ -234,7 +232,7 @@ class Path:
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
 
-            if cart.direction == "forward":
+            if cart.direction == "forward" and not isinstance(attached_item, Station):
                 new_direction = attached_item.directions[int(cart.degree % 360 / 90)]            
                 
             else:
@@ -273,6 +271,8 @@ class Path:
         col, row = self.end
         self.board_tiles[row][col].attached = None
 
+
+        self.board_tiles[self.start_y][self.start_x].attached = None
         # delete train
         del self.train
 

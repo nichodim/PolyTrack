@@ -56,7 +56,7 @@ class Board:
         self.round += 1
 
         # Check level, if done all rounds (or first)...
-        if self.level == -1 or len(self.levels[self.level]) <= self.round: 
+        if self.level == -1 or len(self.levels[self.level]['rounds']) <= self.round: 
             # Go to next level
             self.level += 1
             self.round = 0
