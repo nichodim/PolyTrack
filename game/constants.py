@@ -60,7 +60,8 @@ class TrackSprites:
     left = pygame.image.load('images/track_images/left_track.png').convert_alpha()
     inverted_right = pygame.image.load('images/track_images/inverted_right_track.png').convert_alpha()
     inverted_left = pygame.image.load('images/track_images/inverted_left_track.png').convert_alpha()
-    train_station = pygame.image.load('images/track_images/train_station.png').convert_alpha()
+    start_train_station = pygame.image.load('images/track_images/start_train_station.png').convert_alpha()
+    end_train_station = pygame.image.load('images/track_images/end_train_station.png').convert_alpha()
 
 class TerrainSprites: # temp sprites, change out
     grass = pygame.image.load('images/tile_assets/grass_tiles/grass.png').convert_alpha()

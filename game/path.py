@@ -49,14 +49,15 @@ class Path:
                 start, end, distance = new_start, new_end, new_distance
                 i += 30
 
-        image = TrackSprites.train_station
+        start_image = TrackSprites.start_train_station
+        end_image = TrackSprites.end_train_station
 
         # starting station
         rect_x = self.board_rect.left + OUTER_GAP + start[0] * (TRACK_WIDTH + INNER_GAP)
         rect_y = self.board_rect.top + OUTER_GAP + start[1] * (TRACK_HEIGHT + INNER_GAP)
         station_rect = pygame.Rect(rect_x, rect_y, TRACK_WIDTH, TRACK_HEIGHT)
         self.start_station = Station(
-            image = image, 
+            image = start_image, 
             rect = station_rect, 
             orientation = self.train_orient(start)
         )
@@ -67,7 +68,7 @@ class Path:
         rect_y = self.board_rect.top + OUTER_GAP + end[1] * (TRACK_HEIGHT + INNER_GAP)
         station_rect = pygame.Rect(rect_x, rect_y, TRACK_WIDTH, TRACK_HEIGHT)
         self.end_station = Station(
-            image = image, 
+            image = end_image, 
             rect = station_rect, 
             orientation = self.train_orient(end)
         )
