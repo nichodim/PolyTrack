@@ -41,7 +41,7 @@ VanillaMap = {
         { # level
             'obstacle_range': (3, 4),
             'rounds': [
-                [df], [df], [df, df]
+                [df, df], [df], [df, df]
             ]
         }
     ]
