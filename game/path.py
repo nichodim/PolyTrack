@@ -8,7 +8,7 @@ from track import Track
 from train import Train
 
 class Path:
-    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions):
+    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, f_pressed=False):
         # Prevents updates on nonexisting game objects
         self.path_initated = False
 
@@ -18,6 +18,7 @@ class Path:
         self.end_call = end_call
         self.train_type = train_type
         self.grid_rows, self.grid_cols = grid_dimensions
+        self.f_pressed = f_pressed
 
         # Create path objects
         self.create_stations()
@@ -25,11 +26,9 @@ class Path:
         self.create_train()
         
 
-        # Maintains initial path logic
-        #self.current_tile = None
-        #self.path_initated = True
-        #self.train_passed_start = False
-
+    def set_f_pressed(self, value):
+        self.f_pressed = value
+        
     # Creates start and end stations and saves their locations
     # start and end arent positions but are actually tile locatons (col, row)
     def create_stations(self):
@@ -134,11 +133,18 @@ class Path:
         self.timer = self.time
 
 
-
     # Update
     def update(self):
         starting_orient = self.start_station.orientation
         #if self.current_tile and self.train:
+
+        if self.f_pressed:
+            for train_instance in self.train:
+                train_instance.speed = 2.0
+        else:
+            for train_instance in self.train:
+                train_instance.speed = .15
+        
         for cart in self.train:
             self.check(cart)
             cart.update()
@@ -169,6 +175,7 @@ class Path:
                             start = self.start
                         )
                     )
+        
 
 
     # Continusly called: checks what to do based on new tiles

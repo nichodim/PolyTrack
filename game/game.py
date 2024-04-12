@@ -6,20 +6,19 @@ import random
 from constants import *
 from board import Board
 from track_box import Trackbox
+from train import Train
 
 class Game:
     def __init__(self, map):
         pygame.init()
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
-
+        self.f_pressed = False
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
-
         self.track_box = Trackbox()
         self.active_set = None
         self.active_track_and_index = None
         self.paused = False
-
         self.lives = 50
         print('lives:', self.lives)
 
@@ -30,18 +29,31 @@ class Game:
             # Events allowed when paused
             if self.paused: 
                 if event.type == pygame.KEYDOWN:
-                    if event.unicode == 'p': self.handle_p_down()
+                    if event.unicode == 'p':
+                        self.handle_p_down()
                 return
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: self.handle_mouse_down(event)
+                if event.button == 1: 
+                    self.handle_mouse_down(event)
             elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1: self.handle_mouse_up()
+                if event.button == 1: 
+                    self.handle_mouse_up()
             elif event.type == pygame.MOUSEMOTION:
                 self.handle_mouse_motion(event)
             elif event.type == pygame.KEYDOWN:
-                if event.unicode == 'r': self.handle_r_down()
-                if event.unicode == 'p': self.handle_p_down()
+                if event.unicode == 'r': 
+                    self.handle_r_down()
+                if event.unicode == 'p': 
+                    self.handle_p_down()
+                if event.unicode == 'f':
+                    self.board.set_f_pressed(True)
+                    self.board.update_path_f_pressed(True)
+                    
+            elif event.type == pygame.KEYUP:
+                if event.unicode == 'f':
+                    self.board.set_f_pressed(False)
+                    self.board.update_path_f_pressed(False)
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
@@ -108,7 +120,7 @@ class Game:
         if self.active_set != None:
             self.active_set.move(event.rel)
             self.try_highlight_tiles()
-    
+
     def handle_r_down(self):
         if self.active_set and self.active_track_and_index: 
             SFX.tick.play()

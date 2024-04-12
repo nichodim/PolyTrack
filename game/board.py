@@ -31,6 +31,12 @@ class Board:
         self.level, self.round = -1, -1
         self.new_round()
 
+    def set_f_pressed(self, value):
+        self.f_pressed = value
+    
+    def update_path_f_pressed(self, value):
+        for path in self.paths:
+            path.set_f_pressed(value)
 
     # Board Creation
     def create_grid(self, grid_layout):
