@@ -17,6 +17,7 @@ class Game:
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
         self.track_box = Trackbox()
         self.active_set = None
+        self.active_powerup = None
         self.active_track_and_index = None
         self.paused = False
         self.lives = 50
