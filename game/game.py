@@ -7,6 +7,7 @@ from constants import *
 from board import Board
 from track_box import Trackbox
 from train import Train
+import math
 
 class Game:
     def __init__(self, map):
@@ -202,7 +203,6 @@ class Game:
         
     def render(self):
         self.game_surf.fill(Colors.dark_gray)
-        
         self.board.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
 
@@ -210,7 +210,73 @@ class Game:
         if self.paused:
             highlight_surf = pygame.Surface((GAME_WIDTH, GAME_HEIGHT), pygame.SRCALPHA)
             r, g, b = Colors.light_gray
-            highlight_surf.fill((r,g,b,128))
-            self.game_surf.blit(highlight_surf, (0,0))
+            highlight_surf.fill((r, g, b, 128))
+            self.game_surf.blit(highlight_surf, (0, 0))
+
+            box_width = 700
+            box_height = 400
+            border_width = 5
+
+            bordered_box_surf = pygame.Surface((box_width, box_height))
+            bordered_box_surf.fill(Colors.black)
+
+            blue_box_surf = pygame.Surface((box_width - 2 * border_width, box_height - 2 * border_width))
+            blue_box_surf.fill(Colors.sky_blue)
+
+            # Calculate the position for the bordered box
+            box_x = (GAME_WIDTH - box_width) // 2 - 2
+            box_y = (GAME_HEIGHT - box_height) // 2 - 90
+
+            self.game_surf.blit(bordered_box_surf, (box_x, box_y))
+
+            self.game_surf.blit(blue_box_surf, (box_x + border_width, box_y + border_width))
+
+            # Button dimensions and positions
+            button_width = 250
+            button_height = 100
+            button_y = box_y + (box_height - button_height) // 2
+
+            button_x1 = box_x + (box_width - button_width * 2) // 3
+            button_x2 = button_x1 + button_width + (box_width - button_width * 2) // 3
+
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+ 
+            button1_image = Images.play_img
+            button1_image_hover = Images.play_hover_img
+
+            button2_image = Images.quit_pause_img
+            button2_image_hover = Images.quit_pause_hover_img
+
+            button_image_normal1 = pygame.transform.scale(button1_image, (button_width, button_height))
+            button_image_hover1 = pygame.transform.scale(button1_image_hover, (button_width, button_height))
+
+            button_image_normal2 = pygame.transform.scale(button2_image, (button_width, button_height))
+            button_image_hover2 = pygame.transform.scale(button2_image_hover, (button_width, button_height))
+
+            threshold = 50
+
+            # Calculate the distance between the mouse and button centers
+            distance_to_button1 = math.sqrt((button_x1 + button_width / 2 - mouse_x) ** 2 + (button_y + button_height / 2 - mouse_y) ** 2)
+            distance_to_button2 = math.sqrt((button_x2 + button_width / 2 - mouse_x) ** 2 + (button_y + button_height / 2 - mouse_y) ** 2)
+
+            if distance_to_button1 < threshold:
+                self.game_surf.blit(button_image_hover2, (button_x1, button_y))
+            else:
+                self.game_surf.blit(button_image_normal2, (button_x1, button_y))
+
+            if distance_to_button2 < threshold:
+                self.game_surf.blit(button_image_hover1, (button_x2, button_y))
+            else:
+                self.game_surf.blit(button_image_normal1, (button_x2, button_y))
+
+
+            # Check for button clicks
+            if distance_to_button1 < threshold and pygame.mouse.get_pressed()[0]:
+                self.quit_game()
+
+            elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
+                self.paused = False
+
+        pygame.display.update()
 
         pygame.display.update()
