@@ -6,6 +6,7 @@ from constants import *
 from station import Station
 from track import Track
 from train import Train
+from obstacle import Obstacle
 
 class Path:
     def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, f_pressed=False):
@@ -33,20 +34,65 @@ class Path:
     # start and end arent positions but are actually tile locatons (col, row)
     def create_stations(self):
         # Find big enough distanced station spots
-        # Checks for additional bigger distances to bias for even larger paths (dont overdo)
-        distance = 0
+        
+        # check for surrounding station around the random generate point if there is one with in 2 block it will regenerate another one
+        def surrounding_station(point):
+            col_range = [point[0] - 2, point[0] + 2]
+            if col_range[0] < 0: col_range[0] = 0
+            if col_range[1] > self.grid_cols - 1: col_range[1] = self.grid_cols - 1
+
+            row_range = [point[1] - 2, point[1] + 2]
+            if row_range[0] < 0: row_range[0] = 0
+            if row_range[1] > self.grid_rows - 1: row_range[1] = self.grid_rows - 1
+            
+            for i in range(row_range[0], row_range[1] + 1):
+                for j in range(col_range[0], col_range[1] + 1):
+                    if isinstance(self.board_tiles[i][j].attached, Station):
+                        return True
+            return False
+        
+        # check if train is near the edge of the board
+        def near_edge(point):
+            return (point[0] < 2 or self.grid_cols - 3 < point[0]) or (point[1] < 2 or self.grid_rows - 3 < point[1])
+        
         start, end = (0, 0), (0, 0)
-        for i in range(100):
-            new_start = (random.randint(0, self.grid_cols - 1), random.randint(0, self.grid_rows - 1))
-            new_end = (random.randint(0, self.grid_cols - 1), random.randint(0, self.grid_rows - 1))
-            new_distance = math.sqrt((new_end[0] - new_start[0])**2 + (new_end[1] - new_start[1])**2)
 
-            if distance == 0 and new_distance > 4:
-                start, end, distance = new_start, new_end, new_distance
+        searching_for_station = True
 
-            if distance < new_distance: 
-                start, end, distance = new_start, new_end, new_distance
-                i += 30
+        # we don't want this while loop to run too much times so if the location is deems semi acceptable it will switch these
+        # boolean variable to True so it would generate another of the point
+        # point are acceptable if there are no surrounding station within 2 blocks
+        # point lean towards the edge of the board preferable at most 2 blocks from the edge
+        acceptable_start = False
+        acceptable_end = False
+
+        while searching_for_station:
+            if acceptable_start == False:
+                start = (random.randint(0, self.grid_cols - 1), random.randint(0, self.grid_rows - 1))
+
+            if acceptable_end == False:
+                end = (random.randint(0, self.grid_cols - 1), random.randint(0, self.grid_rows - 1))
+            
+            distance = math.sqrt((end[0] - start[0])**2 + (end[1] - start[1])**2)
+
+            if distance > 4:
+                    sur_start = surrounding_station(start)
+                    sur_end = surrounding_station(end)
+
+                    if sur_start == False and sur_end == False:
+                        searching_for_station = False
+                        
+                    
+                # check if there are station around start position
+                    
+                    if sur_start == False and near_edge(start):
+                        acceptable_start = True
+
+                    if sur_end == False and near_edge(start):
+                        acceptable_end = True
+                    
+                    
+
 
         start_image = TrackSprites.start_train_station
         end_image = TrackSprites.end_train_station
@@ -129,33 +175,27 @@ class Path:
 
         # multiple cart
         self.total_cart = 5
-        self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) // self.train[0].speed
+        self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / self.train[0].speed
         self.timer = self.time
+        print(self.time)
 
 
     # Update
     def update(self):
         starting_orient = self.start_station.orientation
         #if self.current_tile and self.train:
-
-        if self.f_pressed:
-            for train_instance in self.train:
-                train_instance.speed = 2.0
-        else:
-            for train_instance in self.train:
-                train_instance.speed = .15
         
         for cart in self.train:
             self.check(cart)
             cart.update()
         
-        if self.total_cart > 0:
+        if self.total_cart > 1:
             self.timer -= 1
-            if self.timer == 0:
+            if self.timer <= 0:
                 self.total_cart -= 1
                 self.timer = self.time
 
-                if self.total_cart == 0:
+                if self.total_cart == 1:
                     self.train.append(
                         Train(
                             type = 'default', 
@@ -176,6 +216,25 @@ class Path:
                         )
                     )
         
+        if self.f_pressed:
+            # adjust the timer and time it takes for a new cart to spawn according to change in speed
+            if self.train[0].speed == .15:
+                self.timer *= (.15/2.0)
+                self.time *= .15/2.0
+                print(self.time)
+
+            for train_instance in self.train:
+                train_instance.speed = 2.0
+            
+                
+        else:
+            # adjust the timer and time it takes for a new cart to spawn according to change in speed 
+            if self.train[0].speed != .15:
+                self.timer *= 2.0/.15
+                self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / .15
+
+            for train_instance in self.train:
+                train_instance.speed = .15
 
 
     # Continusly called: checks what to do based on new tiles
@@ -214,9 +273,7 @@ class Path:
 
             if cart.relative_position == "tail":
                 self.end_call(self, True)
-                print("Delete all")
             else: 
-                print("Delete one")
                 self.train.remove(cart)
         find_if_under_station()
 
@@ -234,11 +291,11 @@ class Path:
             valid_index = (0 <= center_y <= self.grid_cols - 1) and (0 <= center_x <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x, cart.y) 
             
 
-            #print(self.board_tiles[center_y][center_x].rect.collidepoint(cart.x, cart.y))
             if not valid_index: return (True, 'invalid location')            
             
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
+            if isinstance(attached_item, Obstacle): return (False, 'train crash into obstacle')
 
             if cart.direction == "forward" and not isinstance(attached_item, Station):
                 new_direction = attached_item.directions[int(cart.degree % 360 / 90)]            
@@ -286,5 +343,6 @@ class Path:
 
     # Rendering
     def draw(self, game_surf):
+        
         for cart in self.train:
             cart.draw(game_surf)
