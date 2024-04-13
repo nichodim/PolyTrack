@@ -7,6 +7,7 @@ from constants import *
 import maps
 import sys
 
+
 pygame.init()
 pygame.mixer.music.load(SFX.theme_song)
 pygame.mixer.music.set_volume(0.015)
@@ -22,6 +23,8 @@ def main():
     button_x = GAME_WIDTH / 2 - (Images.start_img.get_width() * image_scale / 2)
     start_button = Button(button_x, 400, Images.start_img, image_scale)
     quit_button = Button(button_x, 500, Images.quit_img, image_scale)
+    grass_map = Button(400, 400, Images.grass_map, image_scale)
+    snow_map = Button(900, 400, Images.snow_map, image_scale)
 
     # Set title
     image_scale = 2
@@ -42,7 +45,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start_button.clicked():
-                    game.run()
+                    map_menu()
                 if quit_button.clicked():
                     run = False
         
@@ -63,6 +66,33 @@ def main():
                 quit()
         pygame.display.update()        
     pygame.mixer.music.stop()
+
+def map_menu():  # Give it its own file at a later date
+    pygame.init()
+
+    image_scale = 3
+    button_x = GAME_WIDTH / 4
+    button_radius = Images.grass_map.get_width() * 3 / 2
+    map_button_radius = Images.mapmenu_img.get_width() * 2 / 2
+    grass_map = Button(button_x - button_radius, 400, Images.grass_map, image_scale)
+    snow_map = Button(2 * button_x - button_radius, 400, Images.snow_map, image_scale)
+    map_img = Button(2 * button_x - map_button_radius, 100, Images.mapmenu_img, 2)
+    
+
+    run = True
+    while run:
+        main_surf.fill(Colors.sky_blue)
+        grass_map.draw(main_surf)
+        snow_map.draw(main_surf)
+        map_img.draw(main_surf)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if grass_map.clicked():
+                    game = Game(maps.VanillaMap)
+                    game.run()
+
+        pygame.display.update() 
 
 def quit():
     pygame.quit()
