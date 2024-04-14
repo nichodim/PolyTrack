@@ -3,6 +3,7 @@
 import random
 from constants import *
 from button_toggle import ButtonToggle
+from powerup import Powerup
 from track_set_spawner import TrackSetSpawner
 from track_set import TrackSet
 from track_set_types import *
@@ -25,14 +26,20 @@ class Trackbox:
         self.spawner = TrackSetSpawner(spawner_rect)
         self.spawner_button = ButtonToggle(self.spawner.rect, (Colors.green, Colors.red))
 
-        # Create tracks
+        # Create tracks and powerups
         self.track_sets = []
+        self.powerups = []
 
 
     # Track box game logic
     def generate_track_set(self):  
         track_set = self.spawner.spawn_track_set()
         self.track_sets.append(track_set)
+    
+    def generate_powerup(self):
+        x, y = self.rect.bottomleft
+        powerup = Powerup((x, y - 50), 'bomb')
+        self.powerups.append(powerup)
 
     def find_precise_pos_of_tracks(self):
         positions = []
@@ -44,6 +51,11 @@ class Trackbox:
     def find_track_set(self, pos):
         for track_set in self.track_sets:
             if track_set.is_in_pos(pos): return track_set
+        return None
+    
+    def find_powerup(self, pos):
+        for powerup in self.powerups:
+            if powerup.rect.collidepoint(pos): return powerup
         return None
 
     def find_hovered_track_and_index(self, track_set):
@@ -109,6 +121,8 @@ class Trackbox:
         self.spawner.draw(game_surf)
         self.spawner_button.draw(game_surf)
         self.draw_track_sets(game_surf)
+        for powerup in self.powerups:
+            powerup.draw(game_surf)
 
     def draw_track_box(self, game_surf):
         pygame.draw.rect(game_surf, Colors.black, self.rect)

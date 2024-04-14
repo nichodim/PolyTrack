@@ -108,6 +108,9 @@ class Board:
     
 
     # Extra Board Logic
+    def trigger_powerup(self, powerup, tile):
+        print('powerup activated!')
+
     def unhighlight(self):
         for tile in self.highlighted_tiles:
             tile.highlighted = False

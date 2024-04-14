@@ -94,6 +94,10 @@ class TrainSprites:
     propane_cargo = pygame.image.load('images/train_images/propane_cargo.png').convert_alpha()
     random_train_choice = ([red_train, gray_cargo, red_cargo, blue_cargo, rock_cargo, propane_cargo])
 
+class PowerupSprites:
+    bomb = pygame.image.load('images/powerup_images/bomb.png').convert_alpha()
+    bomb_lit = pygame.image.load('images/powerup_images/bomb_lit.png').convert_alpha()
+
 class Colors:
     black = (0, 0, 0)
     white = (255, 255, 255)

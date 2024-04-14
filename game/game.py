@@ -6,7 +6,7 @@ import random
 from constants import *
 from board import Board
 from track_box import Trackbox
-from train import Train
+from powerup import Powerup
 import math
 
 class Game:
@@ -14,13 +14,19 @@ class Game:
         pygame.init()
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
+
         self.f_pressed = False
+        self.paused = False
+
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
         self.track_box = Trackbox()
+
         self.active_set = None
-        self.active_powerup = None
         self.active_track_and_index = None
-        self.paused = False
+
+        self.active_powerup = None
+        self.track_box.generate_powerup()
+
         self.lives = 50
         print('lives:', self.lives)
 
@@ -31,23 +37,18 @@ class Game:
             # Events allowed when paused
             if self.paused: 
                 if event.type == pygame.KEYDOWN:
-                    if event.unicode == 'p':
-                        self.handle_p_down()
+                    if event.unicode == 'p': self.handle_p_down()
                 return
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: 
-                    self.handle_mouse_down(event)
+                if event.button == 1: self.handle_mouse_down(event)
             elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1: 
-                    self.handle_mouse_up()
+                if event.button == 1: self.handle_mouse_up()
             elif event.type == pygame.MOUSEMOTION:
                 self.handle_mouse_motion(event)
             elif event.type == pygame.KEYDOWN:
-                if event.unicode == 'r': 
-                    self.handle_r_down()
-                if event.unicode == 'p': 
-                    self.handle_p_down()
+                if event.unicode == 'r': self.handle_r_down()
+                if event.unicode == 'p': self.handle_p_down()
                 if event.unicode == 'f':
                     self.board.set_f_pressed(True)
                     self.board.update_path_f_pressed(True)
@@ -59,6 +60,15 @@ class Game:
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
+    def activate_powerup(self, event):
+        self.active_powerup = self.track_box.find_powerup(event.pos)
+        if not self.active_powerup: return False
+
+        SFX.metal_move.play() # TODO replace with proper sound
+        self.active_powerup_inital_pos = self.active_powerup.rect.center
+
+        return True
+
     def activate_set(self, event):
         # Find picked up track set and the hovered track/index
         self.active_set = self.track_box.find_track_set(event.pos)
@@ -69,8 +79,7 @@ class Game:
         self.active_track_and_index = self.track_box.find_hovered_track_and_index(self.active_set)
         if self.active_track_and_index == None: return False
 
-        #SFX.metal_move.play()
-
+        SFX.metal_move.play()
         self.active_set_inital_pos = self.active_set.rect.center
 
         # Aligns the hovered track with the mouse for easy rotation
@@ -81,12 +90,15 @@ class Game:
         return True
     
     def handle_mouse_down(self, event):
-        # Activates new set and track/index, if failed, abort
+        # Activates powerup if possible
+        activated = self.activate_powerup(event)
+        if activated: return
+
+        # Otherwise, activates track set if possible
         activated = self.activate_set(event)
         if not activated: 
             self.active_set == None
             self.active_track_and_index == None
-        
         self.track_box.handle_spawn_button()
 
     def handle_mouse_up(self):
@@ -95,8 +107,29 @@ class Game:
             self.active_set = None
             self.active_track_and_index = None
             self.active_set_inital_pos = None
+        def clear_active_powerup():
+            self.active_powerup_inital_pos = None
+            self.active_powerup = None
 
-        if self.active_set == None: return
+        if self.active_set == None: 
+            if self.active_powerup == None: return
+
+            board_triggered = self.trigger_powerup_on_board()
+            over_track_spawner = self.active_powerup.powerup_over_rect(self.track_box.spawner.rect)
+            over_track_box = self.active_powerup.powerup_over_rect(self.track_box.rect)
+
+            if board_triggered: 
+                self.track_box.powerups.remove(self.active_powerup)
+                clear_active_powerup()
+                return
+
+            if over_track_box and not over_track_spawner:
+                clear_active_powerup()
+                return
+
+            self.active_powerup.set_position_by_center(self.active_powerup_inital_pos)
+            clear_active_powerup()
+            return
 
         # Snaps board and finds if track set should be set back to initial position
         set_snapped = self.snap_set_to_board()
@@ -122,6 +155,9 @@ class Game:
         if self.active_set != None:
             self.active_set.move(event.rel)
             self.try_highlight_tiles()
+        elif self.active_powerup != None:
+            self.active_powerup.move(event.rel)
+            # self.try_highlight_tiles()
 
     def handle_r_down(self):
         if self.active_set and self.active_track_and_index: 
@@ -182,6 +218,12 @@ class Game:
         if not hovered_tiles: return False
         self.active_set.attach_tracks_to_tiles(hovered_tiles)
         self.track_box.track_sets.remove(self.active_set)
+        return True
+    
+    def trigger_powerup_on_board(self):
+        tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
+        if not tile: return False
+        self.board.trigger_powerup(self.active_powerup, tile)
         return True
 
 
