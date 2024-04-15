@@ -37,6 +37,7 @@ class SFX:
     pickup = pygame.mixer.Sound('sfx/pickup.mp3')
     tick = pygame.mixer.Sound('sfx/tick.mp3')
     theme_song = 'sfx/theme_song.mp3'
+    explosion = pygame.mixer.Sound('sfx/explosion.mp3')
 
 # Mixer
 SFX.metal_move.set_volume(0.2)
