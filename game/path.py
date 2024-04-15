@@ -343,6 +343,10 @@ class Path:
 
     # Rendering
     def draw(self, game_surf):
-        
         for cart in self.train:
             cart.draw(game_surf)
+        
+        col, row = self.start
+        self.board_tiles[row][col].draw_attached(game_surf)
+        col, row = self.end
+        self.board_tiles[row][col].draw_attached(game_surf)
