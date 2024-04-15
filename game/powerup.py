@@ -10,7 +10,7 @@ class Powerup: # Generic class
         self.sprite = self.type['sprite']
         self.dimensions = self.type['dimensions']
 
-        x, y = pos
+        x, y = pos[0] + 7, pos[1] - 7
         w, h = self.dimensions
         self.rect = pygame.Rect(x, y, w, h)
     

@@ -244,7 +244,7 @@ class Game:
         
         
     def render(self):
-        self.game_surf.fill(Colors.dark_gray)
+        self.game_surf.fill(Colors.sky_blue)
         self.board.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
 

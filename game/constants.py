@@ -60,6 +60,9 @@ class Images:
     grass_map = pygame.image.load('images/button_images/grass_mapbutton.png').convert_alpha()
     mapmenu_img = pygame.image.load('images/button_images/MAPS.png').convert_alpha()
 
+class Toolbox:
+    toolbox_sprite = pygame.image.load('images/toolbox_images/toolbox_sprite.png').convert_alpha()
+
 class TrackSprites:
     horizontal = pygame.image.load('images/track_images/horizontal_track.png').convert_alpha()
     vertical = pygame.image.load('images/track_images/vertical_track.png').convert_alpha()
