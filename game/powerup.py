@@ -41,6 +41,6 @@ PowerUpTypes = { # Actual config
         'effected attachments': [], # Empty to effect all
 
         # Type specific
-        'blast radius': 2
+        'blast radius': 1
     },
 }

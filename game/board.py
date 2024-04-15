@@ -1,6 +1,7 @@
 # The board holding and controlling the tiles
 import random
 import pygame
+from itertools import product
 from constants import *
 from tile import Tile
 from obstacle import Obstacle
@@ -23,8 +24,13 @@ class Board:
 
         # Create tiles
         self.tiles = self.create_grid(grid_layout)
+        self.tile_indexes = {}
+        for i, row in enumerate(self.tiles):
+            for j, tile in enumerate(row):
+                self.tile_indexes[f'{tile}'] = (i, j)
 
         self.highlighted_tiles = []
+        self.highlight_color = Colors.green
         self.paths = []
 
         # Start levels
@@ -108,8 +114,49 @@ class Board:
     
 
     # Extra Board Logic
+    def get_tiles_in_radius(self, radius, tile):
+        row, col = self.tile_indexes[f'{tile}']
+        tiles = [tile]
+
+        # Circle bomb blast
+        def spread_coords(coord, r):
+            x, y = coord
+            if 0 <= x+1 < self.cols: 
+                tiles.append(self.tiles[x+1][y])
+                if r < radius: spread_coords((x+1, y), r+1)
+            if 0 <= x-1 < self.cols: 
+                tiles.append(self.tiles[x-1][y])
+                if r < radius: spread_coords((x-1, y), r+1)
+            if 0 <= y+1 < self.rows: 
+                tiles.append(self.tiles[x][y+1])
+                if r < radius: spread_coords((x, y+1), r+1)
+            if 0 <= y-1 < self.rows: 
+                tiles.append(self.tiles[x][y-1])
+                if r < radius: spread_coords((x, y-1), r+1)
+        
+        spread_coords((row, col), 1)
+        return tiles
+
+        # Square bomb blast
+        # radius_squared = radius ** 2
+        # for x, y in product(range(-radius, radius + 1), repeat=2):
+        #     if x ** 2 + y ** 2 < radius_squared:
+        #         tile_x, tile_y = x + row, y + col
+        #         if 0 <= tile_x < self.cols and 0 <= tile_y < self.rows:
+        #             tiles.append(self.tiles[tile_x][tile_y])
+        # return tiles
+    
+    def highlight_bomb_tiles(self, powerup, tile):
+        tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile)
+        self.highlight(tiles_to_highlight)
+    
     def trigger_powerup(self, powerup, tile):
-        print('powerup activated!')
+        if powerup.type_name == 'bomb':
+            print('bomb activated!')
+            for tile in self.highlighted_tiles:
+                tile.attached = None
+
+            self.unhighlight()
 
     def unhighlight(self):
         for tile in self.highlighted_tiles:
@@ -173,7 +220,7 @@ class Board:
                 if not tile.highlighted: continue
 
                 highlight_surf = pygame.Surface((TRACK_WIDTH,TRACK_HEIGHT), pygame.SRCALPHA)
-                r, g, b = Colors.green
+                r, g, b = self.highlight_color
                 highlight_surf.fill((r,g,b,128))
                 game_surf.blit(highlight_surf, tile.rect.topleft)
     

@@ -177,7 +177,6 @@ class Path:
         self.total_cart = 5
         self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / self.train[0].speed
         self.timer = self.time
-        print(self.time)
 
 
     # Update
@@ -221,7 +220,6 @@ class Path:
             if self.train[0].speed == .15:
                 self.timer *= (.15/2.0)
                 self.time *= .15/2.0
-                print(self.time)
 
             for train_instance in self.train:
                 train_instance.speed = 2.0
@@ -343,6 +341,10 @@ class Path:
 
     # Rendering
     def draw(self, game_surf):
-        
         for cart in self.train:
             cart.draw(game_surf)
+        
+        col, row = self.start
+        self.board_tiles[row][col].draw_attached(game_surf)
+        col, row = self.end
+        self.board_tiles[row][col].draw_attached(game_surf)
