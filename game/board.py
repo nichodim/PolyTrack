@@ -157,14 +157,14 @@ class Board:
     
     def trigger_powerup(self, powerup, tile, game_surf):
         if powerup.type_name == 'bomb':
-            print('bomb activated!')
+            # Start explosion animation
+            new_center = (tile.rect.center[0], tile.rect.center[1])
+            self.animate_explosion(new_center, game_surf)
+
             for tile in self.highlighted_tiles:
                 tile.attached = None
 
             self.unhighlight()
-            new_center = (tile.rect.center[0] + 50, tile.rect.center[1])
-            # Start explosion animation
-            self.animate_explosion(new_center, game_surf)
 
     def animate_explosion(self, position, game_surf):
         for image in self.explosion_images:
