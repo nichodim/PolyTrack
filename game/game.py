@@ -235,7 +235,7 @@ class Game:
     def trigger_powerup_on_board(self):
         tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
         if not tile: return False
-        self.board.trigger_powerup(self.active_powerup, tile)
+        self.board.trigger_powerup(self.active_powerup, tile, self.game_surf)
         self.track_box.generate_powerup() # TODO create different powerup spawning system
         return True
 

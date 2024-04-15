@@ -101,6 +101,17 @@ class TrainSprites:
 class PowerupSprites:
     bomb = pygame.image.load('images/powerup_images/bomb.png').convert_alpha()
     bomb_lit = pygame.image.load('images/powerup_images/bomb_lit.png').convert_alpha()
+    explosion_images = [
+        pygame.image.load('images/powerup_images/bomb1.png'),
+        pygame.image.load('images/powerup_images/bomb2.png'),
+        pygame.image.load('images/powerup_images/bomb3.png'),
+        pygame.image.load('images/powerup_images/bomb4.png'),
+        pygame.image.load('images/powerup_images/bomb5.png'),
+        pygame.image.load('images/powerup_images/bomb6.png'),
+        pygame.image.load('images/powerup_images/bomb7.png'),
+        pygame.image.load('images/powerup_images/bomb8.png'),
+        pygame.image.load('images/powerup_images/bomb9.png')
+    ]
 
 class Colors:
     black = (0, 0, 0)

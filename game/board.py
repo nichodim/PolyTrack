@@ -33,6 +33,12 @@ class Board:
         self.highlight_color = Colors.green
         self.paths = []
 
+        # Load explosion images
+        self.explosion_images = PowerupSprites.explosion_images
+        self.explosion_index = 0
+        self.explosion_rect = pygame.Rect(0, 0, 0, 0)
+        self.explosion_animation_speed = 40
+
         # Start levels
         self.level, self.round = -1, -1
         self.new_round()
@@ -53,7 +59,7 @@ class Board:
         for row in grid_layout:
             tile_x = OUTER_GAP
             row_list = []
-            
+
             for col in row:
                 tile_rect = pygame.Rect(self.rect.left + tile_x, row_y, TRACK_WIDTH, TRACK_HEIGHT)
                 row_list.append(Tile(tile_rect, col))
@@ -111,7 +117,6 @@ class Board:
             grid_dimensions = (self.rows, self.cols)
         )
         self.paths.append(new_path)
-    
 
     # Extra Board Logic
     def get_tiles_in_radius(self, radius, tile):
@@ -150,13 +155,27 @@ class Board:
         tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile)
         self.highlight(tiles_to_highlight)
     
-    def trigger_powerup(self, powerup, tile):
+    def trigger_powerup(self, powerup, tile, game_surf):
         if powerup.type_name == 'bomb':
             print('bomb activated!')
             for tile in self.highlighted_tiles:
                 tile.attached = None
 
             self.unhighlight()
+            new_center = (tile.rect.center[0] + 50, tile.rect.center[1])
+            # Start explosion animation
+            self.animate_explosion(new_center, game_surf)
+
+    def animate_explosion(self, position, game_surf):
+        for image in self.explosion_images:
+            self.explosion_rect = image.get_rect(center=position)
+
+            game_surf.blit(image, self.explosion_rect)
+            pygame.display.flip()
+
+            pygame.time.delay(self.explosion_animation_speed)
+
+        self.explosion_index = 0
 
     def unhighlight(self):
         for tile in self.highlighted_tiles:
@@ -199,10 +218,9 @@ class Board:
         if len(self.paths) == 0: self.new_round()
     
     def update(self):
-        # for trian
+        # for train
         for path in self.paths:
             path.update()
-
 
     # Rendering
     def draw(self, game_surf):
