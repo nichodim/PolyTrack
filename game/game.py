@@ -92,7 +92,9 @@ class Game:
     def handle_mouse_down(self, event):
         # Activates powerup if possible
         activated = self.activate_powerup(event)
-        if activated: return
+        if activated: 
+            self.board.highlight_color = Colors.red
+            return
 
         # Otherwise, activates track set if possible
         activated = self.activate_set(event)
@@ -100,6 +102,7 @@ class Game:
             self.active_set == None
             self.active_track_and_index == None
         self.track_box.handle_spawn_button()
+        self.board.highlight_color = Colors.green
 
     def handle_mouse_up(self):
         def clear_active_set():

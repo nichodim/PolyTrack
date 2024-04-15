@@ -30,7 +30,7 @@ class Board:
                 self.tile_indexes[f'{tile}'] = (i, j)
 
         self.highlighted_tiles = []
-        self.highlight_color = Colors.red
+        self.highlight_color = Colors.green
         self.paths = []
 
         # Start levels
