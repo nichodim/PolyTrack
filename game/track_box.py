@@ -38,7 +38,7 @@ class Trackbox:
     
     def generate_powerup(self):
         x, y = self.rect.bottomleft
-        powerup = Powerup((x, y - 50), 'bomb')
+        powerup = Powerup((x, y - 50), 'bomb') # Pretty random, temp spawn point
         self.powerups.append(powerup)
 
     def find_precise_pos_of_tracks(self):

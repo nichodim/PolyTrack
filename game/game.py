@@ -154,10 +154,10 @@ class Game:
     def handle_mouse_motion(self, event):
         if self.active_set != None:
             self.active_set.move(event.rel)
-            self.try_highlight_tiles()
+            self.try_highlight_tiles_by_set()
         elif self.active_powerup != None:
             self.active_powerup.move(event.rel)
-            # self.try_highlight_tiles()
+            self.highlight_tiles_by_powerup()
 
     def handle_r_down(self):
         if self.active_set and self.active_track_and_index: 
@@ -171,7 +171,7 @@ class Game:
             track_index = self.active_track_and_index[1]
             self.active_track_and_index = (self.active_set.tracks[track_index], track_index)
 
-            self.try_highlight_tiles()
+            self.try_highlight_tiles_by_set()
 
     def handle_p_down(self):
         if self.active_set: return
@@ -195,12 +195,21 @@ class Game:
     
 
     # Game logic between components
-    def try_highlight_tiles(self):
+    def try_highlight_tiles_by_set(self):
         tiles = self.find_open_tiles_under_tracks()
         if not tiles: 
             self.board.unhighlight()
             return
         self.board.highlight(tiles)
+    
+    def highlight_tiles_by_powerup(self):
+        tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
+        if not tile: 
+            self.board.unhighlight()
+            return
+
+        if self.active_powerup.type_name == 'bomb':
+            self.board.highlight_bomb_tiles(self.active_powerup, tile)
 
     def find_open_tiles_under_tracks(self):
         track_positions = self.active_set.find_pos_of_tracks()
@@ -224,6 +233,7 @@ class Game:
         tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
         if not tile: return False
         self.board.trigger_powerup(self.active_powerup, tile)
+        self.track_box.generate_powerup() # TODO create different powerup spawning system
         return True
 
 
