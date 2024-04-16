@@ -162,7 +162,10 @@ class Board:
             self.animate_explosion(new_center, game_surf)
 
             for tile in self.highlighted_tiles:
-                tile.attached = None
+                everything_effected = len(powerup.type['effected attachments']) == 0
+                is_effected = tile.attached.__class__.__name__ in powerup.type['effected attachments']
+                if everything_effected or is_effected:
+                    tile.attached = None
 
             self.unhighlight()
 
@@ -231,17 +234,25 @@ class Board:
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
 
+    def draw_highlight(self, tile, game_surf):
+        if not tile.highlighted: return
+
+        highlight_surf = pygame.Surface((TRACK_WIDTH,TRACK_HEIGHT), pygame.SRCALPHA)
+        r, g, b = self.highlight_color
+        highlight_surf.fill((r,g,b,128))
+        game_surf.blit(highlight_surf, tile.rect.topleft)
+
     def draw_tiles(self, game_surf):
         for row in self.tiles:
             for tile in row:
                 tile.draw_attached(game_surf)
-                if not tile.highlighted: continue
-
-                highlight_surf = pygame.Surface((TRACK_WIDTH,TRACK_HEIGHT), pygame.SRCALPHA)
-                r, g, b = self.highlight_color
-                highlight_surf.fill((r,g,b,128))
-                game_surf.blit(highlight_surf, tile.rect.topleft)
+                self.draw_highlight(tile, game_surf)
     
     def draw_paths(self, game_surf):
         for path in self.paths:
             path.draw(game_surf)
+
+            # Rerender highlight for station tiles
+            rerendered_tiles = [path.start_station_tile, path.end_station_tile]
+            for tile in rerendered_tiles:
+                self.draw_highlight(tile, game_surf)

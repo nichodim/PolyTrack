@@ -119,7 +119,12 @@ class Path:
         )
         self.board_tiles[end[1]][end[0]].attached = self.end_station
         
+        # Save stations and locations
         self.start, self.end = start, end
+        col, row = start
+        self.start_station_tile = self.board_tiles[row][col]
+        col, row = end
+        self.end_station_tile = self.board_tiles[row][col]
     
     # Tracks that spawn next to the station based on orientation
     def create_station_tracks(self):
@@ -344,7 +349,5 @@ class Path:
         for cart in self.train:
             cart.draw(game_surf)
         
-        col, row = self.start
-        self.board_tiles[row][col].draw_attached(game_surf)
-        col, row = self.end
-        self.board_tiles[row][col].draw_attached(game_surf)
+        self.start_station_tile.draw_attached(game_surf)
+        self.end_station_tile.draw_attached(game_surf)
