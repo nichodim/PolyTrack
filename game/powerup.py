@@ -37,10 +37,19 @@ PowerUpTypes = { # Actual config
     'bomb': {
         # Generic definitions
         'dimensions': (50, 50),
-        'sprite': PowerupSprites.bomb_lit,
+        'sprite': PowerupSprites.bomb,
         'effected attachments': ['Obstacle', 'Track'], # Empty to effect all
 
         # Type specific
         'blast radius': 1
+    },
+    'bigbomb': {
+        # Generic definitions
+        'dimensions': (50, 50),
+        'sprite': PowerupSprites.bomb_lit,
+        'effected attachments': ['Obstacle', 'Track'], # Empty to effect all
+
+        # Type specific
+        'blast radius': 2
     },
 }

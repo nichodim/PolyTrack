@@ -4,7 +4,7 @@ import random
 import pygame
 from constants import *
 from button_toggle import ButtonToggle
-from powerup import Powerup
+from powerup import Powerup, PowerUpTypes
 from track_set_spawner import TrackSetSpawner
 from track_set import TrackSet
 from track_set_types import *
@@ -40,7 +40,9 @@ class Trackbox:
 
     def generate_powerup(self):
         x, y = self.rect.bottomleft
-        powerup = Powerup((x, y - 50), 'bomb') # Pretty random, temp spawn point
+
+        powerup_type_name = random.choice(list(PowerUpTypes.keys()))
+        powerup = Powerup((x, y - 50), powerup_type_name) # Pretty random, temp spawn point
         self.powerups.append(powerup)
 
     def find_precise_pos_of_tracks(self):

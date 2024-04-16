@@ -156,7 +156,7 @@ class Board:
         self.highlight(tiles_to_highlight)
     
     def trigger_powerup(self, powerup, tile, game_surf):
-        if powerup.type_name == 'bomb':
+        if powerup.type_name == 'bomb' or powerup.type_name == 'bigbomb':
             # Start explosion animation
             new_center = (tile.rect.center[0], tile.rect.center[1])
             self.animate_explosion(new_center, game_surf)

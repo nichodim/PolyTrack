@@ -211,7 +211,7 @@ class Game:
             self.board.unhighlight()
             return
 
-        if self.active_powerup.type_name == 'bomb':
+        if self.active_powerup.type_name == 'bomb' or self.active_powerup.type_name == 'bigbomb':
             self.board.highlight_bomb_tiles(self.active_powerup, tile)
 
     def find_open_tiles_under_tracks(self):
