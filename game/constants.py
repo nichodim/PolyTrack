@@ -78,6 +78,7 @@ class TerrainSprites: # temp sprites, change out
     grass = pygame.image.load('images/tile_assets/grass_tiles/grass.png').convert_alpha()
     tallgrass = pygame.image.load('images/tile_assets/grass_tiles/tallgrass.png').convert_alpha()
     water = pygame.image.load('images/placeholders/blue.png').convert_alpha()
+    ice = pygame.image.load('images/placeholders/light_blue.png').convert_alpha()
 
 class ObstacleSprites:
     rock = pygame.image.load('images/obstacle_images/rock.png').convert_alpha()

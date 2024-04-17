@@ -10,6 +10,7 @@ class Train:
         data = TrainTypes[type]
         self.board_rect = board_rect
         self.image, self.speed = data['image'], data['speed']
+        self.default_speed = data['speed']
         self.direction, self.degree = "forward", degree
         self.current_tile = start
 

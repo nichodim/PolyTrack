@@ -29,8 +29,11 @@ class Board:
             for j, tile in enumerate(row):
                 self.tile_indexes[f'{tile}'] = (i, j)
 
+        # Create highlighting
         self.highlighted_tiles = []
         self.highlight_color = Colors.green
+
+        # Creatre path boilerplate
         self.paths = []
 
         # Load explosion images
@@ -43,12 +46,9 @@ class Board:
         self.level, self.round = -1, -1
         self.new_round()
 
-    def set_f_pressed(self, value):
-        self.f_pressed = value
-    
-    def update_path_f_pressed(self, value):
+    def toggle_fast_forward(self, active):
         for path in self.paths:
-            path.set_f_pressed(value)
+            path.toggle_speed_multiplier('fast_forward', active)
 
     # Board Creation
     def create_grid(self, grid_layout):

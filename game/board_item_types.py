@@ -7,7 +7,8 @@ from track_set_types import *
 TerrainTypes = {
     'grass': TerrainSprites.grass,
     'tallgrass': TerrainSprites.tallgrass,
-    'water': TerrainSprites.water
+    'water': TerrainSprites.water, 
+    'ice': TerrainSprites.ice
 }
 
 TrackTypes = [vertical, horizontal, left, right, ileft, iright]
@@ -26,11 +27,21 @@ SpawnObstacles = [
 
 TrainTypes = {
     'default': {
-        'image': TrainSprites.red_train,
-        'speed': 0.15
+        'image': TrainSprites.red_train, 
+        'speed': 0.15,
     }, 
     'bullet': {
         'image': TrainSprites.gray_cargo,
-        'speed': 0.25
+        'speed': 0.25,
     }
+}
+TrainSpeed_Multipliers = {
+    'fast_forward': {
+        'multiplier': 8, 
+        'active': False
+    }, 
+    # 'ice': {
+    #     'multiplier': 0.9, 
+    #     'active': False
+    # }
 }

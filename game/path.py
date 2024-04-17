@@ -1,5 +1,6 @@
 import math
 import random
+import copy
 import pygame
 import track_set_types
 from constants import *
@@ -7,9 +8,10 @@ from station import Station
 from track import Track
 from train import Train
 from obstacle import Obstacle
+from board_item_types import TrainSpeed_Multipliers
 
 class Path:
-    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, f_pressed=False):
+    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions):
         # Prevents updates on nonexisting game objects
         self.path_initated = False
 
@@ -19,16 +21,12 @@ class Path:
         self.end_call = end_call
         self.train_type = train_type
         self.grid_rows, self.grid_cols = grid_dimensions
-        self.f_pressed = f_pressed
+        self.speed_multipliers = copy.deepcopy(TrainSpeed_Multipliers)
 
         # Create path objects
         self.create_stations()
         self.create_station_tracks()
         self.create_train()
-        
-
-    def set_f_pressed(self, value):
-        self.f_pressed = value
         
     # Creates start and end stations and saves their locations
     # start and end arent positions but are actually tile locatons (col, row)
@@ -170,7 +168,7 @@ class Path:
         # build the head for the train
         self.train.append(
             Train(
-                type = 'default', 
+                type = self.train_type, 
                 board_rect = self.board_rect,
                 degree = starting_orient, 
                 start = self.start,
@@ -182,6 +180,35 @@ class Path:
         self.total_cart = 5
         self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / self.train[0].speed
         self.timer = self.time
+
+    def toggle_speed_multiplier(self, type, active):
+        print(self.speed_multipliers['fast_forward']['active'])
+        
+        multiplier = self.speed_multipliers[type]['multiplier']
+        already_active = self.speed_multipliers[type]['active']
+        cart = self.train[0]
+
+        if active == already_active: return
+
+        if active: # activate
+            # adjust the timer and time it takes for a new cart to spawn according to change in speed
+            new_speed = cart.speed * multiplier
+            self.timer *= (cart.speed/new_speed)
+            self.time *= cart.speed/new_speed
+
+            for train_instance in self.train:
+                train_instance.speed = new_speed
+        else: # deactivate
+            # adjust the timer and time it takes for a new cart to spawn according to change in speed 
+            new_speed = cart.speed / multiplier
+            self.timer *= cart.speed/new_speed
+            self.time = (pygame.Surface.get_width(cart.surface) + 5) / new_speed
+
+            for train_instance in self.train:
+                train_instance.speed = new_speed
+        
+        self.speed_multipliers[type]['active'] = active
+        print(self.train[0].speed)
 
 
     # Update
@@ -202,43 +229,22 @@ class Path:
                 if self.total_cart == 1:
                     self.train.append(
                         Train(
-                            type = 'default', 
+                            type = self.train_type, 
                             board_rect = self.board_rect,
                             degree = starting_orient, 
                             start = self.start,
                             relative_position = "tail"
                         )
                     )
-
                 else:
                     self.train.append(
                         Train(
-                            type = 'default', 
+                            type = self.train_type, 
                             board_rect = self.board_rect,
                             degree = starting_orient, 
                             start = self.start
                         )
                     )
-        
-        if self.f_pressed:
-            # adjust the timer and time it takes for a new cart to spawn according to change in speed
-            if self.train[0].speed == .15:
-                self.timer *= (.15/2.0)
-                self.time *= .15/2.0
-
-            for train_instance in self.train:
-                train_instance.speed = 2.0
-            
-                
-        else:
-            # adjust the timer and time it takes for a new cart to spawn according to change in speed 
-            if self.train[0].speed != .15:
-                self.timer *= 2.0/.15
-                self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / .15
-
-            for train_instance in self.train:
-                train_instance.speed = .15
-
 
     # Continusly called: checks what to do based on new tiles
     def check(self, cart):
@@ -301,11 +307,15 @@ class Path:
             if isinstance(attached_item, Obstacle): return (False, 'train crash into obstacle')
 
             if cart.direction == "forward" and not isinstance(attached_item, Station):
-                new_direction = attached_item.directions[int(cart.degree % 360 / 90)]            
-                
-            else:
-                return (True, 'turning')
+                new_direction = attached_item.directions[int(cart.degree % 360 / 90)]             
+            else: return (True, 'turning')
             if new_direction == 'crash': return (False, 'direction found was not correct for train')
+
+            # print(tile.terrain)
+            # if tile.terrain == 'ice':
+            #     if cart.default_speed == cart.speed:
+            #         cart.speed *= 2
+            # else: cart.speed = cart.default_speed
 
             cart.direction = new_direction
             cart.current_tile = (center_x, center_y)

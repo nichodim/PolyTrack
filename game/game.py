@@ -15,7 +15,6 @@ class Game:
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
 
-        self.f_pressed = False
         self.paused = False
 
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
@@ -49,14 +48,9 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.unicode == 'r': self.handle_r_down()
                 if event.unicode == 'p': self.handle_p_down()
-                if event.unicode == 'f':
-                    self.board.set_f_pressed(True)
-                    self.board.update_path_f_pressed(True)
-                    
+                if event.unicode == 'f': self.board.toggle_fast_forward(True)  
             elif event.type == pygame.KEYUP:
-                if event.unicode == 'f':
-                    self.board.set_f_pressed(False)
-                    self.board.update_path_f_pressed(False)
+                if event.unicode == 'f': self.board.toggle_fast_forward(False)
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
