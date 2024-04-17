@@ -180,35 +180,40 @@ class Path:
         self.total_cart = 5
         self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / self.train[0].speed
         self.timer = self.time
+        #print("time =", self.time)
 
-    def toggle_speed_multiplier(self, type, active):
-        print(self.speed_multipliers['fast_forward']['active'])
-        
-        multiplier = self.speed_multipliers[type]['multiplier']
-        already_active = self.speed_multipliers[type]['active']
+    def toggle_speed_multiplier(self, type, active = None):
+        #print(self.speed_multipliers['fast_forward']['active'])
+
+        # Modified by Kelvin Huang on 4/16/2024
         cart = self.train[0]
+        new_speed = cart.speed
 
-        if active == already_active: return
+        if not (active == None):
+            multiplier = self.speed_multipliers[type]['multiplier']
+            already_active = self.speed_multipliers[type]['active']
+            
+            if active == already_active: 
+                if not (type == 'ice'): print("type =", type, "speed", cart.speed)
 
-        if active: # activate
-            # adjust the timer and time it takes for a new cart to spawn according to change in speed
-            new_speed = cart.speed * multiplier
-            self.timer *= (cart.speed/new_speed)
-            self.time *= cart.speed/new_speed
+            elif active: # activate
+                # adjust the timer and time it takes for a new cart to spawn according to change in speed
+                new_speed = cart.speed * multiplier
+                
+            else: # deactivate
+                # adjust the timer and time it takes for a new cart to spawn according to change in speed 
+                new_speed = cart.speed / multiplier
 
-            for train_instance in self.train:
-                train_instance.speed = new_speed
-        else: # deactivate
-            # adjust the timer and time it takes for a new cart to spawn according to change in speed 
-            new_speed = cart.speed / multiplier
-            self.timer *= cart.speed/new_speed
-            self.time = (pygame.Surface.get_width(cart.surface) + 5) / new_speed
+            self.speed_multipliers[type]['active'] = active
 
-            for train_instance in self.train:
-                train_instance.speed = new_speed
+        self.timer *= (cart.speed/new_speed)
+        self.time *= (cart.speed/new_speed)
+
+        for train_instance in self.train:
+            train_instance.speed = new_speed
         
-        self.speed_multipliers[type]['active'] = active
-        print(self.train[0].speed)
+        
+        #print(self.train[0].speed)
 
 
     # Update
@@ -233,7 +238,8 @@ class Path:
                             board_rect = self.board_rect,
                             degree = starting_orient, 
                             start = self.start,
-                            relative_position = "tail"
+                            relative_position = "tail",
+                            speed = self.train[0].speed
                         )
                     )
                 else:
@@ -242,7 +248,8 @@ class Path:
                             type = self.train_type, 
                             board_rect = self.board_rect,
                             degree = starting_orient, 
-                            start = self.start
+                            start = self.start,
+                            speed = self.train[0].speed
                         )
                     )
 
@@ -311,10 +318,11 @@ class Path:
             else: return (True, 'turning')
             if new_direction == 'crash': return (False, 'direction found was not correct for train')
 
-            print(tile.terrain)
+            #print(tile.terrain)
             if tile.terrain == 'ice':
                 self.toggle_speed_multiplier('ice', True)
             else: self.toggle_speed_multiplier('ice', False)
+            self.toggle_speed_multiplier("fast_forward")
 
             cart.direction = new_direction
             cart.current_tile = (center_x, center_y)

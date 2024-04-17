@@ -6,11 +6,16 @@ from board_item_types import TrainTypes
 import math
 
 class Train:
-    def __init__(self, type, board_rect, degree, start, relative_position = "body"):
+    def __init__(self, type, board_rect, degree, start, relative_position = "body", speed = 'default'):
         data = TrainTypes[type]
         self.board_rect = board_rect
-        self.image, self.speed = data['image'], data['speed']
+        self.image = data['image']
+
+        if speed == 'default': self.speed = data['speed']
+        else: self.speed = speed
+
         self.default_speed = data['speed']
+        
         self.direction, self.degree = "forward", degree
         self.current_tile = start
 
