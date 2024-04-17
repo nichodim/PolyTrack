@@ -20,7 +20,7 @@ df, bul = 'default', 'bullet'
 
 # Maps
 VanillaMap = {
-    'type': 'vanilla',
+    'type': 'frozen',
     'board': [ # map of board terrain
         [t,t,t,g,i,i,i,i,g,g], 
         [g,g,g,g,g,i,i,i,g,g], 
@@ -39,6 +39,12 @@ VanillaMap = {
     ],
     'levels': [
         { # level
+            'obstacle_range': (3, 4),
+            'rounds': [
+                [df, df], [df], [df, df]
+            ]
+        }, 
+        {
             'obstacle_range': (3, 4),
             'rounds': [
                 [df, df], [df], [df, df]

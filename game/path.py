@@ -311,11 +311,10 @@ class Path:
             else: return (True, 'turning')
             if new_direction == 'crash': return (False, 'direction found was not correct for train')
 
-            # print(tile.terrain)
-            # if tile.terrain == 'ice':
-            #     if cart.default_speed == cart.speed:
-            #         cart.speed *= 2
-            # else: cart.speed = cart.default_speed
+            print(tile.terrain)
+            if tile.terrain == 'ice':
+                self.toggle_speed_multiplier('ice', True)
+            else: self.toggle_speed_multiplier('ice', False)
 
             cart.direction = new_direction
             cart.current_tile = (center_x, center_y)

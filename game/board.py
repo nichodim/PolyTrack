@@ -46,10 +46,6 @@ class Board:
         self.level, self.round = -1, -1
         self.new_round()
 
-    def toggle_fast_forward(self, active):
-        for path in self.paths:
-            path.toggle_speed_multiplier('fast_forward', active)
-
     # Board Creation
     def create_grid(self, grid_layout):
         tiles = []
@@ -86,6 +82,8 @@ class Board:
             for row in self.tiles:
                 for tile in row:
                     tile.attached = None
+                    if self.type == 'frozen' and tile.terrain == 'water':
+                        tile.terrain = 'ice'
             
             # Generate new obstacles
             obstacle_range = self.levels[self.level]['obstacle_range']
@@ -117,6 +115,10 @@ class Board:
             grid_dimensions = (self.rows, self.cols)
         )
         self.paths.append(new_path)
+    
+    def toggle_fast_forward(self, active):
+        for path in self.paths:
+            path.toggle_speed_multiplier('fast_forward', active)
 
     # Extra Board Logic
     def get_tiles_in_radius(self, radius, tile):
@@ -162,6 +164,8 @@ class Board:
             self.animate_explosion(new_center, game_surf)
 
             for tile in self.highlighted_tiles:
+                if tile.terrain == 'ice': tile.terrain = 'water'
+
                 everything_effected = len(powerup.type['effected attachments']) == 0
                 is_effected = tile.attached.__class__.__name__ in powerup.type['effected attachments']
                 if everything_effected or is_effected:
