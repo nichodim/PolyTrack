@@ -36,7 +36,7 @@ class Game:
             # Events allowed when paused
             if self.paused: 
                 if event.type == pygame.KEYDOWN:
-                    if event.unicode == 'p': self.handle_p_down()
+                    if event.unicode == ' ': self.handle_space_down()
                 return
             
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -47,7 +47,7 @@ class Game:
                 self.handle_mouse_motion(event)
             elif event.type == pygame.KEYDOWN:
                 if event.unicode == 'r': self.handle_r_down()
-                if event.unicode == 'p': self.handle_p_down()
+                if event.unicode == ' ': self.handle_space_down()
                 if event.unicode == 'f': self.board.toggle_fast_forward(True)  
             elif event.type == pygame.KEYUP:
                 if event.unicode == 'f': self.board.toggle_fast_forward(False)
@@ -170,7 +170,7 @@ class Game:
 
             self.try_highlight_tiles_by_set()
 
-    def handle_p_down(self):
+    def handle_space_down(self):
         if self.active_set: return
         self.paused = not self.paused
 
