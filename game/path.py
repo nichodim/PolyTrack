@@ -182,29 +182,27 @@ class Path:
         self.timer = self.time
         #print("time =", self.time)
 
-    def toggle_speed_multiplier(self, type, active = None):
+    def toggle_speed_multiplier(self, type, active):
         #print(self.speed_multipliers['fast_forward']['active'])
 
         # Modified by Kelvin Huang on 4/16/2024
         cart = self.train[0]
         new_speed = cart.speed
 
-        if not (active == None):
-            multiplier = self.speed_multipliers[type]['multiplier']
-            already_active = self.speed_multipliers[type]['active']
+        multiplier = self.speed_multipliers[type]['multiplier']
+        already_active = self.speed_multipliers[type]['active']
+        
+        if active == already_active: 
+            return
+        if active: # activate
+            # adjust the timer and time it takes for a new cart to spawn according to change in speed
+            new_speed = cart.speed * multiplier
             
-            if active == already_active: 
-                if not (type == 'ice'): print("type =", type, "speed", cart.speed)
+        else: # deactivate
+            # adjust the timer and time it takes for a new cart to spawn according to change in speed 
+            new_speed = cart.speed / multiplier
 
-            elif active: # activate
-                # adjust the timer and time it takes for a new cart to spawn according to change in speed
-                new_speed = cart.speed * multiplier
-                
-            else: # deactivate
-                # adjust the timer and time it takes for a new cart to spawn according to change in speed 
-                new_speed = cart.speed / multiplier
-
-            self.speed_multipliers[type]['active'] = active
+        self.speed_multipliers[type]['active'] = active
 
         self.timer *= (cart.speed/new_speed)
         self.time *= (cart.speed/new_speed)
@@ -322,7 +320,6 @@ class Path:
             if tile.terrain == 'ice':
                 self.toggle_speed_multiplier('ice', True)
             else: self.toggle_speed_multiplier('ice', False)
-            self.toggle_speed_multiplier("fast_forward")
 
             cart.direction = new_direction
             cart.current_tile = (center_x, center_y)
