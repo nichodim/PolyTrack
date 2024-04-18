@@ -8,7 +8,8 @@ TerrainTypes = {
     'grass': TerrainSprites.grass,
     'tallgrass': TerrainSprites.tallgrass,
     'water': TerrainSprites.water, 
-    'ice': TerrainSprites.ice
+    'ice': TerrainSprites.ice,
+    'snow': TerrainSprites.snow
 }
 
 TrackTypes = [vertical, horizontal, left, right, ileft, iright]

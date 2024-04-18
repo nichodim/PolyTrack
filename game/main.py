@@ -76,6 +76,7 @@ def map_menu():  # Give it its own file at a later date
     map_button_radius = Images.mapmenu_img.get_width() * 2 / 2
     grass_map = Button(button_x - button_radius, 400, Images.grass_map, image_scale)
     snow_map = Button(2 * button_x - button_radius, 400, Images.snow_map, image_scale)
+    snow_mapL = Button(3 * button_x - button_radius, 400, Images.snow_map_large, image_scale)
     map_img = Button(2 * button_x - map_button_radius, 100, Images.mapmenu_img, 2)
     
 
@@ -84,12 +85,20 @@ def map_menu():  # Give it its own file at a later date
         main_surf.fill(Colors.sky_blue)
         grass_map.draw(main_surf)
         snow_map.draw(main_surf)
+        snow_mapL.draw(main_surf)
         map_img.draw(main_surf)
+        
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if grass_map.clicked():
                     game = Game(maps.VanillaMap)
+                    game.run()
+                if snow_map.clicked():
+                    game = Game(maps.SnowMap)
+                    game.run()
+                if snow_mapL.clicked():
+                    game = Game(maps.SnowMapL)
                     game.run()
 
         pygame.display.update() 
