@@ -302,8 +302,7 @@ class Path:
             attached_item = tile.attached
 
             # check if train is on the board and on a tile and not within the gaps
-            valid_index = (0 <= center_y <= self.grid_cols - 1) and (0 <= center_x <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x, cart.y) 
-            
+            valid_index = (0 <= center_x <= self.grid_cols - 1) and (0 <= center_y <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x, cart.y) 
 
             if not valid_index: return (True, 'invalid location')            
             
