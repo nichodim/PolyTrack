@@ -129,6 +129,7 @@ class Path:
         start_orient = self.start_station.orientation
         self.start_x = int(round(self.start[0] + math.cos(math.radians(start_orient)), 1))
         self.start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
+        print(self.start_x, self.start_y)
         self.create_station_track((self.start_x, self.start_y), start_orient)
 
         '''
@@ -151,11 +152,12 @@ class Path:
         if location[0] == 0 or location[1] == 0 or deg == 90 or deg == 180:
             possible_tracks.remove(track_set_types.ileft)
 
-        if location[0] == self.grid_rows - 1 or location[1] == self.grid_rows - 1 or deg == 0 or deg == 270:
+        if location[0] == self.grid_cols - 1 or location[1] == self.grid_rows - 1 or deg == 0 or deg == 270:
             possible_tracks.remove(track_set_types.right)
-        if location[0] == self.grid_rows - 1 or location[1] == 0 or deg == 0 or deg == 90:
+        if location[0] == self.grid_cols - 1 or location[1] == 0 or deg == 0 or deg == 90:
             possible_tracks.remove(track_set_types.iright)
         
+        print(location[0], location[1])
         track_rect = pygame.Rect(self.board_tiles[location[1]][location[0]].rect.left, self.board_tiles[location[1]][location[0]].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
         track = Track(track_rect, possible_tracks[random.randint(0, len(possible_tracks) - 1)])
         self.board_tiles[location[1]][location[0]].attached = track
@@ -275,8 +277,9 @@ class Path:
 
         # Only cares to end game if train reaches end station
         def find_if_under_station():
-            tile = self.board_tiles[center_y][center_x]
-            valid_index = (0 <= back_y <= self.grid_cols - 1) and (0 <= back_x <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            tile = self.board_tiles[back_y][back_x]
+            valid_index = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1) and tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            
             if not valid_index: return
 
             attached_item = self.board_tiles[back_y][back_x].attached
@@ -334,12 +337,12 @@ class Path:
         orient = [0, 90, 180, 270]
         if location[0] == 0:
             orient.remove(180)
-        if location[0] == self.grid_rows - 1:
+        if location[0] == self.grid_cols - 1:
             orient.remove(0)
 
         if location[1] == 0:
             orient.remove(90)
-        if location[1] == self.grid_cols - 1:
+        if location[1] == self.grid_rows - 1:
             orient.remove(270)
 
         return orient[random.randint(0, len(orient) - 1)]
@@ -351,7 +354,6 @@ class Path:
         self.board_tiles[row][col].attached = None
         col, row = self.end
         self.board_tiles[row][col].attached = None
-
 
         self.board_tiles[self.start_y][self.start_x].attached = None
         # delete train
