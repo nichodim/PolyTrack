@@ -14,7 +14,7 @@ class Board:
         self.type, self.obstacles, self.levels = map['type'], map['obstacles'], map['levels']
         self.rows, self.cols = len(grid_layout), len(grid_layout[0])
         self.end_call, self.complete_map = end_call, complete_map
-
+        
         # Create board
         board_width = self.cols * TRACK_WIDTH + INNER_GAP * (self.cols - 1) + OUTER_GAP * 2
         board_height = self.rows * TRACK_HEIGHT + INNER_GAP * (self.rows - 1) + OUTER_GAP * 2
@@ -127,17 +127,19 @@ class Board:
 
         # Circle bomb blast
         def spread_coords(coord, r):
+            # Modified By Kelvin Huang, 4/18/2024
+            # Fixed issue where large board crash on the last row
             x, y = coord
-            if 0 <= x+1 < self.cols: 
+            if 0 <= x+1 < self.rows: 
                 tiles.append(self.tiles[x+1][y])
                 if r < radius: spread_coords((x+1, y), r+1)
-            if 0 <= x-1 < self.cols: 
+            if 0 <= x-1 < self.rows: 
                 tiles.append(self.tiles[x-1][y])
                 if r < radius: spread_coords((x-1, y), r+1)
-            if 0 <= y+1 < self.rows: 
+            if 0 <= y+1 < self.cols: 
                 tiles.append(self.tiles[x][y+1])
                 if r < radius: spread_coords((x, y+1), r+1)
-            if 0 <= y-1 < self.rows: 
+            if 0 <= y-1 < self.cols: 
                 tiles.append(self.tiles[x][y-1])
                 if r < radius: spread_coords((x, y-1), r+1)
         
