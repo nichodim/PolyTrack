@@ -6,6 +6,7 @@ from constants import *
 from tile import Tile
 from obstacle import Obstacle
 from path import Path
+from weather import Weather
 
 class Board:
     def __init__(self, map, end_call, complete_map):
@@ -41,6 +42,9 @@ class Board:
         self.explosion_index = 0
         self.explosion_rect = pygame.Rect(0, 0, 0, 0)
         self.explosion_animation_speed = 40
+
+        # weather
+        self.weather = Weather("rain")
 
         # Start levels
         self.level, self.round = -1, -1
@@ -230,12 +234,14 @@ class Board:
         # for train
         for path in self.paths:
             path.update()
+        self.weather.update()
 
     # Rendering
     def draw(self, game_surf):
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
         self.draw_paths(game_surf)
+        self.weather.draw(game_surf)
         
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
