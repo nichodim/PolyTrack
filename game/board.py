@@ -44,7 +44,7 @@ class Board:
         self.explosion_animation_speed = 40
 
         # weather
-        self.weather = Weather("rain")
+        self.weather = Weather("snow", direction="left", degree=45)
 
         # Start levels
         self.level, self.round = -1, -1
