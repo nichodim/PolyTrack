@@ -1,4 +1,7 @@
-# Written by Kelvin Huang
+# Written by Kelvin Huang, April 21, 2024
+# Lay out foundation of this class and created weather for rain and snow with features to change
+# speed of particle, degree of particle, direction in which particle is coming from, frequency of particle, duration of weather event, and an option for gradual increase and decrease in percentage of particle spawning
+
 import pygame 
 import random
 import math
@@ -12,13 +15,16 @@ class Weather:
         self.speed = speed
         self.degree = degree
         self.direction = direction
-
+        
         self.timer = 0
         self.duration = duration * 60
         self.gradual = gradual
 
         if self.type == "snow" or self.type == "rain":
+            # set up list of particles for weather type rain and snow
             self.particles = []
+
+            # set up initial parameter of spawn
             if direction == "left":
                 self.spawn = [-math.tan(degree * math.pi/180) * GAME_HEIGHT, 0]
             elif direction == "right":
@@ -28,6 +34,7 @@ class Weather:
 
     def update(self):
         if self.timer < self.duration and (self.type == "snow" or self.type == "rain"):
+            # gradual increase the range of spawn
             if self.direction == "left" and self.spawn[1] < GAME_WIDTH:
                 self.spawn[1] += 1
             elif self.direction == "right" and self.spawn[0] > 0:
@@ -38,10 +45,12 @@ class Weather:
         self.move()
         self.timer += 1
 
+        # when the weather is over and there is no particles del this object
         if self.timer > self.duration and len(self.particles) == 0:
             self.stop()
 
     def spawn_new_particles(self):
+        # control weather if the weather is going to gradual increase/decrease or not
         if self.gradual == True:
             # equations that I made up to stimulate what will the probability be if it increase and decrease gradually
             # link to desmos page: https://www.desmos.com/calculator/mxu2syamzy for the two graths
@@ -60,16 +69,19 @@ class Weather:
             else:
                 self.particles.append(Wparticles(self.type ,self.speed, -self.degree, position))
 
+    # moved each particles
     def move(self):
         if self.type == "snow" or self.type == "rain":
             for particle in self.particles:
                 particle.move()
 
+    # draw particles objects
     def draw(self, game_surf):
         if self.type == "snow" or self.type == "rain":
             for particle in self.particles:
                 particle.draw(game_surf)
-    
+
+    # delete this object when event is over
     def stop(self):
         del self
         
