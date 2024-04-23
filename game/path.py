@@ -24,10 +24,19 @@ class Path:
         self.speed_multipliers = copy.deepcopy(TrainSpeed_Multipliers)
 
         # Create path objects
+        self.tiles_under = []
         self.create_stations()
         self.create_station_tracks()
         self.create_train()
-        
+    
+    def add_tile_under(self, tile):
+        if tile in self.tiles_under: return
+        self.tiles_under.append(tile)
+        tile.under_path = self
+    def remove_tile_under(self, tile):
+        self.tiles_under.remove(tile)
+        tile.under_path = None
+
     # Creates start and end stations and saves their locations
     # start and end arent positions but are actually tile locatons (col, row)
     def create_stations(self):
@@ -123,6 +132,9 @@ class Path:
         self.start_station_tile = self.board_tiles[row][col]
         col, row = end
         self.end_station_tile = self.board_tiles[row][col]
+
+        self.add_tile_under(self.start_station_tile)
+        self.add_tile_under(self.end_station_tile)
     
     # Tracks that spawn next to the station based on orientation
     def create_station_tracks(self):
@@ -300,14 +312,12 @@ class Path:
             if (center_x, center_y) == cart.current_tile: 
                 return (True, 'same tile')
 
-            tile = self.board_tiles[center_y][center_x]
-            #if tile == self.current_tile: return (True, 'still on same tile')
-            attached_item = tile.attached
-
             # check if train is on the board and on a tile and not within the gaps
             valid_index = (0 <= center_x <= self.grid_cols - 1) and (0 <= center_y <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x, cart.y) 
+            if not valid_index: return (True, 'invalid location')   
 
-            if not valid_index: return (True, 'invalid location')            
+            tile = self.board_tiles[center_y][center_x]
+            attached_item = tile.attached         
             
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
@@ -325,8 +335,9 @@ class Path:
 
             cart.direction = new_direction
             cart.current_tile = (center_x, center_y)
-            #self.current_tile = self.board_tiles[center_y][center_x]
-            return(True, 'found new track direction')
+
+            self.add_tile_under(self.board_tiles[center_y][center_x])
+            return (True, 'found new track direction')
 
         still_fine, condition = find_new_direction()
         if not still_fine: 
@@ -352,8 +363,10 @@ class Path:
         # delete stations
         col, row = self.start
         self.board_tiles[row][col].attached = None
+        self.board_tiles[row][col].under_path = None
         col, row = self.end
         self.board_tiles[row][col].attached = None
+        self.board_tiles[row][col].under_path = None
 
         self.board_tiles[self.start_y][self.start_x].attached = None
         # delete train
