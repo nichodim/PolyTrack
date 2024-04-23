@@ -28,7 +28,7 @@ SpawnObstacles = [
 
 TrainTypes = {
     'default': {
-        'image': TrainSprites.red_train, 
+        'image': TrainSprites.propane_cargo,
         'speed': 0.15,
     }, 
     'bullet': {

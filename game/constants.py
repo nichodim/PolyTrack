@@ -97,8 +97,8 @@ class TrainSprites:
     gray_cargo = pygame.image.load('images/train_images/gray_cargo.png').convert_alpha()
     red_cargo = pygame.image.load('images/train_images/red_cargo.png').convert_alpha()
     blue_cargo = pygame.image.load('images/train_images/blue_cargo.png').convert_alpha()
-    rock_cargo = pygame.image.load('images/train_images/rock_cargo.png').convert_alpha()
-    propane_cargo = pygame.image.load('images/train_images/propane_cargo.png').convert_alpha()
+    rock_cargo = pygame.image.load('images/train_images/old_train_images/rock_cargo.png').convert_alpha()
+    propane_cargo = pygame.image.load('images/train_images/nuclear_cargo.png').convert_alpha()
     random_train_choice = ([red_train, gray_cargo, red_cargo, blue_cargo, rock_cargo, propane_cargo])
 
 class PowerupSprites:
