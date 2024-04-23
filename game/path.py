@@ -289,10 +289,12 @@ class Path:
 
         # Only cares to end game if train reaches end station
         def find_if_under_station():
-            valid_index = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1) and tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            valid_index = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1)
             if not valid_index: return
 
             tile = self.board_tiles[back_y][back_x]
+            train_under_tile = tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            if not train_under_tile: return
 
             attached_item = self.board_tiles[back_y][back_x].attached
             if attached_item != self.end_station: return
@@ -313,11 +315,13 @@ class Path:
                 return (True, 'same tile')
 
             # check if train is on the board and on a tile and not within the gaps
-            valid_index = (0 <= center_x <= self.grid_cols - 1) and (0 <= center_y <= self.grid_rows - 1) and tile.rect.collidepoint(cart.x, cart.y) 
+            valid_index = (0 <= center_x <= self.grid_cols - 1) and (0 <= center_y <= self.grid_rows - 1) 
             if not valid_index: return (True, 'invalid location')   
 
             tile = self.board_tiles[center_y][center_x]
-            attached_item = tile.attached         
+            attached_item = tile.attached      
+            train_under_tile = tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            if not train_under_tile: return (True, 'train not under tile')
             
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
