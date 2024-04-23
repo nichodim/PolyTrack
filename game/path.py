@@ -289,10 +289,10 @@ class Path:
 
         # Only cares to end game if train reaches end station
         def find_if_under_station():
-            tile = self.board_tiles[back_y][back_x]
             valid_index = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1) and tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
-            
             if not valid_index: return
+
+            tile = self.board_tiles[back_y][back_x]
 
             attached_item = self.board_tiles[back_y][back_x].attached
             if attached_item != self.end_station: return
