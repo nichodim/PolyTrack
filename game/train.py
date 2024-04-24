@@ -6,7 +6,7 @@ from board_item_types import TrainTypes
 import math
 
 class Train:
-    def __init__(self, type, board_rect, degree, start, relative_position = "body", speed = 'default'):
+    def __init__(self, type, board_rect, degree, start, speed = 'default'):
         data = TrainTypes[type]
         self.board_rect = board_rect
         self.image = data['image']
@@ -24,9 +24,6 @@ class Train:
         self.surface.set_colorkey(Colors.white)
         self.image = pygame.transform.smoothscale(self.image, [60 * (TRACK_WIDTH/50), 48 * (TRACK_HEIGHT/50)])
         self.surface.blit(self.image, (0,0))
-
-
-        self.relative_position = relative_position
         
         self.set_pos(start)
 
@@ -80,6 +77,7 @@ class Train:
     # Rendering
     def draw(self, game_surf):
         y_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.cos(math.radians(self.degree)))
+        x_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.sin(math.radians(self.degree)))
 
         self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y + y_correction))
         game_surf.blit(self.rotate, self.rotate_rect)
