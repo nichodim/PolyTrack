@@ -63,7 +63,7 @@ def main():
         # Check for end event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit()
+                pygame.quit()
         pygame.display.update()        
     pygame.mixer.music.stop()
 
@@ -100,6 +100,9 @@ def map_menu():  # Give it its own file at a later date
                 if snow_mapL.clicked():
                     game = Game(maps.SnowMapL)
                     game.run()
+                
+        
+
 
         pygame.display.update() 
 

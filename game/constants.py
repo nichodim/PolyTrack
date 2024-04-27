@@ -58,8 +58,13 @@ class Images:
     quit_pause_img = pygame.image.load('images/button_images/quit_button.png').convert_alpha()
     quit_pause_hover_img = pygame.image.load('images/button_images/quit_pause_hover.png').convert_alpha()
     snow_map = pygame.image.load('images/button_images/snow_mapbutton.png').convert_alpha()
-    snow_map_large = pygame.image.load('images/placeholders/snow_map_L.png').convert_alpha()
+    snow_map_large = pygame.image.load('images/button_images/snow_map_L.png').convert_alpha()
+    snow_map_medium = pygame.image.load('images/button_images/snow_map_medium.png').convert_alpha()
+    snow_map_small = pygame.image.load('images/button_images/snow_map_small.png').convert_alpha()
     grass_map = pygame.image.load('images/button_images/grass_mapbutton.png').convert_alpha()
+    grass_map_small = pygame.image.load('images/button_images/grass_map_small.png').convert_alpha()
+    grass_map_medium = pygame.image.load('images/button_images/grass_map_medium.png').convert_alpha()
+    grass_map_large = pygame.image.load('images/button_images/grass_map_large.png').convert_alpha()
     mapmenu_img = pygame.image.load('images/button_images/MAPS.png').convert_alpha()
 
 class Toolbox:
