@@ -19,7 +19,7 @@ g, t, w, i, s = 'grass', 'tallgrass', 'water', 'ice', 'snow'
 df, bul = 'default', 'bullet'
 
 # Maps
-VanillaMap = {
+GrassMapSmall = {
     'type': 'vanilla',
     'board': [ # map of board terrain
         [t,t,t,g,g,g,t,g,g,g], 
@@ -49,11 +49,72 @@ VanillaMap = {
             'rounds': [
                 [df], [df, df], [df], [df, df], [df, df]
             ]
-        }
+        },
+        {},
+        {},
+        {},
     ]
 }
 
-SnowMap = {
+GrassMapMedium = {
+    'type': 'vanilla',
+    'board': [
+        [g,g,g,w,w,w,w,w,g,g,g,g,g,g,g],
+        [g,g,g,g,g,w,w,g,g,g,t,g,g,g,g],
+        [g,g,g,g,g,g,g,g,g,g,g,t,t,t,g],
+        [g,g,g,g,g,g,g,g,g,g,g,g,t,t,g],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g],
+        [g,g,g,g,t,g,g,g,g,g,g,g,g,g,g],
+        [g,g,g,t,t,g,g,g,g,g,g,g,g,g,g],
+        [g,g,t,t,g,g,g,g,g,g,g,g,g,g,g],
+        [w,w,w,g,g,g,g,g,g,w,w,w,g,g,g],
+        [w,w,w,w,g,g,g,g,w,w,w,w,w,g,g],
+    ],
+
+    'obstacles': [
+        'woodshack', 'sandrock', 'sadrock', "rock", 'tree'
+    ],
+
+    'levels': {
+        {},
+        {},
+        {},
+        {},
+        {},
+    }
+
+}
+
+GrassMapLarge = {
+    'type': 'vanilla',
+    'board': [
+        [g,g,g,g,g,w,w,w,w,w,w,g,g,g,g,g,w,w,w,w],
+        [g,g,g,g,g,g,g,w,w,w,g,g,g,g,g,g,w,w,w,w],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w,w],
+        [w,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w,g],
+        [w,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w,g],
+        [w,w,w,w,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,g],
+        [w,w,w,w,w,g,g,g,g,g,g,w,w,g,g,g,g,g,g,g],
+        [w,w,w,w,w,g,g,g,g,w,w,w,w,g,g,g,g,g,g,g],
+        [w,w,w,w,w,g,g,g,w,w,w,w,w,w,g,g,g,g,g,g],
+    ],
+
+    'obstacles': [
+        'woodshack', 'sandrock', 'sadrock', "rock", 'tree'
+    ],
+
+    'levels': [
+        {},
+        {},
+        {},
+        {},
+        {},
+    ]
+
+}
+SnowMapSmall = {
     'type': 'snowy',
     'board': [
         [i,i,s,s,s,s,s,s,s,i],
@@ -84,11 +145,42 @@ SnowMap = {
             'rounds': [
                 [bul], [bul], [bul, df], [bul, df], [bul, df]
             ]
-        }
+        },
+        {},
+        {},
+        {}
     ]
 }
 
-SnowMapL = {  # BREAKS THE GAME
+SnowMapMedium = {
+        'type': 'snowy',
+    'board' : [
+        [w,w,w,w,s,s,s,i,i,i,i,i,s,s,s],
+        [w,w,w,w,s,s,s,i,i,i,i,i,s,s,s],
+        [s,s,s,w,w,s,s,s,s,i,i,s,s,s,s],
+        [s,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [s,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [i,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [i,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [i,i,s,s,s,s,s,s,s,s,s,i,s,s,s],
+        [i,i,i,s,s,s,s,s,s,s,i,i,i,s,s],
+        [i,i,i,s,s,s,s,s,i,i,i,i,i,s,s],
+    ],
+
+    'obstacles': [
+        'woodshack', 'sadrock', 'sandrock'
+    ],
+
+    'levels':[
+        {},
+        {},
+        {},
+        {},
+        {},
+    ]
+}
+
+SnowMapL = {  
         'type': 'snowy', 
     'board': [
         [i,i,i,i,s,s,s,s,s,s,s,s,s,i,i,i,i,i,i,i,],
@@ -120,6 +212,9 @@ SnowMapL = {  # BREAKS THE GAME
             'rounds': [
                 [bul], [bul], [bul, df], [bul, df], [bul, df]
             ]
-        }
+        },
+        {},
+        {},
+        {},
     ]
 }
