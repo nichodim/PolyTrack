@@ -66,6 +66,7 @@ class Images:
     grass_map_medium = pygame.image.load('images/button_images/grass_map_medium.png').convert_alpha()
     grass_map_large = pygame.image.load('images/button_images/grass_map_large.png').convert_alpha()
     mapmenu_img = pygame.image.load('images/button_images/MAPS.png').convert_alpha()
+    select_size_img = pygame.image.load('images/button_images/select_map_size.png').convert_alpha()
 
 class Toolbox:
     toolbox_sprite = pygame.image.load('images/toolbox_images/toolbox_sprite.png').convert_alpha()

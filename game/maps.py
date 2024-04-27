@@ -91,7 +91,7 @@ GrassMapMedium = {
         'woodshack', 'sandrock', 'sadrock', "rock", 'tree'
     ],
 
-    'levels': {
+    'levels': [
         {
             'obstacle_range': (5,7),
             'rounds': [
@@ -122,7 +122,7 @@ GrassMapMedium = {
                 [bul], [df, bul], [df, df], [bul, bul], [bul, bul]
             ]
         },
-    }
+    ]
 
 }
 
@@ -256,7 +256,7 @@ SnowMapMedium = {
         'woodshack', 'sadrock', 'sandrock'
     ],
 
-    'levels': {
+    'levels': [
         {
             'obstacle_range': (5,7),
             'rounds': [
@@ -287,10 +287,10 @@ SnowMapMedium = {
                 [bul], [df, bul], [df, df], [bul, bul], [bul, bul]
             ]
         },
-    }
+    ]
 }
 
-SnowMapL = {  
+SnowMapLarge = {  
         'type': 'snowy', 
     'board': [
         [i,i,i,i,s,s,s,s,s,s,s,s,s,i,i,i,i,i,i,i,],
