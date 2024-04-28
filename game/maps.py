@@ -20,7 +20,7 @@ df, bul = 'default', 'bullet'
 map_types = ['vanilla', 'frozen'] # Make sure to use these for types
 
 # Maps
-VanillaMap = {
+GrassMapSmall = {
     'type': 'vanilla',
     'board': [ # map of board terrain
         [t,t,t,g,g,g,t,g,g,g], 
@@ -42,7 +42,7 @@ VanillaMap = {
         { # level
             'obstacle_range': (3, 4),
             'rounds': [
-                [df, df], [df], [df, df]
+                [df, df], [df], [df, df], [df, df], [bul]
             ]
         }, 
         {
@@ -50,11 +50,142 @@ VanillaMap = {
             'rounds': [
                 [df], [df, df], [df], [df, df], [df, df]
             ]
-        }
+        },
+        {
+            'obstacle_range': (7, 8),
+            'rounds': [
+                [df, df], [df], [df, df], [df, df], [bul]
+            ]
+        },
+        {
+            'obstacle_range': (7, 8),
+            'rounds': [
+                [df], [df, df], [df], [df, df], [df, df]
+            ]
+        },
+        {
+            'obstacle_range': (9, 10),
+            'rounds': [
+                [bul], [df, bul], [df, df], [bul, bul], [bul, bul]
+            ]
+
+        },
     ]
 }
 
-SnowMap = {
+GrassMapMedium = {
+    'type': 'vanilla',
+    'board': [
+        [g,g,g,w,w,w,w,w,g,g,g,g,g,g,g],
+        [g,g,g,g,g,w,w,g,g,g,t,g,g,g,g],
+        [g,g,g,g,g,g,g,g,g,g,g,t,t,t,g],
+        [g,g,g,g,g,g,g,g,g,g,g,g,t,t,g],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g],
+        [g,g,g,g,t,g,g,g,g,g,g,g,g,g,g],
+        [g,g,g,t,t,g,g,g,g,g,g,g,g,g,g],
+        [g,g,t,t,g,g,g,g,g,g,g,g,g,g,g],
+        [w,w,w,g,g,g,g,g,g,w,w,w,g,g,g],
+        [w,w,w,w,g,g,g,g,w,w,w,w,w,g,g],
+    ],
+
+    'obstacles': [
+        'woodshack', 'sandrock', 'sadrock', "rock", 'tree'
+    ],
+
+    'levels': [
+        {
+            'obstacle_range': (5,7),
+            'rounds': [
+                [df, df], [df], [df, df], [df, df], [bul]
+            ]
+        },
+        {
+            'obstacle_range': (8, 9),
+            'rounds': [
+                [df], [df, df], [df], [df, df], [df, df]
+            ]
+        },
+        {
+            'obstacle_range': (10, 12),
+            'rounds': [
+                [df, df], [df], [df, df], [df, df], [bul]
+            ]
+        },
+        {
+            'obstacle_range': (12, 14),
+            'rounds': [
+                [df], [df, df], [df], [df, df], [df, df]
+            ]
+        },
+        {
+            'obstacle_range': (14, 15),
+            'rounds': [
+                [bul], [df, bul], [df, df], [bul, bul], [bul, bul]
+            ]
+        },
+    ]
+
+}
+
+GrassMapLarge = {
+    'type': 'vanilla',
+    'board': [
+        [g,g,g,g,g,w,w,w,w,w,w,g,g,g,g,g,w,w,w,w],
+        [g,g,g,g,g,g,g,w,w,w,g,g,g,g,g,g,w,w,w,w],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w],
+        [g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w,w],
+        [w,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w,g],
+        [w,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,w,g],
+        [w,w,w,w,g,g,g,g,g,g,g,g,g,g,g,g,g,w,w,g],
+        [w,w,w,w,w,g,g,g,g,g,g,w,w,g,g,g,g,g,g,g],
+        [w,w,w,w,w,g,g,g,g,w,w,w,w,g,g,g,g,g,g,g],
+        [w,w,w,w,w,g,g,g,w,w,w,w,w,w,g,g,g,g,g,g],
+    ],
+
+    'obstacles': [
+        'woodshack', 'sandrock', 'sadrock', "rock", 'tree'
+    ],
+
+    'levels': [
+        {
+            'obstacle_range': (10, 14),
+            'rounds': [
+                [df], [df], [df, df], [df, df], [bul]
+            ]
+        },
+
+        {
+            'obstacle_range': (8, 12),
+            'rounds': [
+                [bul], [bul], [bul, df], [bul, df], [bul, df]
+            ]
+        },
+
+        {
+            'obstacle_range': (12, 14),
+            'rounds': [
+                [df, bul], [df, bul], [df, df, bul], [df, df, bul], [bul, bul]
+            ]
+        },
+
+        {
+            'obstacle_range': (12, 14),
+            'rounds': [
+                [df, bul], [df, bul], [df, df, bul], [df, df, bul], [bul, bul]
+            ]
+        },
+        {
+            'obstacle_range': (5, 15),
+            'rounds': [
+                [bul], [bul, bul], [df, bul, bul], [df, bul, bul], [bul, bul, bul]
+            ]
+        },
+    ]
+}
+
+
+SnowMapSmall = {
     'type': 'frozen',
     'board': [
         [i,i,s,s,s,s,s,s,s,i],
@@ -73,23 +204,95 @@ SnowMap = {
         'woodshack', 'sadrock', 'sandrock'
     ],
 
-    'levels':[
-        {
-            'obstacle_range': (5, 7),
+    'levels': [
+        { # level
+            'obstacle_range': (3, 4),
             'rounds': [
-                [df], [df], [df, df], [df, df], [df, df, df]
+                [df, df], [df], [df, df], [df, df], [bul]
             ]
-        },
+        }, 
         {
             'obstacle_range': (4, 6),
             'rounds': [
-                [bul], [bul], [bul, df], [bul, df], [bul, df]
+                [df], [df, df], [df], [df, df], [df, df]
             ]
-        }
+        },
+        {
+            'obstacle_range': (7, 8),
+            'rounds': [
+                [df, df], [df], [df, df], [df, df], [bul]
+            ]
+        },
+        {
+            'obstacle_range': (7, 8),
+            'rounds': [
+                [df], [df, df], [df], [df, df], [df, df]
+            ]
+        },
+        {
+            'obstacle_range': (9, 10),
+            'rounds': [
+                [bul], [df, bul], [df, df], [bul, bul], [bul, bul]
+            ]
+
+        },
     ]
 }
 
-SnowMapL = {  # BREAKS THE GAME
+SnowMapMedium = {
+    'type': 'frozen',
+    'board' : [
+        [w,w,w,w,s,s,s,i,i,i,i,i,s,s,s],
+        [w,w,w,w,s,s,s,i,i,i,i,i,s,s,s],
+        [s,s,s,w,w,s,s,s,s,i,i,s,s,s,s],
+        [s,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [s,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [i,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [i,s,s,s,s,s,s,s,s,s,s,s,s,s,s],
+        [i,i,s,s,s,s,s,s,s,s,s,i,s,s,s],
+        [i,i,i,s,s,s,s,s,s,s,i,i,i,s,s],
+        [i,i,i,s,s,s,s,s,i,i,i,i,i,s,s],
+    ],
+
+    'obstacles': [
+        'woodshack', 'sadrock', 'sandrock'
+    ],
+
+    'levels': [
+        {
+            'obstacle_range': (5,7),
+            'rounds': [
+                [df, df], [df], [df, df], [df, df], [bul]
+            ]
+        },
+        {
+            'obstacle_range': (8, 9),
+            'rounds': [
+                [df], [df, df], [df], [df, df], [df, df]
+            ]
+        },
+        {
+            'obstacle_range': (10, 12),
+            'rounds': [
+                [df, df], [df], [df, df], [df, df], [bul]
+            ]
+        },
+        {
+            'obstacle_range': (12, 14),
+            'rounds': [
+                [df], [df, df], [df], [df, df], [df, df]
+            ]
+        },
+        {
+            'obstacle_range': (14, 15),
+            'rounds': [
+                [bul], [df, bul], [df, df], [bul, bul], [bul, bul]
+            ]
+        },
+    ]
+}
+
+SnowMapLarge = {  
     'type': 'frozen', 
     'board': [
         [i,i,i,i,s,s,s,s,s,s,s,s,s,i,i,i,i,i,i,i,],
@@ -116,11 +319,32 @@ SnowMapL = {  # BREAKS THE GAME
                 [df], [df], [df, df], [df, df], [bul]
             ]
         },
+
         {
             'obstacle_range': (8, 12),
             'rounds': [
                 [bul], [bul], [bul, df], [bul, df], [bul, df]
             ]
-        }
+        },
+
+        {
+            'obstacle_range': (12, 14),
+            'rounds': [
+                [df, bul], [df, bul], [df, df, bul], [df, df, bul], [bul, bul]
+            ]
+        },
+
+        {
+            'obstacle_range': (12, 14),
+            'rounds': [
+                [df, bul], [df, bul], [df, df, bul], [df, df, bul], [bul, bul]
+            ]
+        },
+        {
+            'obstacle_range': (5, 15),
+            'rounds': [
+                [bul], [bul, bul], [df, bul, bul], [df, bul, bul], [bul, bul, bul]
+            ]
+        },
     ]
 }

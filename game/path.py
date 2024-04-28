@@ -141,7 +141,6 @@ class Path:
         start_orient = self.start_station.orientation
         self.start_x = int(round(self.start[0] + math.cos(math.radians(start_orient)), 1))
         self.start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
-        print(self.start_x, self.start_y)
         self.create_station_track((self.start_x, self.start_y), start_orient)
 
         '''
@@ -169,7 +168,6 @@ class Path:
         if location[0] == self.grid_cols - 1 or location[1] == 0 or deg == 0 or deg == 90:
             possible_tracks.remove(track_set_types.iright)
         
-        print(location[0], location[1])
         track_rect = pygame.Rect(self.board_tiles[location[1]][location[0]].rect.left, self.board_tiles[location[1]][location[0]].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
         track = Track(track_rect, possible_tracks[random.randint(0, len(possible_tracks) - 1)])
         self.board_tiles[location[1]][location[0]].attached = track
@@ -185,13 +183,12 @@ class Path:
                 type = self.train_type, 
                 board_rect = self.board_rect,
                 degree = starting_orient, 
-                start = self.start,
-                relative_position = "head",
+                start = self.start
             )
         )
 
         # multiple cart
-        self.total_cart = 5
+        self.total_cart = 1
         self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / self.train[0].speed
         self.timer = self.time
         #print("time =", self.time)
@@ -223,10 +220,6 @@ class Path:
 
         for train_instance in self.train:
             train_instance.speed = new_speed
-        
-        
-        #print(self.train[0].speed)
-
 
     # Update
     def update(self):
@@ -242,28 +235,16 @@ class Path:
             if self.timer <= 0:
                 self.total_cart -= 1
                 self.timer = self.time
+                self.train.append(
+                    Train(
+                        type = self.train_type, 
+                        board_rect = self.board_rect,
+                        degree = starting_orient, 
+                        start = self.start,
+                        speed = self.train[0].speed
+                    )
+                )
 
-                if self.total_cart == 1:
-                    self.train.append(
-                        Train(
-                            type = self.train_type, 
-                            board_rect = self.board_rect,
-                            degree = starting_orient, 
-                            start = self.start,
-                            relative_position = "tail",
-                            speed = self.train[0].speed
-                        )
-                    )
-                else:
-                    self.train.append(
-                        Train(
-                            type = self.train_type, 
-                            board_rect = self.board_rect,
-                            degree = starting_orient, 
-                            start = self.start,
-                            speed = self.train[0].speed
-                        )
-                    )
 
     # Continusly called: checks what to do based on new tiles
     def check(self, cart):
@@ -289,44 +270,52 @@ class Path:
 
         # Only cares to end game if train reaches end station
         def find_if_under_station():
-            valid_index = (0 <= back_y <= self.grid_rows - 1) and (0 <= back_x <= self.grid_cols - 1)
-            if not valid_index: return
+            valid_index = (0 <= center_y <= self.grid_rows - 1) and (0 <= center_x <= self.grid_cols - 1)
+            if not valid_index: 
+                self.delate()
+                self.end_call(self, False)
+                return True
 
-            tile = self.board_tiles[back_y][back_x]
+            tile = self.board_tiles[center_y][center_x]
             train_under_tile = tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
-            if not train_under_tile: return
+            if not train_under_tile: return False
 
             attached_item = self.board_tiles[back_y][back_x].attached
-            if attached_item != self.end_station: return
+            if attached_item != self.end_station: return False
 
             #correct_direction = round(math.sin(math.radians(cart.degree + 180)), 5) == round(math.sin(math.radians(attached_item.orientation)), 5)
             #if not correct_direction: return
 
-            if cart.relative_position == "tail":
+            if len(self.train) == 1:
+                self.delate()
                 self.end_call(self, True)
+                return True
             else: 
                 self.train.remove(cart)
-        find_if_under_station()
+        
+        if find_if_under_station() == True: return
 
         # Checks next tile for direction
         # Also finds end conditions: True is a failure to find a direction that should not end the path
+        
         def find_new_direction():
             if (center_x, center_y) == cart.current_tile: 
                 return (True, 'same tile')
 
             # check if train is on the board and on a tile and not within the gaps
             valid_index = (0 <= center_x <= self.grid_cols - 1) and (0 <= center_y <= self.grid_rows - 1) 
-            if not valid_index: return (True, 'invalid location')   
+            if not valid_index: return (False, 'invalid location')   
 
             tile = self.board_tiles[center_y][center_x]
-            attached_item = tile.attached      
-            train_under_tile = tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            attached_item = tile.attached
+            train_under_tile = tile.rect.collidepoint(cart.x, cart.y)
             if not train_under_tile: return (True, 'train not under tile')
+            
             
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
             if isinstance(attached_item, Obstacle): return (False, 'train crash into obstacle')
-
+            
             if cart.direction == "forward" and not isinstance(attached_item, Station):
                 new_direction = attached_item.directions[int(cart.degree % 360 / 90)]             
             else: return (True, 'turning')
@@ -342,10 +331,13 @@ class Path:
 
             self.add_tile_under(self.board_tiles[center_y][center_x])
             return (True, 'found new track direction')
-
+        
         still_fine, condition = find_new_direction()
-        if not still_fine: 
+
+        if not still_fine:
+            self.delate()
             self.end_call(self, False)
+        
 
     # Dont look here
     def train_orient(self, location):
@@ -363,16 +355,18 @@ class Path:
         return orient[random.randint(0, len(orient) - 1)]
     
     # Deletion of path doesnt leave behind objects
-    def __del__(self):
+    def delate(self):
         # delete stations
         col, row = self.start
         self.board_tiles[row][col].attached = None
         self.board_tiles[row][col].under_path = None
+
         col, row = self.end
         self.board_tiles[row][col].attached = None
         self.board_tiles[row][col].under_path = None
 
         self.board_tiles[self.start_y][self.start_x].attached = None
+
         # delete train
         del self.train
 
