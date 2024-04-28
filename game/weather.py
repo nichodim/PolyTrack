@@ -2,6 +2,9 @@
 # Lay out foundation of this class and created weather for rain and snow with features to change
 # speed of particle, degree of particle, direction in which particle is coming from, frequency of particle, duration of weather event, and an option for gradual increase and decrease in percentage of particle spawning
 
+# Modified by Nicholas Seagal, April 28, 2024
+# Changed a little bit of variables
+
 import pygame 
 import random
 import math
@@ -11,7 +14,7 @@ from wparticles import Wparticles
 class Weather:
     types = ['snow', 'rain']
 
-    def __init__(self, type = "random", speed = 1, degree = 0, direction = "center", freq = .3, duration = -1, gradual = False):
+    def __init__(self, type = "random", speed = 1, degree = 0, direction = "center", freq = .3, duration = 10000, gradual = False):
         if type == 'random': self.type = random.choice(self.types)
         else: self.type = type
         self.freq = freq
@@ -20,8 +23,7 @@ class Weather:
         self.direction = direction
         
         self.timer = 0
-        if duration == -1: self.duration = 10000
-        else: self.duration = duration * 60
+        self.duration = duration * 60
         self.gradual = gradual
 
         self.is_falling_type = self.type == "snow" or self.type == "rain"
