@@ -3,11 +3,11 @@
 import pygame
 import sys
 import random
+import math
 from constants import *
 from board import Board
 from track_box import Trackbox
-from powerup import Powerup
-import math
+from powerup_menu import PowerupMenu
 from weather import Weather
 
 class Game:
@@ -19,13 +19,14 @@ class Game:
         self.paused = False
 
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
+
         self.track_box = Trackbox()
 
         self.active_set = None
         self.active_track_and_index = None
 
+        self.powerup_menu = PowerupMenu(self.track_box.rect)
         self.active_powerup = None
-        self.track_box.generate_powerup()
 
         self.lives = 50
         print('lives:', self.lives)
@@ -61,7 +62,7 @@ class Game:
                 self.quit_game()
 
     def activate_powerup(self, event):
-        self.active_powerup = self.track_box.find_powerup(event.pos)
+        self.active_powerup = self.powerup_menu.find_powerup(event.pos)
         if not self.active_powerup: return False
 
         SFX.metal_move.play() # TODO replace with proper sound
@@ -93,7 +94,7 @@ class Game:
         # Activates powerup if possible
         activated = self.activate_powerup(event)
         if activated: 
-            self.board.highlight_color = Colors.red
+            self.board.highlight_color = Colors.red # TODO make this dependant on powerup type
             return
 
         # Otherwise, activates track set if possible
@@ -118,15 +119,9 @@ class Game:
             if self.active_powerup == None: return
 
             board_triggered = self.trigger_powerup_on_board()
-            over_track_spawner = self.active_powerup.powerup_over_rect(self.track_box.spawner.rect)
-            over_track_box = self.active_powerup.powerup_over_rect(self.track_box.rect)
 
             if board_triggered: 
-                self.track_box.powerups.remove(self.active_powerup)
-                clear_active_powerup()
-                return
-
-            if over_track_box and not over_track_spawner:
+                self.powerup_menu.remove_powerup(self.active_powerup)
                 clear_active_powerup()
                 return
 
@@ -236,7 +231,6 @@ class Game:
         tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
         if not tile: return False
         self.board.trigger_powerup(self.active_powerup, tile, self.game_surf)
-        self.track_box.generate_powerup() # TODO create different powerup spawning system
         return True
 
 
@@ -260,6 +254,7 @@ class Game:
     def render(self):
         self.game_surf.fill(Colors.sky_blue)
         self.board.draw(self.game_surf)
+        self.powerup_menu.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
         if self.weather != None: self.weather.draw(self.game_surf)
 

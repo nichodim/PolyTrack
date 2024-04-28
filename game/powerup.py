@@ -1,7 +1,7 @@
 # Use [object].__class__.__name__ elsewhere to compare with effected attachments
 
 import pygame
-from constants import PowerupSprites
+from constants import Colors, PowerupSprites
 
 class Powerup: # Generic class
     def __init__(self, pos, type_name):
@@ -10,7 +10,7 @@ class Powerup: # Generic class
         self.sprite = self.type['sprite']
         self.dimensions = self.type['dimensions']
 
-        x, y = pos[0] + 7, pos[1] - 7
+        x, y = pos[0], pos[1]
         w, h = self.dimensions
         self.rect = pygame.Rect(x, y, w, h)
     

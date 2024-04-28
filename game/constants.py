@@ -10,8 +10,6 @@ GAME_HEIGHT = 900
 # Board config
 # Number of cols, rows has been depracated - determined by map
 OUTER_BORDER_SIZE = 150
-# NUM_ROWS = 10
-# NUM_COLS = 10
 INNER_GAP = 1
 OUTER_GAP = 35
 
@@ -21,6 +19,10 @@ TRACK_HEIGHT = 50
 TRACK_SEPERATION = TRACK_WIDTH * 2
 EXTRA_WIDTH = TRACK_WIDTH * 0.75
 EXTRA_HEIGHT = TRACK_HEIGHT / 2
+
+# Powerup menu config
+SLOT_WIDTH = 55
+SLOT_HEIGHT = 55
 
 main_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
 pygame.init()
@@ -108,6 +110,7 @@ class TrainSprites:
     random_train_choice = ([red_train, gray_cargo, red_cargo, blue_cargo, rock_cargo, propane_cargo])
 
 class PowerupSprites:
+    powerup_menu = pygame.image.load('images/powerup_images/powerup_menu.png').convert_alpha()
     bomb = pygame.image.load('images/powerup_images/bomb.png').convert_alpha()
     bomb_lit = pygame.image.load('images/powerup_images/bomb_lit.png').convert_alpha()
     explosion_images = [
