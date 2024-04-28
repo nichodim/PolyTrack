@@ -42,7 +42,7 @@ GrassMapSmall = {
         { # level
             'obstacle_range': (3, 4),
             'rounds': [
-                [df, df], [df], [df, df], [df, df], [bul]
+                [df], [df], [df, df], [df, df], [bul]
             ]
         }, 
         {
@@ -58,15 +58,9 @@ GrassMapSmall = {
             ]
         },
         {
-            'obstacle_range': (7, 8),
+            'obstacle_range': (35, 40),
             'rounds': [
-                [df], [df, df], [df], [df, df], [df, df]
-            ]
-        },
-        {
-            'obstacle_range': (16, 25),
-            'rounds': [
-                [df], [df], [df], [df], [df], [df, df]
+                [df], [df], [df], [df, df], [df], [bul]
             ]
         },
         {
