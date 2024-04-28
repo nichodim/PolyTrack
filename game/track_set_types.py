@@ -255,10 +255,11 @@ TrackSetTypes = {
 # Add multiple times to increase chances
 SpawnTracks = [
     TrackSetTypes['medstraight-1'], 
-    TrackSetTypes['medstraight-1'], 
+    TrackSetTypes['medstraight-2'], 
     TrackSetTypes['smallstraight-1'], 
     TrackSetTypes['smallstraight-2'], 
     TrackSetTypes['tinystraight-1'], 
+    TrackSetTypes['tinystraight-2'], 
 
     TrackSetTypes['leftturn-1'], 
     TrackSetTypes['leftturn-1'], 
