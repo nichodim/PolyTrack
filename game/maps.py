@@ -17,6 +17,7 @@ MapName = {
 from board_item_types import *
 g, t, w, i, s = 'grass', 'tallgrass', 'water', 'ice', 'snow'
 df, bul = 'default', 'bullet'
+map_types = ['vanilla', 'frozen'] # Make sure to use these for types
 
 # Maps
 VanillaMap = {
@@ -54,7 +55,7 @@ VanillaMap = {
 }
 
 SnowMap = {
-    'type': 'snowy',
+    'type': 'frozen',
     'board': [
         [i,i,s,s,s,s,s,s,s,i],
         [i,i,s,s,s,s,s,s,s,i],
@@ -89,7 +90,7 @@ SnowMap = {
 }
 
 SnowMapL = {  # BREAKS THE GAME
-        'type': 'snowy', 
+    'type': 'frozen', 
     'board': [
         [i,i,i,i,s,s,s,s,s,s,s,s,s,i,i,i,i,i,i,i,],
         [i,i,i,s,s,s,s,s,s,s,s,s,s,s,s,i,i,i,i,i,],

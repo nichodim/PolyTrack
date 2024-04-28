@@ -8,6 +8,7 @@ from board import Board
 from track_box import Trackbox
 from powerup import Powerup
 import math
+from weather import Weather
 
 class Game:
     def __init__(self, map):
@@ -28,6 +29,11 @@ class Game:
 
         self.lives = 50
         print('lives:', self.lives)
+
+        # Constant Particle Weather
+        # This implementation only accounts for constant weather on map types
+        self.weather = None
+        if map['type'] == "frozen": self.weather = Weather("snow", direction="left", degree=45)
 
 
     # Event control 
@@ -248,12 +254,14 @@ class Game:
 
     def update(self):
         self.board.update()
+        if self.weather != None: self.weather.update()
         
         
     def render(self):
         self.game_surf.fill(Colors.sky_blue)
         self.board.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
+        if self.weather != None: self.weather.draw(self.game_surf)
 
         # Paused render
         if self.paused:
@@ -325,7 +333,5 @@ class Game:
 
             elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
                 self.paused = False
-
-        pygame.display.update()
 
         pygame.display.update()

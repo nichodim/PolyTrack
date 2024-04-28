@@ -9,19 +9,24 @@ from constants import *
 from wparticles import Wparticles
 
 class Weather:
-    def __init__(self, type = "random", speed = 1, degree = 0, direction = "center", freq = .3, duration = 999, gradual = False):
-        self.type = type
+    types = ['snow', 'rain']
+
+    def __init__(self, type = "random", speed = 1, degree = 0, direction = "center", freq = .3, duration = -1, gradual = False):
+        if type == 'random': self.type = random.choice(self.types)
+        else: self.type = type
         self.freq = freq
         self.speed = speed
         self.degree = degree
         self.direction = direction
         
         self.timer = 0
-        self.duration = duration * 60
+        if duration == -1: self.duration = 10000
+        else: self.duration = duration * 60
         self.gradual = gradual
 
-        if self.type == "snow" or self.type == "rain":
-            # set up list of particles for weather type rain and snow
+        self.is_falling_type = self.type == "snow" or self.type == "rain"
+        if self.is_falling_type:
+            # set up list of particles for falling type
             self.particles = []
 
             # set up initial parameter of spawn
@@ -33,7 +38,7 @@ class Weather:
                 self.spawn = [0, GAME_WIDTH]
 
     def update(self):
-        if self.timer < self.duration and (self.type == "snow" or self.type == "rain"):
+        if self.timer < self.duration and self.is_falling_type:
             # gradual increase the range of spawn
             if self.direction == "left" and self.spawn[1] < GAME_WIDTH:
                 self.spawn[1] += 1
@@ -65,19 +70,19 @@ class Weather:
             start, end = self.spawn
             position = start + random.random() * (end - start)
             if self.direction == "left":
-                self.particles.append(Wparticles(self.type ,self.speed, self.degree, position))
+                self.particles.append(Wparticles(self.type, self.speed, self.degree, position))
             else:
-                self.particles.append(Wparticles(self.type ,self.speed, -self.degree, position))
+                self.particles.append(Wparticles(self.type, self.speed, -self.degree, position))
 
     # moved each particles
     def move(self):
-        if self.type == "snow" or self.type == "rain":
+        if self.is_falling_type:
             for particle in self.particles:
                 particle.move()
 
     # draw particles objects
     def draw(self, game_surf):
-        if self.type == "snow" or self.type == "rain":
+        if self.is_falling_type:
             for particle in self.particles:
                 particle.draw(game_surf)
 
