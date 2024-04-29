@@ -254,18 +254,15 @@ TrackSetTypes = {
 
 # Add multiple times to increase chances
 SpawnTracks = [
+    # Modified by Kelvin Huang, April 28, 2024
+    # removed tracks that are basically the same except in different rotation
+    # so that the new randomly generated track system feels more fair
+    
     TrackSetTypes['medstraight-1'], 
-    TrackSetTypes['medstraight-2'], 
     TrackSetTypes['smallstraight-1'], 
-    TrackSetTypes['smallstraight-2'], 
     TrackSetTypes['tinystraight-1'], 
-    TrackSetTypes['tinystraight-2'], 
 
     TrackSetTypes['leftturn-1'], 
-    TrackSetTypes['leftturn-1'], 
-    TrackSetTypes['rightturn-1'], 
-    TrackSetTypes['rightturn-1'], 
-    TrackSetTypes['smallturn-1'], 
     TrackSetTypes['smallturn-1'], 
 
     TrackSetTypes['u-1'], 
