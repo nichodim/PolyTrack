@@ -117,6 +117,19 @@ class Board:
         )
         self.paths.append(new_path)
     
+    # Path has returned end condition
+    # End condition is then passed up to board
+    # Be careful with update and deletion, can cause crashing
+    def path_call(self, path, condition):
+        path.remove_all_under() # added by Kelvin Huang, April 28, 2024 delete all reference to path
+        self.paths.remove(path)
+        del path
+
+        # Tell the game that the board has end condition
+        self.end_call(condition)
+
+        if len(self.paths) == 0: self.new_round()
+
     def toggle_fast_forward(self, active):
         for path in self.paths:
             path.toggle_speed_multiplier('fast_forward', active)
@@ -174,6 +187,12 @@ class Board:
                 if everything_effected or is_effected:
                     tile.attached = None
 
+                # Modified by Kelvin Huang, April 28, 2024
+                # destroy path if train is on top of the tile bomb
+                print(tile.under_path)
+                if tile.under_path != None:
+                    tile.under_path.delete(False)
+
             self.unhighlight()
 
     def animate_explosion(self, position, game_surf):
@@ -214,18 +233,6 @@ class Board:
         ):
             return self.tiles[row][col]
         return None
-    
-    # Path has returned end condition
-    # End condition is then passed up to board
-    # Be careful with update and deletion, can cause crashing
-    def path_call(self, path, condition):
-        self.paths.remove(path)
-        del path
-
-        # Tell the game that the board has end condition
-        self.end_call(condition)
-
-        if len(self.paths) == 0: self.new_round()
     
     def update(self):
         # for train

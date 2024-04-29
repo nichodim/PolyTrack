@@ -33,9 +33,17 @@ class Path:
         if tile in self.tiles_under: return
         self.tiles_under.append(tile)
         tile.under_path = self
+
     def remove_tile_under(self, tile):
         self.tiles_under.remove(tile)
         tile.under_path = None
+
+    # Added By Kelvin Huang, April 28, 2024 
+    # delete all reference to this path so the __del__ function works
+    def remove_all_under(self):
+        for tile in self.tiles_under:
+            tile.under_path = None
+            self.tiles_under.remove(tile)
 
     # Creates start and end stations and saves their locations
     # start and end arent positions but are actually tile locatons (col, row)
@@ -83,24 +91,20 @@ class Path:
             distance = math.sqrt((end[0] - start[0])**2 + (end[1] - start[1])**2)
 
             if distance > 4:
-                    sur_start = surrounding_station(start)
-                    sur_end = surrounding_station(end)
+                sur_start = surrounding_station(start)
+                sur_end = surrounding_station(end)
 
-                    if sur_start == False and sur_end == False:
-                        searching_for_station = False
-                        
+                if sur_start == False and sur_end == False:
+                    searching_for_station = False
                     
                 # check if there are station around start position
                     
-                    if sur_start == False and near_edge(start):
-                        acceptable_start = True
+                if sur_start == False and near_edge(start):
+                    acceptable_start = True
 
-                    if sur_end == False and near_edge(start):
-                        acceptable_end = True
+                if sur_end == False and near_edge(start):
+                    acceptable_end = True
                     
-                    
-
-
         start_image = TrackSprites.start_train_station
         end_image = TrackSprites.end_train_station
 
@@ -134,7 +138,7 @@ class Path:
         self.end_station_tile = self.board_tiles[row][col]
 
         self.add_tile_under(self.start_station_tile)
-        self.add_tile_under(self.end_station_tile)
+        #self.add_tile_under(self.end_station_tile)
     
     # Tracks that spawn next to the station based on orientation
     def create_station_tracks(self):
@@ -150,7 +154,7 @@ class Path:
         self.create_station_track((end_x, end_y), end_orient)
         '''
     
-    # Crazy logic I didnt read (thank you Kelvin)
+    # generate station track based on train initial angle and location of starting station
     def create_station_track(self, location, deg):
         possible_tracks = [track_set_types.vertical, track_set_types.horizontal, track_set_types.left, track_set_types.right, track_set_types.ileft, track_set_types.iright]
         if location[0] == 0 or location[0] == self.grid_rows - 1 or deg == 90 or deg == 270:
@@ -271,29 +275,35 @@ class Path:
         # Only cares to end game if train reaches end station
         def find_if_under_station():
             valid_index = (0 <= center_y <= self.grid_rows - 1) and (0 <= center_x <= self.grid_cols - 1)
-            if not valid_index: 
-                self.delate()
-                self.end_call(self, False)
-                return True
-
+            if not valid_index:
+                return False
+            
             tile = self.board_tiles[center_y][center_x]
             train_under_tile = tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
-            if not train_under_tile: return False
+            if not train_under_tile: return "continue"
 
             attached_item = self.board_tiles[back_y][back_x].attached
-            if attached_item != self.end_station: return False
+            if attached_item != self.end_station: return "continue"
 
             #correct_direction = round(math.sin(math.radians(cart.degree + 180)), 5) == round(math.sin(math.radians(attached_item.orientation)), 5)
             #if not correct_direction: return
 
             if len(self.train) == 1:
-                self.delate()
-                self.end_call(self, True)
                 return True
             else: 
                 self.train.remove(cart)
-        
-        if find_if_under_station() == True: return
+
+        # Modified by Kelvin Huang, April 28, 2024
+        # deleting path condition
+        still_fine = find_if_under_station()
+        if still_fine == "continue":
+            pass
+        elif still_fine == True:
+            self.delete(True)
+            return
+        elif still_fine == False:
+            self.delete(False)
+            return
 
         # Checks next tile for direction
         # Also finds end conditions: True is a failure to find a direction that should not end the path
@@ -327,6 +337,9 @@ class Path:
             else: self.toggle_speed_multiplier('ice', False)
 
             cart.direction = new_direction
+
+            x, y = cart.current_tile
+            self.remove_tile_under(self.board_tiles[y][x])
             cart.current_tile = (center_x, center_y)
 
             self.add_tile_under(self.board_tiles[center_y][center_x])
@@ -335,10 +348,8 @@ class Path:
         still_fine, condition = find_new_direction()
 
         if not still_fine:
-            self.delate()
-            self.end_call(self, False)
-        
-
+            self.delete(False)
+    
     # Dont look here
     def train_orient(self, location):
         orient = [0, 90, 180, 270]
@@ -354,8 +365,11 @@ class Path:
 
         return orient[random.randint(0, len(orient) - 1)]
     
+    def delete(self, condition):
+        self.end_call(self, condition)
+
     # Deletion of path doesnt leave behind objects
-    def delate(self):
+    def __del__(self): # Modified by Kelvin Huang, April 28, 2024 got __del__ function to work and replace the previous delete function with __del__
         # delete stations
         col, row = self.start
         self.board_tiles[row][col].attached = None
