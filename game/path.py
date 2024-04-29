@@ -192,7 +192,7 @@ class Path:
         )
 
         # multiple cart
-        self.total_cart = 1
+        self.total_cart = 5
         self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / self.train[0].speed
         self.timer = self.time
         #print("time =", self.time)
@@ -248,6 +248,10 @@ class Path:
                         speed = self.train[0].speed
                     )
                 )
+                # Modified by Kelvin Huang, April 29, 2024
+                # add a new tile which train is under when it spawn a new cart
+                # prevent the game from crashing when there is more than 1 cart
+                self.add_tile_under(self.start_station_tile)
 
 
     # Continusly called: checks what to do based on new tiles
@@ -340,8 +344,8 @@ class Path:
 
             x, y = cart.current_tile
             self.remove_tile_under(self.board_tiles[y][x])
-            cart.current_tile = (center_x, center_y)
 
+            cart.current_tile = (center_x, center_y)
             self.add_tile_under(self.board_tiles[center_y][center_x])
             return (True, 'found new track direction')
         
