@@ -189,9 +189,14 @@ class Board:
 
                 # Modified by Kelvin Huang, April 28, 2024
                 # destroy path if train is on top of the tile bomb
-                print(tile.under_path)
-                if tile.under_path != None:
+                
+                # Modified by Kelvin Huang, April 29, 2024
+                # adjust code to work with multiple cart
+                # if path get delete once there is no need to delete it again
+                delete_path = False
+                if tile.under_path != None and not delete_path:
                     tile.under_path.delete(False)
+                    delete_path = True
 
             self.unhighlight()
 

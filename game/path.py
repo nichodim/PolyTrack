@@ -30,21 +30,39 @@ class Path:
         self.create_train()
     
     def add_tile_under(self, tile):
+        x, y = tile
         if tile in self.tiles_under: return
         self.tiles_under.append(tile)
-        tile.under_path = self
+        self.board_tiles[y][x].under_path = self
 
     def remove_tile_under(self, tile):
+        x, y = tile
         self.tiles_under.remove(tile)
-        tile.under_path = None
+
+        self.board_tiles[y][x].under_path = None
 
     # Added By Kelvin Huang, April 28, 2024 
     # delete all reference to this path so the __del__ function works
     def remove_all_under(self):
-        for tile in self.tiles_under:
-            tile.under_path = None
-            self.tiles_under.remove(tile)
+        # Modified by Kelvin Huang, April 29, 2024
+        # adjust deletion of references to work with multiple carts 
 
+        # start from the end of the list to the beginning
+        for index in range(len(self.tiles_under) - 1, -1, -1):
+            # change it so ever path the train under to become None
+            x, y = self.tiles_under[index]
+            self.board_tiles[y][x].under_path = None
+
+            # remove that tile x, y values that store in the list
+            self.tiles_under.remove(self.tiles_under[index])
+        
+        # for testing
+        '''
+        for row in self.board_tiles:
+            for tile in row:
+                print(tile.under_path, end=" ")
+            print("\n")
+        '''
     # Creates start and end stations and saves their locations
     # start and end arent positions but are actually tile locatons (col, row)
     def create_stations(self):
@@ -137,7 +155,7 @@ class Path:
         col, row = end
         self.end_station_tile = self.board_tiles[row][col]
 
-        self.add_tile_under(self.start_station_tile)
+        self.add_tile_under([start[0], start[1]])
         #self.add_tile_under(self.end_station_tile)
     
     # Tracks that spawn next to the station based on orientation
@@ -248,11 +266,6 @@ class Path:
                         speed = self.train[0].speed
                     )
                 )
-                # Modified by Kelvin Huang, April 29, 2024
-                # add a new tile which train is under when it spawn a new cart
-                # prevent the game from crashing when there is more than 1 cart
-                self.add_tile_under(self.start_station_tile)
-
 
     # Continusly called: checks what to do based on new tiles
     def check(self, cart):
@@ -342,11 +355,19 @@ class Path:
 
             cart.direction = new_direction
 
-            x, y = cart.current_tile
-            self.remove_tile_under(self.board_tiles[y][x])
+            # Modified by Kelvin Huang, April 29, 2024
+            # Adjust code to work with multiple cart
+
+            # will only start deleting the references when the last cart leave the previous tile
+            if self.total_cart == 0 and cart == self.train[len(self.train) - 1]:
+                x, y = cart.current_tile
+                self.remove_tile_under([x, y])
 
             cart.current_tile = (center_x, center_y)
-            self.add_tile_under(self.board_tiles[center_y][center_x])
+            # only add tile to reference list when the front of the train move to a new tile
+            if cart == self.train[0]:
+                self.add_tile_under([center_x, center_y])
+            
             return (True, 'found new track direction')
         
         still_fine, condition = find_new_direction()
