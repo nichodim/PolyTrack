@@ -194,23 +194,44 @@ TrackSetTypes = {
         ('down', vertical)
     ], 
 
-    'doublehook-1': [
+    'doublehook1-1': [
         ('origin', right), 
         ('right', ileft)
     ], 
-    'doublehook-2': [
+    'doublehook1-2': [
         ('origin', iright), 
         ('up', left)
     ], 
-    'doublehook-3': [
+    'doublehook1-3': [
         ('origin', ileft), 
         ('left', right)
     ], 
-    'doublehook-4': [
+    'doublehook1-4': [
         ('origin', left), 
         ('down', iright)
     ], 
-
+    
+    # Modified by Kelvin Huang, April 29, 2024
+    #
+    # \__
+    #    |
+    'doublehook2-1': [
+        ('origin', iright), 
+        ('right', left)
+    ], 
+    'doublehook2-2': [
+        ('origin', ileft), 
+        ('up', right)
+    ], 
+    'doublehook2-3': [
+        ('origin', left), 
+        ('left', iright)
+    ], 
+    'doublehook2-4': [
+        ('origin', right), 
+        ('down', ileft)
+    ], 
+    
     # zigzag
     'zigzag-1': [
         ('origin', vertical), 
@@ -268,7 +289,8 @@ SpawnTracks = [
     TrackSetTypes['u-1'], 
     TrackSetTypes['lefthook-1'], 
     TrackSetTypes['righthook-1'], 
-    TrackSetTypes['doublehook-1'],
+    TrackSetTypes['doublehook1-1'],
+    TrackSetTypes['doublehook2-1'],
     TrackSetTypes['zigzag-1'],
     TrackSetTypes['diagonal-1'],
 ]
