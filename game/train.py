@@ -9,7 +9,7 @@ class Train:
     def __init__(self, type, board_rect, degree, start, speed = 'default'):
         data = TrainTypes[type]
         self.board_rect = board_rect
-        self.image = data['image']
+        self.image_data = data['image']
 
         if speed == 'default': self.speed = data['speed']
         else: self.speed = speed
@@ -20,9 +20,9 @@ class Train:
         self.current_tile = start
 
         # Make expanding surface/image with transparent background
-        self.surface = pygame.Surface([60 * (TRACK_WIDTH/50), (TRACK_HEIGHT - 2 * (TRACK_HEIGHT/50))])
+        self.surface = pygame.Surface([60 * (TRACK_WIDTH/50), ((TRACK_HEIGHT - 2) * (TRACK_HEIGHT/50))])
         self.surface.set_colorkey(Colors.white)
-        self.image = pygame.transform.smoothscale(self.image, [60 * (TRACK_WIDTH/50), 48 * (TRACK_HEIGHT/50)])
+        self.image = pygame.transform.smoothscale(self.image_data, [60 * (TRACK_WIDTH/50), (TRACK_HEIGHT - 2) * (TRACK_HEIGHT/50)])
         self.surface.blit(self.image, (0,0))
         
         self.set_pos(start)
@@ -30,6 +30,9 @@ class Train:
         self.rotate = pygame.transform.rotate(self.surface, self.degree)
         self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y))
 
+        self.clipped = False
+        self.cropped_x_correction = 0
+        self.cropped_y_correction = 0
     # Uses tile location + angle to find x, y coordinates
     def set_pos(self, start):
         col, row = start
@@ -43,6 +46,32 @@ class Train:
         if self.degree == 90:
             self.y -= pygame.Surface.get_width(self.surface) - TRACK_HEIGHT - INNER_GAP
     
+    # Modified by Kelvin Huang, May 1, 2024
+    # create a method that will be used once to clipped the image of the carts so it doesn't peak out the station
+    # clipping carts
+    def clip(self):
+        train_width = pygame.Surface.get_width(self.surface)
+        train_height = pygame.Surface.get_height(self.surface)
+
+        self.cropped_x_correction = -math.cos(math.radians(self.degree)) * train_width/4
+        self.cropped_y_correction = math.sin(math.radians(self.degree)) * train_width/4
+        print(train_width)
+        # create a cropped surface
+        cropped = pygame.Surface((train_width / 2, 48))
+        # cropped image
+        cropped.blit(self.image, (0, 0), (0, 0, train_width / 2, 48))
+
+        # use cropped image as the image to place on the main surface
+        self.surface = pygame.Surface([train_height/2, train_height])
+        self.surface.blit(cropped, (0, 0))
+        
+        # redo rotation stuff with new image
+        self.rotate = pygame.transform.rotate(self.surface, self.degree)
+        self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y))
+        
+        # make it so only the image show
+
+        self.clipped = True
 
     # Update Section
     def update(self):
@@ -77,7 +106,7 @@ class Train:
     # Rendering
     def draw(self, game_surf):
         y_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.cos(math.radians(self.degree)))
-        x_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.sin(math.radians(self.degree)))
+        #x_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.sin(math.radians(self.degree)))
 
-        self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y + y_correction))
+        self.rotate_rect = self.rotate.get_rect(center = (self.x + self.cropped_x_correction, self.y + y_correction + self.cropped_y_correction))
         game_surf.blit(self.rotate, self.rotate_rect)

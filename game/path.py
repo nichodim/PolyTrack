@@ -288,19 +288,29 @@ class Path:
         center_x = int((x_no_margin - INNER_GAP * (x_no_margin // (TRACK_HEIGHT + INNER_GAP))) // TRACK_HEIGHT)
         center_y = int((y_no_margin - INNER_GAP * (y_no_margin // (TRACK_WIDTH + INNER_GAP))) // TRACK_WIDTH)
 
-
         # Only cares to end game if train reaches end station
         def find_if_under_station():
+            # Modified by Kelvin Huang, May 1, 2024
+            # Deleted check if same tile and index validation from the checking direction function and moving it up here
+            if (center_x, center_y) == cart.current_tile: 
+                return 'same tile'
+            
             valid_index = (0 <= center_y <= self.grid_rows - 1) and (0 <= center_x <= self.grid_cols - 1)
             if not valid_index:
                 return False
             
             tile = self.board_tiles[center_y][center_x]
-            train_under_tile = tile.rect.collidepoint(cart.x - x_correction, cart.y + y_correction)
+            train_under_tile = tile.rect.collidepoint(cart.x, cart.y)
             if not train_under_tile: return "continue"
 
+            # Modified by Kelvin Huang, May 1, 2024
+            # start clipping the cart so the cart doesn't peak out the edge of the station
+            if (center_x, center_y) == self.end and cart.clipped == False:
+                cart.clip()
+                
+            # the whole cart enter the station
             attached_item = self.board_tiles[back_y][back_x].attached
-            if attached_item != self.end_station: return "continue"
+            if attached_item != self.end_station: return 'not on end station'
 
             #correct_direction = round(math.sin(math.radians(cart.degree + 180)), 5) == round(math.sin(math.radians(attached_item.orientation)), 5)
             #if not correct_direction: return
@@ -313,7 +323,9 @@ class Path:
         # Modified by Kelvin Huang, April 28, 2024
         # deleting path condition
         still_fine = find_if_under_station()
-        if still_fine == "continue":
+        if still_fine == 'same tile' or still_fine == 'continue':
+            return
+        elif still_fine == "not on end station":
             pass
         elif still_fine == True:
             self.delete(True)
@@ -324,21 +336,10 @@ class Path:
 
         # Checks next tile for direction
         # Also finds end conditions: True is a failure to find a direction that should not end the path
-        
         def find_new_direction():
-            if (center_x, center_y) == cart.current_tile: 
-                return (True, 'same tile')
-
-            # check if train is on the board and on a tile and not within the gaps
-            valid_index = (0 <= center_x <= self.grid_cols - 1) and (0 <= center_y <= self.grid_rows - 1) 
-            if not valid_index: return (False, 'invalid location')   
-
             tile = self.board_tiles[center_y][center_x]
             attached_item = tile.attached
-            train_under_tile = tile.rect.collidepoint(cart.x, cart.y)
-            if not train_under_tile: return (True, 'train not under tile')
-            
-            
+
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
             if isinstance(attached_item, Obstacle): return (False, 'train crash into obstacle')
