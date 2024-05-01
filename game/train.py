@@ -55,7 +55,9 @@ class Train:
 
         self.cropped_x_correction = -math.cos(math.radians(self.degree)) * train_width/4
         self.cropped_y_correction = math.sin(math.radians(self.degree)) * train_width/4
-        print(train_width)
+
+        # Reference to the technique that found on stackoverflow
+        # https://stackoverflow.com/questions/6239769/how-can-i-crop-an-image-with-pygame 
         # create a cropped surface
         cropped = pygame.Surface((train_width / 2, 48))
         # cropped image
