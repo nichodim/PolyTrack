@@ -31,8 +31,7 @@ class Train:
         self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y))
 
         self.clipped = False
-        self.cropped_x_correction = 0
-        self.cropped_y_correction = 0
+        
     # Uses tile location + angle to find x, y coordinates
     def set_pos(self, start):
         col, row = start
@@ -53,8 +52,8 @@ class Train:
         train_width = pygame.Surface.get_width(self.surface)
         train_height = pygame.Surface.get_height(self.surface)
 
-        self.cropped_x_correction = -math.cos(math.radians(self.degree)) * train_width/4
-        self.cropped_y_correction = math.sin(math.radians(self.degree)) * train_width/4
+        self.x += -math.cos(math.radians(self.degree)) * train_width/4
+        self.y += math.sin(math.radians(self.degree)) * train_width/4
 
         # Reference to the technique that found on stackoverflow
         # https://stackoverflow.com/questions/6239769/how-can-i-crop-an-image-with-pygame 
@@ -64,7 +63,7 @@ class Train:
         cropped.blit(self.image, (0, 0), (0, 0, train_width / 2, 48))
 
         # use cropped image as the image to place on the main surface
-        self.surface = pygame.Surface([train_height/2, train_height])
+        self.surface = pygame.Surface([train_width/2, train_height])
         self.surface.blit(cropped, (0, 0))
         
         # redo rotation stuff with new image
@@ -110,5 +109,5 @@ class Train:
         y_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.cos(math.radians(self.degree)))
         #x_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.sin(math.radians(self.degree)))
 
-        self.rotate_rect = self.rotate.get_rect(center = (self.x + self.cropped_x_correction, self.y + y_correction + self.cropped_y_correction))
+        self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y + y_correction))
         game_surf.blit(self.rotate, self.rotate_rect)
