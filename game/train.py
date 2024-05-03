@@ -19,10 +19,12 @@ class Train:
         self.direction, self.degree = "forward", degree
         self.current_tile = start
 
+        train_width = 60
+        train_height = 40
         # Make expanding surface/image with transparent background
-        self.surface = pygame.Surface([60 * (TRACK_WIDTH/50), ((TRACK_HEIGHT - 2) * (TRACK_HEIGHT/50))])
+        self.surface = pygame.Surface([train_width * (TRACK_WIDTH/50), (train_height * (TRACK_HEIGHT/50))])
         self.surface.set_colorkey(Colors.white)
-        self.image = pygame.transform.smoothscale(self.image_data, [60 * (TRACK_WIDTH/50), (TRACK_HEIGHT - 2) * (TRACK_HEIGHT/50)])
+        self.image = pygame.transform.smoothscale(self.image_data, [train_width * (TRACK_WIDTH/50), train_height * (TRACK_HEIGHT/50)])
         self.surface.blit(self.image, (0,0))
         
         self.set_pos(start)
@@ -37,13 +39,20 @@ class Train:
         col, row = start
         self.x_center_adjustment = abs(pygame.Surface.get_width(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_height(self.surface) / 2 * math.sin(math.radians(self.degree)))
         self.y_center_adjustment = abs(pygame.Surface.get_height(self.surface) / 2 * math.cos(math.radians(self.degree)) + pygame.Surface.get_width(self.surface) / 2 * math.sin(math.radians(self.degree)))
+
+        x_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.sin(math.radians(self.degree)))        
+        y_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.cos(math.radians(self.degree)))
         
+
         self.x = self.board_rect.left + OUTER_GAP + col * (TRACK_WIDTH + INNER_GAP) + self.x_center_adjustment
         self.y = self.board_rect.top + OUTER_GAP + row * (TRACK_HEIGHT + INNER_GAP) + self.y_center_adjustment
         if self.degree == 180:
             self.x -= pygame.Surface.get_width(self.surface) - TRACK_WIDTH - INNER_GAP
         if self.degree == 90:
             self.y -= pygame.Surface.get_width(self.surface) - TRACK_HEIGHT - INNER_GAP
+        
+        self.x += x_correction
+        self.y += y_correction
     
     # Modified by Kelvin Huang, May 1, 2024
     # create a method that will be used once to clipped the image of the carts so it doesn't peak out the station
@@ -58,12 +67,12 @@ class Train:
         # Reference to the technique that found on stackoverflow
         # https://stackoverflow.com/questions/6239769/how-can-i-crop-an-image-with-pygame 
         # create a cropped surface
-        cropped = pygame.Surface((train_width / 2, 48))
+        cropped = pygame.Surface((train_width / 2, train_height))
         # cropped image
-        cropped.blit(self.image, (0, 0), (0, 0, train_width / 2, 48))
+        cropped.blit(self.image, (0, 0), (0, 0, train_width / 2, train_height))
 
         # use cropped image as the image to place on the main surface
-        self.surface = pygame.Surface([train_width/2, train_height])
+        self.surface = pygame.Surface([train_width / 2, train_height])
         self.surface.blit(cropped, (0, 0))
         
         # redo rotation stuff with new image
@@ -76,14 +85,14 @@ class Train:
 
     # Update Section
     def update(self):
-        self.update_speed()
         self.move()
+        self.update_speed()
 
     # Sappropriately alters speed if the train is turning
     def update_speed(self):
         if self.direction == 'forward' or self.direction == 'crash': return
 
-        self.period = (2 * math.pi * (TRACK_WIDTH/2)*(50/50)) / self.speed 
+        self.period = (2 * math.pi * (TRACK_WIDTH/2)) / self.speed 
 
         if self.direction == "clockwise":
             self.degree -= 360 / self.period #  minus degree since it going counter-clockwise
@@ -106,8 +115,5 @@ class Train:
 
     # Rendering
     def draw(self, game_surf):
-        y_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.cos(math.radians(self.degree)))
-        #x_correction = (TRACK_HEIGHT - pygame.Surface.get_height(self.surface)) / 2 * abs(math.sin(math.radians(self.degree)))
-
-        self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y + y_correction))
+        self.rotate_rect = self.rotate.get_rect(center = (self.x, self.y))
         game_surf.blit(self.rotate, self.rotate_rect)
