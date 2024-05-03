@@ -1,5 +1,4 @@
 # The top level of a scene, this is the state where you actually play
-
 import pygame
 import sys
 import random
@@ -28,13 +27,19 @@ class Game:
         self.powerup_menu = PowerupMenu(self.track_box.rect)
         self.active_powerup = None
 
-        self.lives = 50
+        self.lives = 3
+        self.winner = False
+        self.loser = False
+
+        self.saved_time = 0
+
         print('lives:', self.lives)
 
         # Constant Particle Weather
         # This implementation only accounts for constant weather on map types
         self.weather = None
         if map['type'] == "frozen": self.weather = Weather("snow", direction="left", degree=45)
+
 
 
     # Event control 
@@ -173,23 +178,30 @@ class Game:
 
     def handle_escape(self):
         if self.active_set: return
+        # Modified: Matthew Selvaggi
+        # Date: 5-3-24
+        # Edited to calculate the time in seconds before pause
+        if not self.paused:
+            current_time = pygame.time.get_ticks() / 1000
+            self.saved_time = current_time
+
         self.paused = not self.paused
 
     def handle_board_end(self, win):
         if not win: self.lives -= 1
         if win: 
             self.lives += 1
-            print('noice ;)')
 
         print('lives:', self.lives)
 
         if self.lives <= 0:
-            print('you lost')
-            self.quit_game()
-    
+            self.loser = True
+            self.handle_escape()
+
     def handle_complete_map(self):
         print('You finished the map!')
-        self.quit_game()
+        self.winner = True
+        self.handle_escape()
     
 
     # Game logic between components
@@ -249,8 +261,88 @@ class Game:
     def update(self):
         self.board.update()
         if self.weather != None: self.weather.update()
-        
-        
+
+    # Author: Matthew Selvaggi
+    # Date: 5-3-24
+    # Purpose: Call for pause/win/lose menu with respective button images.
+    def menu(self, button1_image, button1_image_hover, button2_image, button2_image_hover):
+        # Initial box dimensions
+        box_width = 700
+        box_height = 400
+        border_width = 5
+        button_width = 250
+        button_height = 100
+        button_spacing = 50
+        threshold = 50
+
+        # Center of the box x,y
+        box_x = (GAME_WIDTH - box_width) // 2
+        box_y = (GAME_HEIGHT - box_height) // 2
+
+        # Boarder to the box
+        bordered_box_surf = pygame.Surface((box_width, box_height))
+        bordered_box_surf.fill(Colors.black)
+        blue_box_surf = pygame.Surface((box_width - 2 * border_width, box_height - 2 * border_width))
+        blue_box_surf.fill(Colors.sky_blue)
+
+        # Blit boxes
+        self.game_surf.blit(bordered_box_surf, (box_x, box_y))
+        self.game_surf.blit(blue_box_surf, (box_x + border_width, box_y + border_width))
+
+        # Button position
+        total_space = box_width - (2 * border_width)
+        total_button_width = 2 * button_width + button_spacing
+        available_space = total_space - total_button_width
+
+        # Calculate x-cords for the buttons
+        button_x1 = box_x + border_width + (available_space // 2)
+        button_x2 = button_x1 + button_width + button_spacing
+
+        button_y = box_y + (box_height - button_height) // 2
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        # Scale button images
+        button_image_normal1 = pygame.transform.scale(button1_image, (button_width, button_height))
+        button_image_hover1 = pygame.transform.scale(button1_image_hover, (button_width, button_height))
+        button_image_normal2 = pygame.transform.scale(button2_image, (button_width, button_height))
+        button_image_hover2 = pygame.transform.scale(button2_image_hover, (button_width, button_height))
+
+        # Calculate distances to button centers
+        distance_to_button1 = math.sqrt(
+            (button_x1 + button_width / 2 - mouse_x) ** 2 + (button_y + button_height / 2 - mouse_y) ** 2)
+        distance_to_button2 = math.sqrt(
+            (button_x2 + button_width / 2 - mouse_x) ** 2 + (button_y + button_height / 2 - mouse_y) ** 2)
+
+        # Change button to hover animation
+        if distance_to_button1 < threshold:
+            self.game_surf.blit(button_image_hover1, (button_x1, button_y))
+        else:
+            self.game_surf.blit(button_image_normal1, (button_x1, button_y))
+
+        if distance_to_button2 < threshold:
+            self.game_surf.blit(button_image_hover2, (button_x2, button_y))
+        else:
+            self.game_surf.blit(button_image_normal2, (button_x2, button_y))
+
+        # Render Text
+        font = pygame.font.Font('font/font.ttf', 36)
+        elapsed_time_text = f'Time: {self.saved_time:.2f} seconds'
+        text_surface = font.render(elapsed_time_text, True, (0, 0, 0))
+
+        # Text Position
+        text_width = text_surface.get_width()
+        text_x = box_x + (box_width - text_width) // 2
+        text_y = box_y + 70
+
+        self.game_surf.blit(text_surface, (text_x, text_y))
+
+        # Check for button clicks
+        if distance_to_button1 < threshold and pygame.mouse.get_pressed()[0]:
+            self.paused = False
+        elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
+            self.quit_game()
+
     def render(self):
         self.game_surf.fill(Colors.sky_blue)
         self.board.draw(self.game_surf)
@@ -264,69 +356,16 @@ class Game:
             r, g, b = Colors.light_gray
             highlight_surf.fill((r, g, b, 128))
             self.game_surf.blit(highlight_surf, (0, 0))
-
-            box_width = 700
-            box_height = 400
-            border_width = 5
-
-            bordered_box_surf = pygame.Surface((box_width, box_height))
-            bordered_box_surf.fill(Colors.black)
-
-            blue_box_surf = pygame.Surface((box_width - 2 * border_width, box_height - 2 * border_width))
-            blue_box_surf.fill(Colors.sky_blue)
-
-            # Calculate the position for the bordered box
-            box_x = (GAME_WIDTH - box_width) // 2 - 2
-            box_y = (GAME_HEIGHT - box_height) // 2 - 90
-
-            self.game_surf.blit(bordered_box_surf, (box_x, box_y))
-
-            self.game_surf.blit(blue_box_surf, (box_x + border_width, box_y + border_width))
-
-            # Button dimensions and positions
-            button_width = 250
-            button_height = 100
-            button_y = box_y + (box_height - button_height) // 2
-
-            button_x1 = box_x + (box_width - button_width * 2) // 3
-            button_x2 = button_x1 + button_width + (box_width - button_width * 2) // 3
-
-            mouse_x, mouse_y = pygame.mouse.get_pos()
- 
-            button1_image = Images.play_img
-            button1_image_hover = Images.play_hover_img
-
-            button2_image = Images.quit_pause_img
-            button2_image_hover = Images.quit_pause_hover_img
-
-            button_image_normal1 = pygame.transform.scale(button1_image, (button_width, button_height))
-            button_image_hover1 = pygame.transform.scale(button1_image_hover, (button_width, button_height))
-
-            button_image_normal2 = pygame.transform.scale(button2_image, (button_width, button_height))
-            button_image_hover2 = pygame.transform.scale(button2_image_hover, (button_width, button_height))
-
-            threshold = 50
-
-            # Calculate the distance between the mouse and button centers
-            distance_to_button1 = math.sqrt((button_x1 + button_width / 2 - mouse_x) ** 2 + (button_y + button_height / 2 - mouse_y) ** 2)
-            distance_to_button2 = math.sqrt((button_x2 + button_width / 2 - mouse_x) ** 2 + (button_y + button_height / 2 - mouse_y) ** 2)
-
-            if distance_to_button1 < threshold:
-                self.game_surf.blit(button_image_hover2, (button_x1, button_y))
+            # Modified: Matthew Selvaggi
+            # Date: 5-3-24
+            # Purpose: Addded condition to check if the user is winning, losing, or paused.
+            # This will allow the program to generate the approriate button images depending on the action.
+            if self.winner:
+                pass
+            elif self.loser:
+                self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img )
             else:
-                self.game_surf.blit(button_image_normal2, (button_x1, button_y))
+                self.menu(Images.play_img, Images.play_hover_img, Images.quit_pause_img, Images.quit_pause_hover_img )
 
-            if distance_to_button2 < threshold:
-                self.game_surf.blit(button_image_hover1, (button_x2, button_y))
-            else:
-                self.game_surf.blit(button_image_normal1, (button_x2, button_y))
-
-
-            # Check for button clicks
-            if distance_to_button1 < threshold and pygame.mouse.get_pressed()[0]:
-                self.quit_game()
-
-            elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
-                self.paused = False
 
         pygame.display.update()
