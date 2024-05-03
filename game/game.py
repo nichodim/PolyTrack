@@ -326,14 +326,34 @@ class Game:
             self.game_surf.blit(button_image_normal2, (button_x2, button_y))
 
         # Render Text
-        font = pygame.font.Font('font/font.ttf', 36)
+        font_time = pygame.font.Font('font/font.ttf', 36)
+        font_message = pygame.font.Font('font/font.ttf', 45)
         elapsed_time_text = f'Time: {self.saved_time:.2f} seconds'
-        text_surface = font.render(elapsed_time_text, True, (0, 0, 0))
+        text_surface = font_time.render(elapsed_time_text, True, (0, 0, 0))
 
-        # Text Position
+        # Displays winner/loser if the game is completed
+        if self.loser:
+            result_message = f"Loser!"
+            result_text = font_message.render(result_message, True, (255,0,0))
+        elif self.winner:
+            result_message = f"Winner!"
+            result_text = font_message.render(result_message, True, (0,255,0))
+        else:
+            result_message = f"Paused"
+            result_text = font_message.render(result_message, True, (0,0,0))
+                
+        # Text Position of Reult
+        text_width = result_text.get_width()
+        text_x = box_x + (box_width - text_width) // 2
+        text_y = box_y + 50
+
+        self.game_surf.blit(result_text, (text_x, text_y))
+
+
+        # Text Position of Time
         text_width = text_surface.get_width()
         text_x = box_x + (box_width - text_width) // 2
-        text_y = box_y + 70
+        text_y = box_y + 280
 
         self.game_surf.blit(text_surface, (text_x, text_y))
 
@@ -364,6 +384,10 @@ class Game:
                 pass
             elif self.loser:
                 self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img )
+                # Render Text
+                font = pygame.font.Font('font/font.ttf', 36)
+                elapsed_time_text = f'Time: {self.saved_time:.2f} seconds'
+
             else:
                 self.menu(Images.play_img, Images.play_hover_img, Images.quit_pause_img, Images.quit_pause_hover_img )
 
