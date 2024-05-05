@@ -32,6 +32,7 @@ class Game:
         self.loser = False
 
         self.saved_time = 0
+        self.map = map
 
         print('lives:', self.lives)
 
@@ -186,6 +187,28 @@ class Game:
             self.saved_time = current_time
 
         self.paused = not self.paused
+    def restart_game(self):
+        self.saved_time = 0
+        self.winner = False
+        self.loser = False
+        self.lives = 3
+        self.paused = False
+
+        pygame.quit()  # Clean up existing Pygame resources
+        pygame.init()  # Reinitialize Pygame
+
+        # Reinitialize game components
+        self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+        self.fps = pygame.time.Clock()
+
+        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map)
+        self.track_box = Trackbox()
+        self.powerup_menu = PowerupMenu(self.track_box.rect)
+
+        if self.map['type'] == "frozen":
+            self.weather = Weather("snow", direction="left", degree=45)
+        else:
+            self.weather = None
 
     def handle_board_end(self, win):
         if not win: self.lives -= 1
@@ -359,7 +382,7 @@ class Game:
 
         # Check for button clicks
         if distance_to_button1 < threshold and pygame.mouse.get_pressed()[0]:
-            self.paused = False
+            self.restart_game()
         elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
             self.quit_game()
 
