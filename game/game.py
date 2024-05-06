@@ -27,7 +27,7 @@ class Game:
         self.powerup_menu = PowerupMenu(self.track_box.rect)
         self.active_powerup = None
 
-        self.lives = 10
+        self.lives = 100
         self.winner = False
         self.loser = False
 

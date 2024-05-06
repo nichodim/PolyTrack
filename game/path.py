@@ -88,6 +88,25 @@ class Path:
         def near_edge(point):
             return (point[0] < 2 or self.grid_cols - 3 < point[0]) or (point[1] < 2 or self.grid_rows - 3 < point[1])
         
+        ''' TODO this doesnt work right idk why
+        def invalid_in_front(tile_coordinate):
+            col, row = tile_coordinate
+            orient = self.train_orient(tile_coordinate)
+            if orient == 0: # ->
+                if col + 1 >= self.grid_cols: return True
+                if not self.board_tiles[row][col + 1].is_open(): return True
+            elif orient == 270: # \/
+                if row + 1 >= self.grid_rows: return True
+                if not self.board_tiles[row + 1][col].is_open(): return True
+            elif orient == 180: # <-
+                if col - 1 <= 0: return True
+                if not self.board_tiles[row][col - 1].is_open(): return True
+            elif orient == 90: # /\
+                if row - 1 <= 0: return True
+                if not self.board_tiles[row - 1][col].is_open(): return True
+            return False
+        '''
+        
         start, end = (0, 0), (0, 0)
 
         searching_for_station = True
@@ -112,17 +131,34 @@ class Path:
                 sur_start = surrounding_station(start)
                 sur_end = surrounding_station(end)
 
-                if sur_start == False and sur_end == False:
-                    searching_for_station = False
-                    
+                valid_start_terrain = self.board_tiles[start[1]][start[0]].terrain != 'water'
+                valid_end_terrain = self.board_tiles[end[1]][end[0]].terrain != 'water'
+
                 # check if there are station around start position
-                    
-                if sur_start == False and near_edge(start):
+
+                if sur_start == False and near_edge(start) and valid_start_terrain: # and not invalid_in_front(start) | Add for front checking feature
                     acceptable_start = True
 
-                if sur_end == False and near_edge(start):
+                if sur_end == False and near_edge(start) and valid_end_terrain:
                     acceptable_end = True
-                    
+            
+            if acceptable_start and acceptable_end: searching_for_station = False
+        
+        ''' Debug for checking in front of train which is not working right
+        col, row = start
+        orient = self.train_orient(start)
+        if orient == 0:
+            print(self.board_tiles[row][col + 1].terrain, self.board_tiles[row][col + 1].attached)
+        elif orient == 270:
+            print(self.board_tiles[row + 1][col].terrain, self.board_tiles[row + 1][col].attached)
+        elif orient == 180:
+            print(self.board_tiles[row][col - 1].terrain, self.board_tiles[row][col - 1].attached)
+        elif orient == 90:
+            print(self.board_tiles[row - 1][col].terrain, self.board_tiles[row - 1][col].attached)
+        print(invalid_in_front(start))
+        print()
+        '''
+
         start_image = TrackSprites.start_train_station
         end_image = TrackSprites.end_train_station
 
@@ -160,20 +196,23 @@ class Path:
     
     # Tracks that spawn next to the station based on orientation
     def create_station_tracks(self):
-        start_orient = self.start_station.orientation
-        self.start_x = int(round(self.start[0] + math.cos(math.radians(start_orient)), 1))
-        self.start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
-        self.create_station_track((self.start_x, self.start_y), start_orient)
+        for i in range(100):
+            start_orient = self.start_station.orientation
+            self.start_x = int(round(self.start[0] + math.cos(math.radians(start_orient)), 1))
+            self.start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
+
+            success = self.try_create_station_track((self.start_x, self.start_y), start_orient)
+            if success: break
 
         '''
         end_orient = self.end_station.orientation
         end_x = int(round(self.end[0] + math.cos(math.radians(end_orient)), 1))
         end_y = int(round(self.end[1] - math.sin(math.radians(end_orient)), 1))
-        self.create_station_track((end_x, end_y), end_orient)
+        self.try_create_station_track((end_x, end_y), end_orient)
         '''
     
     # generate station track based on train initial angle and location of starting station
-    def create_station_track(self, location, deg):
+    def try_create_station_track(self, location, deg):
         possible_tracks = [track_set_types.vertical, track_set_types.horizontal, track_set_types.left, track_set_types.right, track_set_types.ileft, track_set_types.iright]
         if location[0] == 0 or location[0] == self.grid_rows - 1 or deg == 90 or deg == 270:
             possible_tracks.remove(track_set_types.horizontal)
@@ -190,9 +229,13 @@ class Path:
         if location[0] == self.grid_cols - 1 or location[1] == 0 or deg == 0 or deg == 90:
             possible_tracks.remove(track_set_types.iright)
         
+        tile = self.board_tiles[location[1]][location[0]]
+        if not tile.is_open(): return False
+
         track_rect = pygame.Rect(self.board_tiles[location[1]][location[0]].rect.left, self.board_tiles[location[1]][location[0]].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
         track = Track(track_rect, possible_tracks[random.randint(0, len(possible_tracks) - 1)])
         self.board_tiles[location[1]][location[0]].attached = track
+        return True
     
     def create_train(self):
         starting_orient = self.start_station.orientation
@@ -343,6 +386,7 @@ class Path:
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
             if isinstance(attached_item, Obstacle): return (False, 'train crash into obstacle')
+            if tile.terrain == 'water': return (False, 'train over water')
             
             if cart.direction == "forward" and not isinstance(attached_item, Station):
                 new_direction = attached_item.directions[int(cart.degree % 360 / 90)]             

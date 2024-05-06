@@ -12,7 +12,7 @@ class Tile:
         self.under_path = None
     
     def is_open(self):
-        return not self.attached
+        return not self.attached and self.terrain != 'water'
 
     def attach(self, item):
         if self.is_open():
