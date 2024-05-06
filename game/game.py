@@ -26,13 +26,14 @@ class Game:
 
         self.powerup_menu = PowerupMenu(self.track_box.rect)
         self.active_powerup = None
-
-        self.lives = 100
+        self.lives = 3
+        self.initial_lives = self.lives
         self.winner = False
         self.loser = False
 
         self.saved_time = 0
         self.map = map
+        self.resume = True
 
         print('lives:', self.lives)
 
@@ -191,8 +192,9 @@ class Game:
         self.saved_time = 0
         self.winner = False
         self.loser = False
-        self.lives = 3
         self.paused = False
+        self.resume = True
+        self.lives = self.initial_lives
 
         pygame.quit()  # Clean up existing Pygame resources
         pygame.init()  # Reinitialize Pygame
@@ -382,7 +384,10 @@ class Game:
 
         # Check for button clicks
         if distance_to_button1 < threshold and pygame.mouse.get_pressed()[0]:
-            self.restart_game()
+            if self.resume:
+                self.paused = not self.paused
+            else:
+                self.restart_game()
         elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
             self.quit_game()
 
@@ -404,14 +409,16 @@ class Game:
             # Purpose: Addded condition to check if the user is winning, losing, or paused.
             # This will allow the program to generate the approriate button images depending on the action.
             if self.winner:
+                self.resume = False
                 pass
             elif self.loser:
-                self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img )
+                self.resume = False
+                self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img)
                 # Render Text
                 font = pygame.font.Font('font/font.ttf', 36)
                 elapsed_time_text = f'Time: {self.saved_time:.2f} seconds'
-
             else:
+                self.resume = True
                 self.menu(Images.play_img, Images.play_hover_img, Images.quit_pause_img, Images.quit_pause_hover_img )
 
 
