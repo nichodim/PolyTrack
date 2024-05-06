@@ -11,29 +11,26 @@ from weather import Weather
 
 class Game:
     def __init__(self, map):
+        # Game initialization, i.e. board, trackbox, train
         pygame.init()
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
-
-        self.paused = False
-
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
-
         self.track_box = Trackbox()
-
         self.active_set = None
         self.active_track_and_index = None
 
+        # Powerups
         self.powerup_menu = PowerupMenu(self.track_box.rect)
         self.active_powerup = None
 
+        # Pause menu initialization
         self.lives = 3
         self.initial_lives = self.lives
         self.resume = True
-
+        self.paused = False
         self.winner = False
         self.loser = False
-
         self.saved_time = 0
         self.map = map
 
@@ -405,6 +402,7 @@ class Game:
             r, g, b = Colors.light_gray
             highlight_surf.fill((r, g, b, 128))
             self.game_surf.blit(highlight_surf, (0, 0))
+
             # Modified: Matthew Selvaggi
             # Date: 5-3-24
             # Purpose: Addded condition to check if the user is winning, losing, or paused.
