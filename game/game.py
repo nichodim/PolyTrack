@@ -11,28 +11,31 @@ from weather import Weather
 
 class Game:
     def __init__(self, map):
-        # Game initializations, i.e. board, trackbox
         pygame.init()
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
+
+        self.paused = False
+
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
+
         self.track_box = Trackbox()
+
         self.active_set = None
         self.active_track_and_index = None
 
-        # Powerups
         self.powerup_menu = PowerupMenu(self.track_box.rect)
         self.active_powerup = None
 
-        # Initialization for pause menu
         self.lives = 3
         self.initial_lives = self.lives
+        self.resume = True
+
         self.winner = False
         self.loser = False
-        self.paused = False
+
         self.saved_time = 0
         self.map = map
-        self.resume = True
 
         print('lives:', self.lives)
 
@@ -191,9 +194,8 @@ class Game:
         self.saved_time = 0
         self.winner = False
         self.loser = False
-        self.paused = False
-        self.resume = True
         self.lives = self.initial_lives
+        self.paused = False
 
         pygame.quit()  # Clean up existing Pygame resources
         pygame.init()  # Reinitialize Pygame
@@ -412,10 +414,11 @@ class Game:
                 pass
             elif self.loser:
                 self.resume = False
-                self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img)
+                self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img )
                 # Render Text
                 font = pygame.font.Font('font/font.ttf', 36)
                 elapsed_time_text = f'Time: {self.saved_time:.2f} seconds'
+
             else:
                 self.resume = True
                 self.menu(Images.play_img, Images.play_hover_img, Images.quit_pause_img, Images.quit_pause_hover_img )

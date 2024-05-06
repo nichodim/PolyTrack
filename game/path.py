@@ -230,7 +230,7 @@ class Path:
             possible_tracks.remove(track_set_types.iright)
         
         tile = self.board_tiles[location[1]][location[0]]
-        if not tile.is_open(): return False
+        if tile.terrain == 'water': return False
 
         track_rect = pygame.Rect(self.board_tiles[location[1]][location[0]].rect.left, self.board_tiles[location[1]][location[0]].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
         track = Track(track_rect, possible_tracks[random.randint(0, len(possible_tracks) - 1)])
