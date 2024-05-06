@@ -405,18 +405,14 @@ class Game:
 
             # Modified: Matthew Selvaggi
             # Date: 5-3-24
-            # Purpose: Addded condition to check if the user is winning, losing, or paused.
-            # This will allow the program to generate the approriate button images depending on the action.
-            if self.winner:
-                self.resume = False
-                pass
-            elif self.loser:
-                self.resume = False
-                self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img )
+            # Purpose: Added condition to check if the user is winning, losing, or paused.
+            # This will allow the program to generate the appropriate button images depending on the action.
+            if self.winner or self.loser:                                                                                  # Modified: Matthew Selvaggi
+                self.resume = False                                                                                        # Date: 5-6-24
+                self.menu(Images.restart_img, Images.restart_hover, Images.quit_pause_img, Images.quit_pause_hover_img)    # Added logic for winner actions menu
                 # Render Text
                 font = pygame.font.Font('font/font.ttf', 36)
                 elapsed_time_text = f'Time: {self.saved_time:.2f} seconds'
-
             else:
                 self.resume = True
                 self.menu(Images.play_img, Images.play_hover_img, Images.quit_pause_img, Images.quit_pause_hover_img )
