@@ -11,26 +11,25 @@ from weather import Weather
 
 class Game:
     def __init__(self, map):
+        # Game initializations, i.e. board, trackbox
         pygame.init()
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
-
-        self.paused = False
-
         self.board = Board(map, self.handle_board_end, self.handle_complete_map)
-
         self.track_box = Trackbox()
-
         self.active_set = None
         self.active_track_and_index = None
 
+        # Powerups
         self.powerup_menu = PowerupMenu(self.track_box.rect)
         self.active_powerup = None
+
+        # Initialization for pause menu
         self.lives = 3
         self.initial_lives = self.lives
         self.winner = False
         self.loser = False
-
+        self.paused = False
         self.saved_time = 0
         self.map = map
         self.resume = True
