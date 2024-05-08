@@ -54,7 +54,7 @@ class PowerupMenu:
         slot.remove_powerup()
 
     def draw(self, game_surf):
-        game_surf.blit(PowerupSprites.background_image, self.rect)
-        for type in self.powerup_types_list:
+        game_surf.blit(PowerupSprites.background_image, self.rect)                  # Modified: Matthew Selvaggi 5-8-24
+        for type in self.powerup_types_list:                                        # Blit the background image to the screen
             slot = self.slots[type]
             slot.draw(game_surf)
