@@ -33,20 +33,15 @@ class Board:
         # Create highlighting for tiles
         self.highlighted_tiles = []
         self.highlight_color = Colors.green
+        self.default_highlight_opacity = 128
 
         # Create highlighting for board
-        padding, self.default_highlight_opacity = 10, 128
-        self.board_highlight_rect = pygame.Rect(board_x - padding, board_y - padding, board_width + padding, board_height + padding)
-        self.board_highlight_opacity = self.default_highlight_opacity
-        self.board_highlight_color = None
-
-        self.prev_highlight_state = ''
-        self.full_board_highlight = True
-        self.board_highlight_state = ''
+        self.board_highlight_rect = pygame.Rect(board_x - 10, board_y - 10, board_width + 2*10, board_height + 2*10)
         self.highlight_state_config = {
             'freeze': [Colors.blue, 128], 
             'freeze-hover': [Colors.blue, 64]
         }
+        self.board_highlight = False
 
         # Creatre path boilerplate
         self.paths = []
@@ -189,15 +184,19 @@ class Board:
         tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile)
         self.highlight(tiles_to_highlight)
     
-    def update_freeze(self, paths):
+    def activate_freeze(self, paths):
         for path in self.paths:
-            if path in paths: path.toggle_speed_multiplier('freeze', True)
-            else: path.toggle_speed_multiplier('freeze', False)
+            if path in paths: 
+                path.toggle_speed_multiplier('freeze', True)
+                path.powerup_time = 0
+
+                path.highlight = 'freeze'
+                path.prev_highlight = ''
     
-    def trigger_powerup(self, powerup, tile, game_surf):
+    def trigger_powerup(self, powerup, tile_under, game_surf):
         def trigger_bomb():
             # Start explosion animation
-            new_center = (tile.rect.center[0], tile.rect.center[1])
+            new_center = (tile_under.rect.center[0], tile_under.rect.center[1])
             self.animate_explosion(new_center, game_surf)
 
             for tile in self.highlighted_tiles:
@@ -221,18 +220,14 @@ class Board:
             self.unhighlight()
         
         def trigger_freeze():
-            self.board_highlight_state = 'freeze'
-            if self.prev_highlight_state == 'freeze': self.i = 0
-
             everything_effected = len(powerup.type['effected attachments']) == 0
             if everything_effected: 
-                self.full_board_highlight = True
-                self.update_freeze(self.paths)
+                if tile_under.under_path != None: self.activate_freeze([tile_under.under_path])
+                else: self.activate_freeze(self.paths)
 
         if powerup.type_name == 'bomb' or powerup.type_name == 'bigbomb':
             trigger_bomb()
         
-        # trigger freeze
         if powerup.type_name == 'freeze':
             trigger_freeze()
 
@@ -276,18 +271,6 @@ class Board:
         return None
     
     def update(self):
-        print(self.i)
-        if self.board_highlight_state != '' and 'hover' not in self.board_highlight_state: self.i += 1
-        elif self.prev_highlight_state != '' and 'hover' not in self.prev_highlight_state: self.i += 1
-        if self.i >= 200:
-            self.update_freeze([])
-            if 'hover' in self.board_highlight_state:
-                self.prev_highlight_state = ''
-            else:
-                self.board_highlight_state = ''
-                self.prev_highlight_state = ''
-            self.i = 0
-
         # for train
         for path in self.paths:
             path.update()
@@ -332,10 +315,28 @@ class Board:
                 self.draw_highlight(tile, game_surf)
     
     def draw_board_highlight(self, game_surf):
-        if self.board_highlight_state != '':
-            color, opacity = self.highlight_state_config[self.board_highlight_state]
-
-            if self.full_board_highlight:
-                game_surf.blit(self.get_highlight_box(
-                    self.board_highlight_rect.width, self.board_highlight_rect.height, color, opacity
-                ), self.board_highlight_rect.topleft)
+        if len(self.paths) == 0: return
+        all_highlighted = True
+        all_highlightes_as = self.paths[0].highlight
+        for path in self.paths:
+            if path.highlight == '' or path.highlight != all_highlightes_as:
+                all_highlighted = False
+                break
+        
+        if all_highlighted:
+            color, opacity = self.highlight_state_config[all_highlightes_as]
+            game_surf.blit(self.get_highlight_box(
+                self.board_highlight_rect.width, self.board_highlight_rect.height, color, opacity
+            ), self.board_highlight_rect.topleft)
+        else:
+            for path in self.paths:
+                if path.highlight != '':
+                    if all_highlighted: 
+                        if 'hover' not in path.highlight: continue
+                    
+                    color, opacity = self.highlight_state_config[path.highlight]
+                    for (col, row) in path.tiles_under:
+                        tile = self.tiles[row][col]
+                        game_surf.blit(self.get_highlight_box(
+                            tile.rect.width, tile.rect.height, color, opacity
+                        ), tile.rect.topleft)

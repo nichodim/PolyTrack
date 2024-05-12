@@ -24,6 +24,9 @@ class Path:
         self.speed_multipliers = copy.deepcopy(TrainSpeed_Multipliers)
 
         # Create path objects
+        self.prev_highlight, self.highlight = '', ''
+        self.powerup_time = 0
+
         self.tiles_under = []
         self.create_stations()
         self.create_station_tracks()
@@ -288,6 +291,19 @@ class Path:
 
     # Update
     def update(self):
+        if (self.prev_highlight != '' and 'hover' not in self.prev_highlight) or \
+            (self.highlight != '' and 'hover' not in self.highlight): self.powerup_time += 1
+        
+        if self.powerup_time >= 200:
+            if 'hover' in self.highlight:
+                self.prev_highlight = ''
+            else:
+                self.highlight = ''
+                self.prev_highlight = ''
+            
+            self.toggle_speed_multiplier('freeze', False)
+            self.powerup_time = 0
+
         starting_orient = self.start_station.orientation
         #if self.current_tile and self.train:
         

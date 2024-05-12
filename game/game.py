@@ -161,8 +161,8 @@ class Game:
             self.try_highlight_tiles_by_set()
         elif self.active_powerup != None:
             self.active_powerup.move(event.rel)
-            self.highlight_tiles_by_powerup()
-            self.highlight_board_by_powerup()
+            worked = self.try_highlight_tiles_by_powerup()
+            if not worked: self.highlight_board_by_powerup()
 
     def handle_r_down(self):
         if self.active_set and self.active_track_and_index: 
@@ -236,37 +236,50 @@ class Game:
             return
         self.board.highlight(tiles)
     
-    def highlight_tiles_by_powerup(self):
-        if not self.active_powerup.powerup_over_rect(self.board.rect):
-            if 'hover' in self.board.board_highlight_state: 
-                self.board.board_highlight_state = self.board.prev_highlight_state
-            return
-
-        if self.active_powerup.type_name == 'freeze':
-            if self.board.board_highlight_state != '' and 'hover' not in self.board.board_highlight_state: 
-                self.board.prev_highlight_state = self.board.board_highlight_state
-            self.board.board_highlight_state = 'freeze-hover'
-            self.board.full_board_highlight = True
-
+    def try_highlight_tiles_by_powerup(self):
         tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
         if not tile: 
             self.board.unhighlight()
-            return
+            return False
 
         if self.active_powerup.type_name == 'bomb' or self.active_powerup.type_name == 'bigbomb':
             self.board.highlight_bomb_tiles(self.active_powerup, tile)
+            return True
+        
+        # Sets individual path to hover freeze, saves if frozen to previous state
+        if self.active_powerup.type_name == 'freeze':
+            for path in self.board.paths:
+                if 'hover' in path.highlight: 
+                    path.highlight = path.prev_highlight
+
+            path = tile.under_path
+            if path != None:
+                if path.highlight != '' and 'hover' not in path.highlight: 
+                    path.prev_highlight = path.highlight
+                path.highlight = 'freeze-hover'
+                return True
 
     def highlight_board_by_powerup(self):
+        # Reverts path highlights if all hovered, leaves
         if not self.active_powerup.powerup_over_rect(self.board.rect):
-            if 'hover' in self.board.board_highlight_state: 
-                self.board.board_highlight_state = self.board.prev_highlight_state
+            all_hovered = True
+            for path in self.board.paths:
+                if 'hover' not in path.highlight:
+                    all_hovered = False
+                    break
+            
+            if all_hovered:
+                for path in self.board.paths:
+                    path.highlight = path.prev_highlight
+                    path.prev_highlight = ''
             return
-
+        
+        # Sets all paths to frozen highlight hover, saves frozen states to previous
         if self.active_powerup.type_name == 'freeze':
-            if self.board.board_highlight_state != '' and 'hover' not in self.board.board_highlight_state: 
-                self.board.prev_highlight_state = self.board.board_highlight_state
-            self.board.board_highlight_state = 'freeze-hover'
-            self.board.full_board_highlight = True
+            for path in self.board.paths:
+                if path.highlight != '' and 'hover' not in path.highlight: 
+                    path.prev_highlight = path.highlight
+                path.highlight = 'freeze-hover'
 
     def find_open_tiles_under_tracks(self):
         track_positions = self.active_set.find_pos_of_tracks()
