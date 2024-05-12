@@ -30,9 +30,23 @@ class Board:
             for j, tile in enumerate(row):
                 self.tile_indexes[f'{tile}'] = (i, j)
 
-        # Create highlighting
+        # Create highlighting for tiles
         self.highlighted_tiles = []
         self.highlight_color = Colors.green
+
+        # Create highlighting for board
+        padding, self.default_highlight_opacity = 10, 128
+        self.board_highlight_rect = pygame.Rect(board_x - padding, board_y - padding, board_width + padding, board_height + padding)
+        self.board_highlight_opacity = self.default_highlight_opacity
+        self.board_highlight_color = None
+
+        self.prev_highlight_state = ''
+        self.full_board_highlight = True
+        self.board_highlight_state = ''
+        self.highlight_state_config = {
+            'freeze': [Colors.blue, 128], 
+            'freeze-hover': [Colors.blue, 64]
+        }
 
         # Creatre path boilerplate
         self.paths = []
@@ -46,6 +60,8 @@ class Board:
         # Start levels
         self.level, self.round = -1, -1
         self.new_round()
+
+        self.i = 0
 
     # Board Creation
     def create_grid(self, grid_layout):
@@ -173,8 +189,13 @@ class Board:
         tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile)
         self.highlight(tiles_to_highlight)
     
+    def update_freeze(self, paths):
+        for path in self.paths:
+            if path in paths: path.toggle_speed_multiplier('freeze', True)
+            else: path.toggle_speed_multiplier('freeze', False)
+    
     def trigger_powerup(self, powerup, tile, game_surf):
-        if powerup.type_name == 'bomb' or powerup.type_name == 'bigbomb':
+        def trigger_bomb():
             # Start explosion animation
             new_center = (tile.rect.center[0], tile.rect.center[1])
             self.animate_explosion(new_center, game_surf)
@@ -197,8 +218,23 @@ class Board:
                 if tile.under_path != None and not delete_path:
                     tile.under_path.delete(False)
                     delete_path = True
-
             self.unhighlight()
+        
+        def trigger_freeze():
+            self.board_highlight_state = 'freeze'
+            if self.prev_highlight_state == 'freeze': self.i = 0
+
+            everything_effected = len(powerup.type['effected attachments']) == 0
+            if everything_effected: 
+                self.full_board_highlight = True
+                self.update_freeze(self.paths)
+
+        if powerup.type_name == 'bomb' or powerup.type_name == 'bigbomb':
+            trigger_bomb()
+        
+        # trigger freeze
+        if powerup.type_name == 'freeze':
+            trigger_freeze()
 
     def animate_explosion(self, position, game_surf):
         for image in self.explosion_images:
@@ -240,26 +276,45 @@ class Board:
         return None
     
     def update(self):
+        print(self.i)
+        if self.board_highlight_state != '' and 'hover' not in self.board_highlight_state: self.i += 1
+        elif self.prev_highlight_state != '' and 'hover' not in self.prev_highlight_state: self.i += 1
+        if self.i >= 200:
+            self.update_freeze([])
+            if 'hover' in self.board_highlight_state:
+                self.prev_highlight_state = ''
+            else:
+                self.board_highlight_state = ''
+                self.prev_highlight_state = ''
+            self.i = 0
+
         # for train
         for path in self.paths:
             path.update()
+
+
 
     # Rendering
     def draw(self, game_surf):
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
         self.draw_paths(game_surf)
-        
+        self.draw_board_highlight(game_surf)
+    
+    def get_highlight_box(self, width, height, color, opacity):
+        highlight_surf = pygame.Surface((width,height), pygame.SRCALPHA)
+        r, g, b = color
+        highlight_surf.fill((r,g,b,opacity))
+        return highlight_surf
+
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
 
     def draw_highlight(self, tile, game_surf):
         if not tile.highlighted: return
-
-        highlight_surf = pygame.Surface((TRACK_WIDTH,TRACK_HEIGHT), pygame.SRCALPHA)
-        r, g, b = self.highlight_color
-        highlight_surf.fill((r,g,b,128))
-        game_surf.blit(highlight_surf, tile.rect.topleft)
+        game_surf.blit(self.get_highlight_box(
+            TRACK_WIDTH, TRACK_HEIGHT, self.highlight_color, self.default_highlight_opacity
+        ), tile.rect.topleft)
 
     def draw_tiles(self, game_surf):
         for row in self.tiles:
@@ -275,3 +330,12 @@ class Board:
             rerendered_tiles = [path.start_station_tile, path.end_station_tile]
             for tile in rerendered_tiles:
                 self.draw_highlight(tile, game_surf)
+    
+    def draw_board_highlight(self, game_surf):
+        if self.board_highlight_state != '':
+            color, opacity = self.highlight_state_config[self.board_highlight_state]
+
+            if self.full_board_highlight:
+                game_surf.blit(self.get_highlight_box(
+                    self.board_highlight_rect.width, self.board_highlight_rect.height, color, opacity
+                ), self.board_highlight_rect.topleft)

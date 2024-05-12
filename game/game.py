@@ -162,6 +162,7 @@ class Game:
         elif self.active_powerup != None:
             self.active_powerup.move(event.rel)
             self.highlight_tiles_by_powerup()
+            self.highlight_board_by_powerup()
 
     def handle_r_down(self):
         if self.active_set and self.active_track_and_index: 
@@ -236,6 +237,17 @@ class Game:
         self.board.highlight(tiles)
     
     def highlight_tiles_by_powerup(self):
+        if not self.active_powerup.powerup_over_rect(self.board.rect):
+            if 'hover' in self.board.board_highlight_state: 
+                self.board.board_highlight_state = self.board.prev_highlight_state
+            return
+
+        if self.active_powerup.type_name == 'freeze':
+            if self.board.board_highlight_state != '' and 'hover' not in self.board.board_highlight_state: 
+                self.board.prev_highlight_state = self.board.board_highlight_state
+            self.board.board_highlight_state = 'freeze-hover'
+            self.board.full_board_highlight = True
+
         tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
         if not tile: 
             self.board.unhighlight()
@@ -243,6 +255,18 @@ class Game:
 
         if self.active_powerup.type_name == 'bomb' or self.active_powerup.type_name == 'bigbomb':
             self.board.highlight_bomb_tiles(self.active_powerup, tile)
+
+    def highlight_board_by_powerup(self):
+        if not self.active_powerup.powerup_over_rect(self.board.rect):
+            if 'hover' in self.board.board_highlight_state: 
+                self.board.board_highlight_state = self.board.prev_highlight_state
+            return
+
+        if self.active_powerup.type_name == 'freeze':
+            if self.board.board_highlight_state != '' and 'hover' not in self.board.board_highlight_state: 
+                self.board.prev_highlight_state = self.board.board_highlight_state
+            self.board.board_highlight_state = 'freeze-hover'
+            self.board.full_board_highlight = True
 
     def find_open_tiles_under_tracks(self):
         track_positions = self.active_set.find_pos_of_tracks()

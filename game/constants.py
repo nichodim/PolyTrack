@@ -125,8 +125,8 @@ class PowerupSprites:
         pygame.image.load('images/powerup_images/bomb8.png'),
         pygame.image.load('images/powerup_images/bomb9.png')
     ]
+    freeze = pygame.image.load('images/event_images/snowflake_icon.png')
     background_image = pygame.image.load('images/powerup_images/toolbox_bg.png').convert_alpha()
-
 class Colors:
     black = (0, 0, 0)
     white = (255, 255, 255)
@@ -134,4 +134,5 @@ class Colors:
     light_gray = (70,70,70)
     red = (255, 0, 0)
     sky_blue = (202, 228, 241)
+    blue = (0, 0, 255)
     green = (0, 255, 0)

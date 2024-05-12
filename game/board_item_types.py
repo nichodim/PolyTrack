@@ -44,5 +44,9 @@ TrainSpeed_Multipliers = {
     'ice': {
         'multiplier': 1.15, 
         'active': False
+    }, 
+    'freeze': {
+        'multiplier': 0.00001, 
+        'active': False
     }
 }

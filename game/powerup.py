@@ -52,4 +52,14 @@ PowerUpTypes = { # Actual config
         # Type specific
         'blast radius': 2
     },
+    'freeze': {
+        # Generic definitions
+        'dimensions': (50, 50),
+        'sprite': PowerupSprites.freeze,
+        'effected attachments': [], # Empty to effect all
+
+        # Type specific
+        'full freeze strength': 2, 
+        'single freeze strength': 5, 
+    }
 }
