@@ -11,7 +11,7 @@ from obstacle import Obstacle
 from board_item_types import TrainSpeed_Multipliers
 
 class Path:
-    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions):
+    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, add_clock, tick_clock):
         # Prevents updates on nonexisting game objects
         self.path_initated = False
 
@@ -27,10 +27,22 @@ class Path:
         self.prev_highlight, self.highlight = '', ''
         self.powerup_time = 0
 
+        # clock
+        self.start_spawning_train = False
+        self.spawn_trains = False
+
+        self.clock = None
+        self.add_clock = add_clock
+        self.tick_clock = tick_clock
+
+        # create a list for the train that will store in each cart
+        self.train = []
+
         self.tiles_under = []
         self.create_stations()
         self.create_station_tracks()
-        self.create_train()
+        
+        
     
     def add_tile_under(self, tile):
         x, y = tile
@@ -175,6 +187,11 @@ class Path:
             orientation = self.train_orient(start)
         )
         self.board_tiles[start[1]][start[0]].attached = self.start_station
+        
+        # add clock
+        radius = 25
+        duration = 3
+        self.clock = self.add_clock(rect_x + radius, rect_y + radius, radius, duration)
 
         # ending station
         rect_x = self.board_rect.left + OUTER_GAP + end[0] * (TRACK_WIDTH + INNER_GAP)
@@ -243,8 +260,6 @@ class Path:
     def create_train(self):
         starting_orient = self.start_station.orientation
 
-        # create a list for the train that will store in each cart
-        self.train = []
         # build the head for the train
         self.train.append(
             Train(
@@ -265,6 +280,7 @@ class Path:
         #print(self.speed_multipliers['fast_forward']['active'])
 
         # Modified by Kelvin Huang on 4/16/2024
+        if self.spawn_trains == False: return
         cart = self.train[0]
         new_speed = cart.speed
 
@@ -291,6 +307,11 @@ class Path:
 
     # Update
     def update(self):
+        if self.clock != None:
+            if self.tick_clock(self.clock) == True:
+                self.clock = None
+                self.start_spawning_train = True
+
         if (self.prev_highlight != '' and 'hover' not in self.prev_highlight) or \
             (self.highlight != '' and 'hover' not in self.highlight): self.powerup_time += 1
         
@@ -306,25 +327,31 @@ class Path:
 
         starting_orient = self.start_station.orientation
         #if self.current_tile and self.train:
-        
-        for cart in self.train:
-            self.check(cart)
-            cart.update()
-        
-        if self.total_cart > 1:
-            self.timer -= 1
-            if self.timer <= 0:
-                self.total_cart -= 1
-                self.timer = self.time
-                self.train.append(
-                    Train(
-                        type = self.train_type, 
-                        board_rect = self.board_rect,
-                        degree = starting_orient, 
-                        start = self.start,
-                        speed = self.train[0].speed
+
+        if self.start_spawning_train == True:
+            self.create_train()
+            self.start_spawning_train = False
+            self.spawn_trains = True
+
+        if self.spawn_trains == True:
+            for cart in self.train:
+                self.check(cart)
+                cart.update()
+            
+            if self.total_cart > 1:
+                self.timer -= 1
+                if self.timer <= 0:
+                    self.total_cart -= 1
+                    self.timer = self.time
+                    self.train.append(
+                        Train(
+                            type = self.train_type, 
+                            board_rect = self.board_rect,
+                            degree = starting_orient, 
+                            start = self.start,
+                            speed = self.train[0].speed
+                        )
                     )
-                )
 
     # Continusly called: checks what to do based on new tiles
     def check(self, cart):
