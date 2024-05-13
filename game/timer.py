@@ -59,7 +59,7 @@ class Timer:
         
         self.degree -= self.rate
         self.duration -= 1
-        if self.duration == 0:
+        if self.duration <= 0:
             del self
             return True
         return False
