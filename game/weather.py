@@ -5,11 +5,15 @@
 # Modified by Nicholas Seagal, April 28, 2024
 # Changed a little bit of variables
 
+# Modified By Kelvin Huang, May 12, 2024
+# add animation for hail weather
+
 import pygame 
 import random
 import math
 from constants import *
 from wparticles import Wparticles
+
 
 class Weather:
     types = ['snow', 'rain']
@@ -26,7 +30,7 @@ class Weather:
         self.duration = duration * 60
         self.gradual = gradual
 
-        self.is_falling_type = self.type == "snow" or self.type == "rain"
+        self.is_falling_type = self.type == "snow" or self.type == "rain" or self.type == "hail"
         if self.is_falling_type:
             # set up list of particles for falling type
             self.particles = []
@@ -38,6 +42,57 @@ class Weather:
                 self.spawn = [GAME_WIDTH, GAME_WIDTH + math.tan(degree * math.pi/180) * GAME_HEIGHT]
             else:
                 self.spawn = [0, GAME_WIDTH]
+
+        # animation
+        self.animate_weather = False
+        
+        # create faded white rectangle        
+    def start_animation(self, w_type, duration = 3.0):
+        # store previous data
+        self.p_type = self.type
+        self.p_freq = self.freq
+
+        self.type = w_type
+        self.freq = self.freq * 5
+
+        self.animate_weather = True
+        self.total_animate_duration = duration * 60
+        self.animate_duration = self.total_animate_duration
+
+        if self.type == "hail":
+            # create background
+            self.background = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
+            self.alpha = 1
+            self.background.set_alpha(self.alpha)
+            self.background_color = [255, 255, 255]
+            self.background.fill(self.background_color)
+    
+    def animate(self, game_surf):
+        # percentage of the time where the 'fog' will increase
+        R_PER = .5
+        # percentage of the time where the 'fog' will decrease
+        D_PER = .2
+
+        if self.animate_duration > 0:
+            if self.animate_duration > (1 - R_PER) * self.total_animate_duration:
+                self.alpha += (255 / (R_PER * self.total_animate_duration))
+            
+            elif self.animate_duration < D_PER * self.total_animate_duration:
+                self.alpha -= (255 / (D_PER * self.total_animate_duration))
+
+            # only draw background when animation is going on
+            self.background.set_alpha(self.alpha)
+            game_surf.blit(self.background, (0,0))
+            self.animate_duration -= 1
+
+            # stop animation
+            if self.animate_duration == 0:
+                self.animate_weather = False
+                self.end_animation()
+
+    def end_animation(self):
+        self.type = self.p_type
+        self.freq = self.p_freq
 
     def update(self):
         if self.timer < self.duration and self.is_falling_type:
@@ -68,14 +123,19 @@ class Weather:
         else:
             freq = self.freq
         
-        if random.random() < freq:
-            start, end = self.spawn
-            position = start + random.random() * (end - start)
-            if self.direction == "left":
-                self.particles.append(Wparticles(self.type, self.speed, self.degree, position))
-            else:
-                self.particles.append(Wparticles(self.type, self.speed, -self.degree, position))
-
+        while freq > 0:
+            if random.random() < freq:
+                start, end = self.spawn
+                position = start + random.random() * (end - start)
+                if self.direction == "left":
+                    self.particles.append(Wparticles(self.type, self.speed, self.degree, position, self.delete_particle))
+                else:
+                    self.particles.append(Wparticles(self.type, self.speed, -self.degree, position, self.delete_particle))
+            freq -= 1
+    
+    def delete_particle(self, particle):
+        self.particles.remove(particle)
+    
     # moved each particles
     def move(self):
         if self.is_falling_type:
@@ -84,10 +144,13 @@ class Weather:
 
     # draw particles objects
     def draw(self, game_surf):
+        if self.animate_weather == True:
+            self.animate(game_surf)
+        print(len(self.particles))
         if self.is_falling_type:
             for particle in self.particles:
                 particle.draw(game_surf)
-
+        
     # delete this object when event is over
     def stop(self):
         del self

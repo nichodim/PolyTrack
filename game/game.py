@@ -15,7 +15,7 @@ class Game:
         pygame.init()
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
-        self.board = Board(map, self.handle_board_end, self.handle_complete_map)
+        self.board = Board(map, self.handle_board_end, self.handle_complete_map, self.animate_weather)
         self.track_box = Trackbox()
         self.active_set = None
         self.active_track_and_index = None
@@ -25,7 +25,7 @@ class Game:
         self.active_powerup = None
 
         # Pause menu initialization
-        self.lives = 3
+        self.lives = 100
         self.initial_lives = self.lives
         self.resume = True
         self.paused = False
@@ -40,8 +40,6 @@ class Game:
         # This implementation only accounts for constant weather on map types
         self.weather = None
         if map['type'] == "frozen": self.weather = Weather("snow", direction="left", degree=45)
-
-
 
     # Event control 
     def handle_events(self):
@@ -60,10 +58,10 @@ class Game:
                 self.handle_mouse_motion(event)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE: self.handle_escape()
-                if event.unicode == 'r': self.handle_r_down()
-                if event.unicode == 'f': self.board.toggle_fast_forward(True)  
+                if event.unicode.lower() == 'r': self.handle_r_down()
+                if event.unicode.lower() == 'f': self.board.toggle_fast_forward(True)  
             elif event.type == pygame.KEYUP:
-                if event.unicode == 'f': self.board.toggle_fast_forward(False)
+                if event.unicode.lower() == 'f': self.board.toggle_fast_forward(False)
             elif event.type == pygame.QUIT:
                 self.quit_game()
 
@@ -210,7 +208,7 @@ class Game:
             self.weather = Weather("snow", direction="left", degree=45)
         else:
             self.weather = None
-
+ 
     def handle_board_end(self, win):
         if not win: self.lives -= 1
         if win: 
@@ -318,6 +316,9 @@ class Game:
             self.render()
             self.fps.tick(60)
 
+    def animate_weather(self, w_type, duration = 3):
+        self.weather.start_animation(w_type, duration)
+    
     def update(self):
         self.board.update()
         if self.weather != None: self.weather.update()

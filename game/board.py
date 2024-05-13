@@ -1,6 +1,7 @@
 # The board holding and controlling the tiles
 import random
 import pygame
+
 from itertools import product
 from constants import *
 from tile import Tile
@@ -9,12 +10,12 @@ from path import Path
 from weather import Weather
 
 class Board:
-    def __init__(self, map, end_call, complete_map):
+    def __init__(self, map, end_call, complete_map, animate_weather):
         # Find custom map values
         grid_layout = map['board']
         self.type, self.obstacles, self.levels = map['type'], map['obstacles'], map['levels']
         self.rows, self.cols = len(grid_layout), len(grid_layout[0])
-        self.end_call, self.complete_map = end_call, complete_map
+        self.end_call, self.complete_map, self.animate_weather = end_call, complete_map, animate_weather
         
         # Create board
         board_width = self.cols * TRACK_WIDTH + INNER_GAP * (self.cols - 1) + OUTER_GAP * 2
@@ -53,8 +54,11 @@ class Board:
         self.explosion_animation_speed = 40
 
         # Start levels
-        self.level, self.round = -1, -1
-        self.new_round()
+        self.level, self.round = 0, 0
+        self.new_level()
+
+        self.animate = False
+        self.animate_duration = 0
 
         self.i = 0
 
@@ -78,11 +82,30 @@ class Board:
 
         return tiles
     
+    # Modified By Kelvin Huang, May 12, 2024
+    # split previous new_round function to new_level and new_round to handle weather
+    def new_level(self):
+        # clear board
+        for row in self.tiles:
+            for tile in row:
+                tile.attached = None
+                if self.type == 'frozen' and tile.terrain == 'water':
+                    tile.terrain = 'ice'
+        
+        # Generate new obstacles
+        obstacle_range = self.levels[self.level]['obstacle_range']
+        self.generate_obstacles(obstacle_range)
+        
+        # add first set of train
+        trains_to_spawn = self.levels[self.level]['rounds'][self.round]
+        for train_type in trains_to_spawn:
+            self.create_path(train_type)
+    
     def new_round(self):
         self.round += 1
 
         # Check level, if done all rounds (or first)...
-        if self.level == -1 or len(self.levels[self.level]['rounds']) <= self.round: 
+        if len(self.levels[self.level]['rounds']) <= self.round: 
             # Go to next level
             self.level += 1
             self.round = 0
@@ -90,17 +113,12 @@ class Board:
             # Check if done all levels
             if len(self.levels) <= self.level: self.complete_map()
 
-            # Reset board
-            for row in self.tiles:
-                for tile in row:
-                    tile.attached = None
-                    if self.type == 'frozen' and tile.terrain == 'water':
-                        tile.terrain = 'ice'
+            # start animation between board clearing
+            self.animate = True
+            self.animate_duration = 3 * 60 
+            self.animate_weather("hail")
+            return # prevent next train from being added
             
-            # Generate new obstacles
-            obstacle_range = self.levels[self.level]['obstacle_range']
-            self.generate_obstacles(obstacle_range)
-        
         # Add new trains
         trains_to_spawn = self.levels[self.level]['rounds'][self.round]
         for train_type in trains_to_spawn:
@@ -272,8 +290,15 @@ class Board:
     
     def update(self):
         # for train
-        for path in self.paths:
-            path.update()
+        if self.animate == True:
+            self.animate_duration -= 1
+            if self.animate_duration == 0: 
+                self.animate = False
+                self.new_level()
+                
+        else:
+            for path in self.paths:
+                path.update()
 
 
 
