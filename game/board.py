@@ -8,9 +8,11 @@ from tile import Tile
 from obstacle import Obstacle
 from path import Path
 from weather import Weather
+from timer import Timer
 
 class Board:
     def __init__(self, map, end_call, complete_map, animate_weather):
+        self.clocks = []
         # Find custom map values
         grid_layout = map['board']
         self.type, self.obstacles, self.levels = map['type'], map['obstacles'], map['levels']
@@ -142,7 +144,9 @@ class Board:
             board_rect = self.rect, 
             end_call = self.path_call, 
             train_type = train_type,
-            grid_dimensions = (self.rows, self.cols)
+            grid_dimensions = (self.rows, self.cols),
+            add_clock = self.add_clock,
+            tick_clock = self.tick_clock
         )
         self.paths.append(new_path)
     
@@ -288,6 +292,16 @@ class Board:
             return self.tiles[row][col]
         return None
     
+    def add_clock(self, x, y, radius, duration):
+        clock = Timer(x, y, radius, duration)
+        self.clocks.append(clock)        
+        return clock
+    
+    def tick_clock(self, clock, speed = 1):
+        if clock.tick(speed) == True:
+            self.clocks.remove(clock)
+            return True
+
     def update(self):
         # for train
         if self.animate == True:
@@ -300,15 +314,14 @@ class Board:
             for path in self.paths:
                 path.update()
 
-
-
     # Rendering
     def draw(self, game_surf):
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
         self.draw_paths(game_surf)
         self.draw_board_highlight(game_surf)
-    
+        self.draw_clocks(game_surf)
+        
     def get_highlight_box(self, width, height, color, opacity):
         highlight_surf = pygame.Surface((width,height), pygame.SRCALPHA)
         r, g, b = color
@@ -365,3 +378,7 @@ class Board:
                         game_surf.blit(self.get_highlight_box(
                             tile.rect.width, tile.rect.height, color, opacity
                         ), tile.rect.topleft)
+    
+    def draw_clocks(self, game_surf):
+        for clock in self.clocks:
+            clock.draw(game_surf)
