@@ -188,8 +188,9 @@ class Path:
         )
         self.board_tiles[start[1]][start[0]].attached = self.start_station
         
-        # add clock
-        radius = 25
+        
+        # add clock                                                                         # Modified by Kelvin Huang, May 13, 2024
+        radius = 25                                                                         # add timer before train spawns
         duration = 3
         self.clock = self.add_clock(rect_x + radius, rect_y + radius, radius, duration)
 
@@ -307,8 +308,8 @@ class Path:
 
     # Update
     def update(self):
-        if self.clock != None:
-            if self.tick_clock(self.clock) == True:
+        if self.clock != None:                          # Modified by Kelvin Huang, May 13, 2024
+            if self.tick_clock(self.clock) == True:     # Controls when to start spawning trains
                 self.clock = None
                 self.start_spawning_train = True
 
@@ -328,12 +329,12 @@ class Path:
         starting_orient = self.start_station.orientation
         #if self.current_tile and self.train:
 
-        if self.start_spawning_train == True:
-            self.create_train()
-            self.start_spawning_train = False
+        if self.start_spawning_train == True:   # Modified by Kelvin Huang, May 13, 2024
+            self.create_train()                 # Starting spawning the train
+            self.start_spawning_train = False   # close it off so it doesn't spawn another train
             self.spawn_trains = True
 
-        if self.spawn_trains == True:
+        if self.spawn_trains == True:           # start spawning carts of train
             for cart in self.train:
                 self.check(cart)
                 cart.update()

@@ -1,3 +1,12 @@
+'''
+    Created by Kelvin Huang, May 13, 2024
+    timer object that can be used for cooldown or delays
+    call: Timer(x location, y location, radius, duration (second))
+    methods:
+            tick(speed) -   Return True when time hit <= 0
+                            else return false
+                            optional speed parameter to speed up time
+'''
 import pygame
 import math
 

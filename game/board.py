@@ -145,8 +145,8 @@ class Board:
             end_call = self.path_call, 
             train_type = train_type,
             grid_dimensions = (self.rows, self.cols),
-            add_clock = self.add_clock,
-            tick_clock = self.tick_clock
+            add_clock = self.add_clock,                 # Modified by Kelvin Huang, May 13, 2024
+            tick_clock = self.tick_clock                # pass these method to path so it can use it to add timer above starting stations  
         )
         self.paths.append(new_path)
     
@@ -292,12 +292,12 @@ class Board:
             return self.tiles[row][col]
         return None
     
-    def add_clock(self, x, y, radius, duration):
-        clock = Timer(x, y, radius, duration)
+    def add_clock(self, x, y, radius, duration):    # Created by Kelvin Huang, May 13, 2024 
+        clock = Timer(x, y, radius, duration)       # handles adding new clock in board.py
         self.clocks.append(clock)        
         return clock
     
-    def tick_clock(self, clock, speed = 1):
+    def tick_clock(self, clock, speed = 1):         # handles ticking new clock in board.py
         if clock.tick(speed) == True:
             self.clocks.remove(clock)
             return True
@@ -379,6 +379,6 @@ class Board:
                             tile.rect.width, tile.rect.height, color, opacity
                         ), tile.rect.topleft)
     
-    def draw_clocks(self, game_surf):
-        for clock in self.clocks:
+    def draw_clocks(self, game_surf):       # Created by Kelvin Huang, May 13, 2024
+        for clock in self.clocks:           # Draw each clock
             clock.draw(game_surf)
