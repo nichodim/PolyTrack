@@ -12,6 +12,7 @@ from timer import Timer
 
 class Board:
     def __init__(self, map, end_call, complete_map, animate_weather):
+        self.map = map
         self.clocks = []
         # Find custom map values
         grid_layout = map['board']
@@ -146,7 +147,8 @@ class Board:
             train_type = train_type,
             grid_dimensions = (self.rows, self.cols),
             add_clock = self.add_clock,                 # Modified by Kelvin Huang, May 13, 2024
-            tick_clock = self.tick_clock                # pass these method to path so it can use it to add timer above starting stations  
+            tick_clock = self.tick_clock,               # pass these method to path so it can use it to add timer above starting stations  
+            map = self.map                                
         )
         self.paths.append(new_path)
     

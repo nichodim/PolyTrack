@@ -13,9 +13,10 @@ class Game:
     def __init__(self, map):
         # Game initialization, i.e. board, trackbox, train
         pygame.init()
+        self.map = map
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
-        self.board = Board(map, self.handle_board_end, self.handle_complete_map, self.animate_weather)
+        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map, self.animate_weather)
         self.track_box = Trackbox()
         self.active_set = None
         self.active_track_and_index = None
@@ -32,7 +33,6 @@ class Game:
         self.winner = False
         self.loser = False
         self.saved_time = 0
-        self.map = map
 
         print('lives:', self.lives)
 
@@ -40,7 +40,7 @@ class Game:
         # This implementation only accounts for constant weather on map types
         self.weather = None
         if map['type'] == "frozen": self.weather = Weather("snow", direction="left", degree=45)
-
+    
     # Event control 
     def handle_events(self):
         for event in pygame.event.get():
@@ -200,7 +200,7 @@ class Game:
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
 
-        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map)
+        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map, self.map)
         self.track_box = Trackbox()
         self.powerup_menu = PowerupMenu(self.track_box.rect)
 

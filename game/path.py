@@ -11,7 +11,7 @@ from obstacle import Obstacle
 from board_item_types import TrainSpeed_Multipliers
 
 class Path:
-    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, add_clock, tick_clock):
+    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, add_clock, tick_clock, map):
         # Prevents updates on nonexisting game objects
         self.path_initated = False
 
@@ -34,6 +34,7 @@ class Path:
         self.clock = None
         self.add_clock = add_clock
         self.tick_clock = tick_clock
+        self.map = map
 
         # create a list for the train that will store in each cart
         self.train = []
@@ -41,8 +42,6 @@ class Path:
         self.tiles_under = []
         self.create_stations()
         self.create_station_tracks()
-        
-        
     
     def add_tile_under(self, tile):
         x, y = tile
@@ -174,8 +173,14 @@ class Path:
         print()
         '''
 
-        start_image = TrackSprites.start_train_station
-        end_image = TrackSprites.end_train_station
+        same_color = [(255, 0, 0), (0,0,0)]                 # Modified by Matthew Selvaggi May-15-24
+        self.color = random.choice(same_color)              # Added modification to generate a unique color for start/end
+        if self.map['type'] == 'vanilla':
+            start_image = TerrainSprites.grass
+            end_image = TerrainSprites.grass
+        else:
+            start_image = TerrainSprites.snow
+            end_image = TerrainSprites.snow
 
         # starting station
         rect_x = self.board_rect.left + OUTER_GAP + start[0] * (TRACK_WIDTH + INNER_GAP)
@@ -503,5 +508,14 @@ class Path:
         for cart in self.train:
             cart.draw(game_surf)
         
+    # Modified by Matthew Selvaggi
+    # Added additional changes to draw a rect around to
+    # allow user to understand endpoint for respective train
         self.start_station_tile.draw_attached(game_surf)
         self.end_station_tile.draw_attached(game_surf)
+
+        start_rect = self.start_station_tile.rect
+        end_rect = self.end_station_tile.rect
+
+        pygame.draw.rect(game_surf, self.color, start_rect, 3)
+        pygame.draw.rect(game_surf, self.color, end_rect, 3)
