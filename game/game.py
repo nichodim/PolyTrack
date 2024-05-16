@@ -27,6 +27,7 @@ class Game:
 
         # Pause menu initialization
         self.lives = 100
+        self.points = 0
         self.initial_lives = self.lives
         self.resume = True
         self.paused = False
@@ -213,6 +214,7 @@ class Game:
         if not win: self.lives -= 1
         if win: 
             self.lives += 1
+            self.points += 1
 
         print('lives:', self.lives)
 
@@ -426,12 +428,31 @@ class Game:
                 self.restart_game()
         elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
             self.quit_game()
+    
+    # Author: Neo Chen
+    # Date: 5-16-2024
+    # Purpose: Displays internal points counter and lives counter
+    def points_and_lives(self):
+        points_font = pygame.font.Font('font/font.ttf', 36)
+        points_text = points_font.render(f'Points: {self.points}', True, Colors.black, Colors.sky_blue)
+        points_rect = points_text.get_rect()
+        points_rect.topleft = (10, 4)
 
+        lives_font = pygame.font.Font('font/font.ttf', 36)
+        lives_text = lives_font.render(f'Lives: {self.lives}', True, Colors.black, Colors.sky_blue)
+        lives_rect = lives_text.get_rect()
+        lives_rect.topleft = (10, 39)
+
+        self.game_surf.blit(lives_text, lives_rect)
+        self.game_surf.blit(points_text, points_rect)
+
+    
     def render(self):
         self.game_surf.fill(Colors.sky_blue)
         self.board.draw(self.game_surf)
         self.powerup_menu.draw(self.game_surf)
         self.track_box.draw(self.game_surf)
+        self.points_and_lives()
         if self.weather != None: self.weather.draw(self.game_surf)
 
         # Paused render
