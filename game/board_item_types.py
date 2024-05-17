@@ -47,6 +47,12 @@ TrainSpeed_Multipliers = {
     }, 
     'freeze': {
         'multiplier': 0.00001, 
-        'active': False
+        'active': False, 
+        'time-limit': 150
+    }, 
+    'deep-freeze': { # Freeze but supposed to last longer
+        'multiplier': 0.00001, 
+        'active': False, 
+        'time-limit': 300
     }
 }

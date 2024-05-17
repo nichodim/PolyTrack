@@ -146,7 +146,7 @@ class Weather:
     def draw(self, game_surf):
         if self.animate_weather == True:
             self.animate(game_surf)
-        print(len(self.particles))
+        # print(len(self.particles))
         if self.is_falling_type:
             for particle in self.particles:
                 particle.draw(game_surf)

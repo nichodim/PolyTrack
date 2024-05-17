@@ -248,6 +248,8 @@ class Game:
         
         # Sets individual path to hover freeze, saves if frozen to previous state
         if self.active_powerup.type_name == 'freeze':
+            if len(self.board.paths) == 1: return False
+
             for path in self.board.paths:
                 if 'hover' in path.highlight: 
                     path.highlight = path.prev_highlight
@@ -257,6 +259,7 @@ class Game:
                 if path.highlight != '' and 'hover' not in path.highlight: 
                     path.prev_highlight = path.highlight
                 path.highlight = 'freeze-hover'
+                self.board.full_freeze = False
                 return True
 
     def highlight_board_by_powerup(self):
@@ -280,6 +283,7 @@ class Game:
                 if path.highlight != '' and 'hover' not in path.highlight: 
                     path.prev_highlight = path.highlight
                 path.highlight = 'freeze-hover'
+            self.board.full_freeze = True
 
     def find_open_tiles_under_tracks(self):
         track_positions = self.active_set.find_pos_of_tracks()
@@ -302,8 +306,8 @@ class Game:
     def trigger_powerup_on_board(self):
         tile = self.board.find_tile_in_location(self.active_powerup.rect.center)
         if not tile: return False
-        self.board.trigger_powerup(self.active_powerup, tile, self.game_surf)
-        return True
+        worked = self.board.trigger_powerup(self.active_powerup, tile, self.game_surf)
+        return worked
 
 
     # Boilerplate to functionally update the game

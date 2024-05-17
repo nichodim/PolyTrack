@@ -321,15 +321,24 @@ class Path:
         if (self.prev_highlight != '' and 'hover' not in self.prev_highlight) or \
             (self.highlight != '' and 'hover' not in self.highlight): self.powerup_time += 1
         
-        if self.powerup_time >= 200:
+        dfreeze = self.speed_multipliers['deep-freeze']
+        if dfreeze['active'] and self.powerup_time >= dfreeze['time-limit']:
+            print(self.powerup_time, ': disabled deep freeze')
+            self.toggle_speed_multiplier('deep-freeze', False)
+            self.powerup_time = 0
+
+        freeze = self.speed_multipliers['freeze']
+        if freeze['active'] and self.powerup_time >= freeze['time-limit']:
+            print(self.powerup_time, ': disabled freeze')
+            self.toggle_speed_multiplier('freeze', False)
+            self.powerup_time = 0
+        
+        if not freeze['active'] and not dfreeze['active']: 
             if 'hover' in self.highlight:
                 self.prev_highlight = ''
             else:
                 self.highlight = ''
                 self.prev_highlight = ''
-            
-            self.toggle_speed_multiplier('freeze', False)
-            self.powerup_time = 0
 
         starting_orient = self.start_station.orientation
         #if self.current_tile and self.train:

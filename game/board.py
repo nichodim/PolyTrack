@@ -45,7 +45,7 @@ class Board:
             'freeze': [Colors.blue, 128], 
             'freeze-hover': [Colors.blue, 64]
         }
-        self.board_highlight = False
+        self.full_freeze = False
 
         # Creatre path boilerplate
         self.paths = []
@@ -208,14 +208,15 @@ class Board:
         tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile)
         self.highlight(tiles_to_highlight)
     
-    def activate_freeze(self, paths):
+    def activate_multiplier_on_paths(self, multiplier, paths):
         for path in self.paths:
             if path in paths: 
-                path.toggle_speed_multiplier('freeze', True)
+                path.toggle_speed_multiplier(multiplier, True)
                 path.powerup_time = 0
 
-                path.highlight = 'freeze'
-                path.prev_highlight = ''
+                if 'freeze' in multiplier: 
+                    path.highlight = 'freeze'
+                    path.prev_highlight = ''
     
     def trigger_powerup(self, powerup, tile_under, game_surf):
         def trigger_bomb():
@@ -244,16 +245,29 @@ class Board:
             self.unhighlight()
         
         def trigger_freeze():
+            full_freeze = True
             everything_effected = len(powerup.type['effected attachments']) == 0
             if everything_effected: 
-                if tile_under.under_path != None: self.activate_freeze([tile_under.under_path])
-                else: self.activate_freeze(self.paths)
+                if tile_under.under_path != None: 
+                    self.activate_multiplier_on_paths('deep-freeze', [tile_under.under_path])
+                    if len(self.paths) > 1: full_freeze = False
+                else: 
+                    if len(self.paths) == 1: self.activate_multiplier_on_paths('deep-freeze', self.paths)
+                    else: self.activate_multiplier_on_paths('freeze', self.paths)
+            
+            if full_freeze:
+                for row in self.tiles:
+                    for tile in row:
+                        if tile.terrain == 'water': tile.terrain = 'ice'
+            
+            self.full_freeze = full_freeze
 
         if powerup.type_name == 'bomb' or powerup.type_name == 'bigbomb':
             trigger_bomb()
-        
-        if powerup.type_name == 'freeze':
+        elif powerup.type_name == 'freeze':
             trigger_freeze()
+        else: return False
+        return True
 
     def animate_explosion(self, position, game_surf):
         for image in self.explosion_images:
@@ -363,7 +377,7 @@ class Board:
                 all_highlighted = False
                 break
         
-        if all_highlighted:
+        if all_highlighted and self.full_freeze:
             color, opacity = self.highlight_state_config[all_highlightes_as]
             game_surf.blit(self.get_highlight_box(
                 self.board_highlight_rect.width, self.board_highlight_rect.height, color, opacity
@@ -371,7 +385,7 @@ class Board:
         else:
             for path in self.paths:
                 if path.highlight != '':
-                    if all_highlighted: 
+                    if all_highlighted and self.full_freeze: 
                         if 'hover' not in path.highlight: continue
                     
                     color, opacity = self.highlight_state_config[path.highlight]
