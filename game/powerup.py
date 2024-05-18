@@ -58,7 +58,7 @@ PowerUpTypes = { # Actual config
     'slow': {
         # Generic definitions
         'dimensions': (50, 50),
-        'sprite': PowerupSprites.bomb_lit,
+        'sprite': PowerupSprites.slow,
         'effected attachments': [], # Empty to effect all
 
         # Type specific

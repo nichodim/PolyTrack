@@ -125,7 +125,8 @@ class PowerupSprites:
         pygame.image.load('images/powerup_images/bomb8.png'),
         pygame.image.load('images/powerup_images/bomb9.png')
     ]
-    freeze = pygame.image.load('images/event_images/snowflake_icon.png')
+    freeze = pygame.image.load('images/event_images/snowflake_icon.png').convert_alpha()
+    slow = pygame.image.load('images/powerup_images/slow.jpg').convert_alpha()
     background_image = pygame.image.load('images/powerup_images/toolbox_bg.png').convert_alpha()
 class Colors:
     black = (0, 0, 0)
