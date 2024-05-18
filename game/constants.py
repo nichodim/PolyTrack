@@ -40,6 +40,15 @@ class SFX:
     tick = pygame.mixer.Sound('sfx/tick.mp3')
     theme_song = 'sfx/theme_song.mp3'
     explosion = pygame.mixer.Sound('sfx/explosion.mp3')
+    explosion2 = pygame.mixer.Sound('sfx/bomb.mp3')
+    freeze = pygame.mixer.Sound('sfx/freeze.mp3')
+    freeze2 = pygame.mixer.Sound('sfx/freeze3.mp3')
+    freezee = pygame.mixer.Sound('sfx/icemake1.mp3')
+    freezee2 = pygame.mixer.Sound('sfx/icemake2.mp3')
+    icebreak = pygame.mixer.Sound('sfx/icebreak.mp3')
+    pickup2 = pygame.mixer.Sound('sfx/pickup2.mp3')
+    slow = pygame.mixer.Sound('sfx/slow.mp3')
+    bleep = pygame.mixer.Sound('sfx/bleep.wav')
 
 # Mixer
 SFX.metal_move.set_volume(0.2)
@@ -48,6 +57,16 @@ SFX.med_metal_drop.set_volume(0.4)
 SFX.smalldrill.set_volume(0.4)
 SFX.doubledrill.set_volume(0.4)
 SFX.tick.set_volume(0.15)
+
+SFX.icebreak.set_volume(0.09)
+SFX.bleep.set_volume(0.07)
+SFX.slow.set_volume(0.15)
+SFX.freeze.set_volume(0.08)
+SFX.freeze2.set_volume(0.15)
+SFX.freezee.set_volume(0.08)
+SFX.freezee2.set_volume(0.15)
+SFX.pickup2.set_volume(0.4)
+SFX.explosion2.set_volume(0.2)
 
 class Images:
     start_img = pygame.image.load('images/button_images/start.png').convert_alpha()

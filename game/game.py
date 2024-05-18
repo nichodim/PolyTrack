@@ -70,7 +70,7 @@ class Game:
         self.active_powerup = self.powerup_menu.find_powerup(event.pos)
         if not self.active_powerup: return False
 
-        SFX.metal_move.play() # TODO replace with proper sound
+        SFX.pickup2.play()
         self.active_powerup_inital_pos = self.active_powerup.rect.center
 
         return True
@@ -428,11 +428,13 @@ class Game:
 
         # Check for button clicks
         if distance_to_button1 < threshold and pygame.mouse.get_pressed()[0]:
+            SFX.bleep.play()
             if self.resume:
                 self.paused = not self.paused
             else:
                 self.restart_game()
         elif distance_to_button2 < threshold and pygame.mouse.get_pressed()[0]:
+            SFX.bleep.play()
             self.quit_game()
     
     # Author: Neo Chen

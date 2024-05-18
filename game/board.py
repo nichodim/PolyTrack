@@ -244,12 +244,16 @@ class Board:
     
     def trigger_powerup(self, powerup, tile_under, game_surf):
         def trigger_bomb():
+            SFX.explosion2.play()
             # Start explosion animation
             new_center = (tile_under.rect.center[0], tile_under.rect.center[1])
             self.animate_explosion(new_center, game_surf)
 
+            ice_broke = False
             for tile in self.highlighted_tiles:
-                if tile.terrain == 'ice': tile.terrain = 'water'
+                if tile.terrain == 'ice': 
+                    tile.terrain = 'water'
+                    ice_broke = True
 
                 everything_effected = len(powerup.type['effected attachments']) == 0
                 is_effected = tile.attached.__class__.__name__ in powerup.type['effected attachments']
@@ -267,8 +271,10 @@ class Board:
                     tile.under_path.delete(False)
                     delete_path = True
             self.unhighlight()
+            if ice_broke: SFX.icebreak.play()
         
         def trigger_slow():
+            SFX.slow.play()
             # Actions to pass down into generic timed tile spot
             def slow_tile(tile):
                 tile.slowed = True
@@ -296,9 +302,11 @@ class Board:
                     else: self.activate_multiplier_on_paths('freeze', self.paths)
             
             if full_freeze:
+                SFX.freezee2.play()
                 for row in self.tiles:
                     for tile in row:
                         if tile.terrain == 'water': tile.terrain = 'ice'
+            else: SFX.freezee.play()
             
             self.full_freeze = full_freeze
 

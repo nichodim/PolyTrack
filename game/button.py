@@ -1,5 +1,6 @@
 # Button Class
 import pygame
+from constants import SFX
 
 class Button: # Make this its own file at a later date
     def __init__(self, x, y, image, scale):
@@ -21,6 +22,7 @@ class Button: # Make this its own file at a later date
     
     def clicked(self):
         if self.hovered() and pygame.mouse.get_pressed()[0] == 1:
+            SFX.bleep.play()
             return True
         return False
 
