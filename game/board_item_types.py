@@ -54,5 +54,9 @@ TrainSpeed_Multipliers = {
         'multiplier': 0.00001, 
         'active': False, 
         'time-limit': 300
+    }, 
+    'slow': {
+        'multiplier': 0.35, 
+        'active': False
     }
 }

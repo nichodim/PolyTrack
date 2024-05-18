@@ -98,9 +98,7 @@ class Game:
     def handle_mouse_down(self, event):
         # Activates powerup if possible
         activated = self.activate_powerup(event)
-        if activated: 
-            self.board.highlight_color = Colors.red # TODO make this dependant on powerup type
-            return
+        if activated: return
 
         # Otherwise, activates track set if possible
         activated = self.activate_set(event)
@@ -108,7 +106,7 @@ class Game:
             self.active_set == None
             self.active_track_and_index == None
         self.track_box.handle_spawn_button()
-        self.board.highlight_color = Colors.green
+        self.board.active_tile_highlight = 'track'
 
     def handle_mouse_up(self):
         def clear_active_set():
@@ -244,6 +242,10 @@ class Game:
 
         if self.active_powerup.type_name == 'bomb' or self.active_powerup.type_name == 'bigbomb':
             self.board.highlight_bomb_tiles(self.active_powerup, tile)
+            return True
+        
+        if self.active_powerup.type_name == 'slow':
+            self.board.highlight_slow_tiles(self.active_powerup, tile)
             return True
         
         # Sets individual path to hover freeze, saves if frozen to previous state

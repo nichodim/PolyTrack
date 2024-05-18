@@ -41,6 +41,7 @@ PowerUpTypes = { # Actual config
         'effected attachments': ['Obstacle', 'Track'], # Empty to effect all
 
         # Type specific
+        'highlight color': Colors.red,
         'blast radius': 1
     },
     'bigbomb': {
@@ -50,8 +51,21 @@ PowerUpTypes = { # Actual config
         'effected attachments': ['Obstacle', 'Track'], # Empty to effect all
 
         # Type specific
+        'highlight color': Colors.red,
+        'highlight color': Colors.yellow,
         'blast radius': 2
     },
+    'slow': {
+        # Generic definitions
+        'dimensions': (50, 50),
+        'sprite': PowerupSprites.bomb_lit,
+        'effected attachments': [], # Empty to effect all
+
+        # Type specific
+        'highlight color': Colors.yellow,
+        'time limit': 300, 
+        'slow radius': 2
+    }, 
     'freeze': {
         # Generic definitions
         'dimensions': (50, 50),

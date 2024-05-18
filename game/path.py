@@ -441,6 +441,14 @@ class Path:
             tile = self.board_tiles[center_y][center_x]
             attached_item = tile.attached
 
+            if tile.terrain == 'ice':
+                self.toggle_speed_multiplier('ice', True)
+            else: self.toggle_speed_multiplier('ice', False)
+
+            if tile.slowed:
+                self.toggle_speed_multiplier('slow', True)
+            else: self.toggle_speed_multiplier('slow', False)
+
             if attached_item == None: return (False, 'not a track or station')
             if attached_item == self.end_station: return (True, 'ending station')
             if isinstance(attached_item, Obstacle): return (False, 'train crash into obstacle')
@@ -450,11 +458,6 @@ class Path:
                 new_direction = attached_item.directions[int(cart.degree % 360 / 90)]             
             else: return (True, 'turning')
             if new_direction == 'crash': return (False, 'direction found was not correct for train')
-
-            #print(tile.terrain)
-            if tile.terrain == 'ice':
-                self.toggle_speed_multiplier('ice', True)
-            else: self.toggle_speed_multiplier('ice', False)
 
             cart.direction = new_direction
 

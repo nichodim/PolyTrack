@@ -4,9 +4,10 @@ import pygame
 
 from itertools import product
 from constants import *
-from tile import Tile
+from tile import Tile, TimedTileEffect
 from obstacle import Obstacle
 from path import Path
+from powerup import PowerUpTypes
 from weather import Weather
 from timer import Timer
 
@@ -33,11 +34,11 @@ class Board:
         for i, row in enumerate(self.tiles):
             for j, tile in enumerate(row):
                 self.tile_indexes[f'{tile}'] = (i, j)
+        self.slow_spots = []
 
         # Create highlighting for tiles
         self.highlighted_tiles = []
-        self.highlight_color = Colors.green
-        self.default_highlight_opacity = 128
+        self.active_tile_highlight = '' # bomb, slow, or track
 
         # Create highlighting for board
         self.board_highlight_rect = pygame.Rect(board_x - 10, board_y - 10, board_width + 2*10, board_height + 2*10)
@@ -170,12 +171,8 @@ class Board:
             path.toggle_speed_multiplier('fast_forward', active)
 
     # Extra Board Logic
-    def get_tiles_in_radius(self, radius, tile):
-        row, col = self.tile_indexes[f'{tile}']
-        tiles = [tile]
-
-        # Circle bomb blast
-        def spread_coords(coord, r):
+    def get_tiles_in_radius(self, radius, tile, type):
+        def spread_coords(coord, r = 1):
             # Modified By Kelvin Huang, 4/18/2024
             # Fixed issue where large board crash on the last row
             x, y = coord
@@ -191,21 +188,48 @@ class Board:
             if 0 <= y-1 < self.cols: 
                 tiles.append(self.tiles[x][y-1])
                 if r < radius: spread_coords((x, y-1), r+1)
+        def spread_horiz_coords(coord, r = 1):
+            # Modified By Kelvin Huang, 4/18/2024
+            # Fixed issue where large board crash on the last row
+            x, y = coord
+            if 0 <= x+1 < self.rows: 
+                tiles.append(self.tiles[x+1][y])
+                if r < radius: spread_coords((x+1, y), r+1)
+            if 0 <= x-1 < self.rows: 
+                tiles.append(self.tiles[x-1][y])
+                if r < radius: spread_coords((x-1, y), r+1)
+            if 0 <= y+1 < self.cols: 
+                tiles.append(self.tiles[x][y+1])
+                if r < radius: spread_coords((x, y+1), r+1)
+            if 0 <= y-1 < self.cols: 
+                tiles.append(self.tiles[x][y-1])
+                if r < radius: spread_coords((x, y-1), r+1)
+            if 0 <= y+2 < self.cols: 
+                tiles.append(self.tiles[x][y+1])
+                if r < radius: spread_coords((x, y+2), r+2)
+            if 0 <= y-2 < self.cols: 
+                tiles.append(self.tiles[x][y-1])
+                if r < radius: spread_coords((x, y-2), r+2)
         
-        spread_coords((row, col), 1)
-        return tiles
+        row, col = self.tile_indexes[f'{tile}']
+        tiles = [tile]
 
-        # Square bomb blast
-        # radius_squared = radius ** 2
-        # for x, y in product(range(-radius, radius + 1), repeat=2):
-        #     if x ** 2 + y ** 2 < radius_squared:
-        #         tile_x, tile_y = x + row, y + col
-        #         if 0 <= tile_x < self.cols and 0 <= tile_y < self.rows:
-        #             tiles.append(self.tiles[tile_x][tile_y])
-        # return tiles
+        if type == 'circle':
+            spread_coords((row, col))
+            return set(tiles)
+
+        if type == 'horiz_circle':
+            spread_horiz_coords((row, col))
+            return set(tiles)
     
     def highlight_bomb_tiles(self, powerup, tile):
-        tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile)
+        tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile, 'circle')
+        self.active_tile_highlight = 'bomb'
+        self.highlight(tiles_to_highlight)
+
+    def highlight_slow_tiles(self, powerup, tile):
+        tiles_to_highlight = self.get_tiles_in_radius(powerup.type['slow radius'], tile, 'horiz_circle')
+        self.active_tile_highlight = 'slow'
         self.highlight(tiles_to_highlight)
     
     def activate_multiplier_on_paths(self, multiplier, paths):
@@ -244,6 +268,22 @@ class Board:
                     delete_path = True
             self.unhighlight()
         
+        def trigger_slow():
+            # Actions to pass down into generic timed tile spot
+            def slow_tile(tile):
+                tile.slowed = True
+            def unslow_tile(tile):
+                tile.slowed = False
+            
+            # Remove tiles from any other slow spots (will essentially reset timer on them)
+            for slow_spot in self.slow_spots:
+                slow_spot.remove_tiles(self.highlighted_tiles)
+
+            self.slow_spots.append(TimedTileEffect(
+                self.highlighted_tiles, powerup.type['time limit'], slow_tile, unslow_tile
+            ))
+            self.unhighlight()
+
         def trigger_freeze():
             full_freeze = True
             everything_effected = len(powerup.type['effected attachments']) == 0
@@ -264,6 +304,8 @@ class Board:
 
         if powerup.type_name == 'bomb' or powerup.type_name == 'bigbomb':
             trigger_bomb()
+        elif powerup.type_name == 'slow':
+            trigger_slow()
         elif powerup.type_name == 'freeze':
             trigger_freeze()
         else: return False
@@ -324,11 +366,15 @@ class Board:
             self.animate_duration -= 1
             if self.animate_duration == 0: 
                 self.animate = False
-                self.new_level()
-                
+                self.new_level()    
         else:
             for path in self.paths:
                 path.update()
+        
+        for i in reversed(range(len(self.slow_spots))):
+            slow_spot = self.slow_spots[i]
+            if slow_spot.done: self.slow_spots.remove(slow_spot)
+            else: slow_spot.update()
 
     # Rendering
     def draw(self, game_surf):
@@ -337,26 +383,26 @@ class Board:
         self.draw_paths(game_surf)
         self.draw_board_highlight(game_surf)
         self.draw_clocks(game_surf)
-        
-    def get_highlight_box(self, width, height, color, opacity):
-        highlight_surf = pygame.Surface((width,height), pygame.SRCALPHA)
-        r, g, b = color
-        highlight_surf.fill((r,g,b,opacity))
-        return highlight_surf
 
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
 
     def draw_highlight(self, tile, game_surf):
         if not tile.highlighted: return
-        game_surf.blit(self.get_highlight_box(
-            TRACK_WIDTH, TRACK_HEIGHT, self.highlight_color, self.default_highlight_opacity
+
+        highlight_color = (0,0,0)
+        if self.active_tile_highlight == 'track': highlight_color = Colors.green
+        else: highlight_color = PowerUpTypes[self.active_tile_highlight]['highlight color']
+
+        game_surf.blit(get_highlight_box(
+            TRACK_WIDTH, TRACK_HEIGHT, highlight_color
         ), tile.rect.topleft)
 
     def draw_tiles(self, game_surf):
         for row in self.tiles:
             for tile in row:
                 tile.draw_attached(game_surf)
+                tile.draw_effect(game_surf)
                 self.draw_highlight(tile, game_surf)
     
     def draw_paths(self, game_surf):
@@ -379,7 +425,7 @@ class Board:
         
         if all_highlighted and self.full_freeze:
             color, opacity = self.highlight_state_config[all_highlightes_as]
-            game_surf.blit(self.get_highlight_box(
+            game_surf.blit(get_highlight_box(
                 self.board_highlight_rect.width, self.board_highlight_rect.height, color, opacity
             ), self.board_highlight_rect.topleft)
         else:
@@ -391,7 +437,7 @@ class Board:
                     color, opacity = self.highlight_state_config[path.highlight]
                     for (col, row) in path.tiles_under:
                         tile = self.tiles[row][col]
-                        game_surf.blit(self.get_highlight_box(
+                        game_surf.blit(get_highlight_box(
                             tile.rect.width, tile.rect.height, color, opacity
                         ), tile.rect.topleft)
     

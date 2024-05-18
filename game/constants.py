@@ -136,3 +136,10 @@ class Colors:
     sky_blue = (202, 228, 241)
     blue = (0, 0, 255)
     green = (0, 255, 0)
+    yellow = (255, 255, 0)
+
+def get_highlight_box(width, height, color, opacity = 128):
+    highlight_surf = pygame.Surface((width,height), pygame.SRCALPHA)
+    r, g, b = color
+    highlight_surf.fill((r,g,b,opacity))
+    return highlight_surf
