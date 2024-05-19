@@ -389,6 +389,13 @@ class Board:
         self.draw_board(game_surf)
         self.draw_tiles(game_surf)
         self.draw_paths(game_surf)
+        for row in self.tiles:
+            for tile in row:
+                if tile.under_path:
+                    game_surf.blit(get_highlight_box(
+                        TRACK_WIDTH, TRACK_HEIGHT, (255,255,128)
+                    ), tile.rect.topleft)
+
         self.draw_board_highlight(game_surf)
         self.draw_clocks(game_surf)
 

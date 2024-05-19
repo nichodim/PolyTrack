@@ -46,8 +46,9 @@ class Path:
     def add_tile_under(self, tile):
         x, y = tile
         if tile in self.tiles_under: return
-        self.tiles_under.append(tile)
-        self.board_tiles[y][x].under_path = self
+        if tile not in self.tiles_under:
+            self.tiles_under.append(tile)
+            self.board_tiles[y][x].under_path = self
 
     def remove_tile_under(self, tile):
         x, y = tile
@@ -277,7 +278,8 @@ class Path:
         )
 
         # multiple cart
-        self.total_cart = 5
+        self.max_carts = 5
+        self.total_cart = self.max_carts
         self.time = (pygame.Surface.get_width(self.train[0].surface) + 5) / self.train[0].speed
         self.timer = self.time
         #print("time =", self.time)
@@ -465,7 +467,7 @@ class Path:
             # Adjust code to work with multiple cart
 
             # will only start deleting the references when the last cart leave the previous tile
-            if self.total_cart == 0 and cart == self.train[len(self.train) - 1]:
+            if self.total_cart == 1 and cart == self.train[len(self.train) - 1]:
                 x, y = cart.current_tile
                 self.remove_tile_under([x, y])
 
