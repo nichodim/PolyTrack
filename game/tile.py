@@ -53,16 +53,13 @@ class TimedTileEffect:
                 matching += 1
                 self.tiles.remove(tile)
                 if undo_effect: self.undo(tile)
-        print(matching)
     
     def update(self):
         self.time += 1
-
         if self.time >= self.time_limit:
             self.done = True
     
     def __del__(self):
         for tile in self.tiles:
             self.undo(tile)
-        self.tiles = []
         del self
