@@ -47,10 +47,8 @@ class TimedTileEffect:
         self.done = False
 
     def remove_tiles(self, tiles, undo_effect = False):
-        matching = 0
         for tile in tiles:
             if tile in self.tiles:
-                matching += 1
                 self.tiles.remove(tile)
                 if undo_effect: self.undo(tile)
     
