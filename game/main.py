@@ -1,8 +1,6 @@
 # Top level of the game, responsible for states such as scenes and menus
 
-import pygame
 from button import Button
-from game import Game
 from constants import *
 from menu import Menu
 import sys
