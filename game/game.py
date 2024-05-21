@@ -441,12 +441,12 @@ class Game:
     # Date: 5-16-2024
     # Purpose: Displays internal points counter and lives counter
     def points_and_lives(self):
-        points_font = pygame.font.Font('font/font.ttf', 36)
+        points_font = pygame.font.Font('font/font.ttf', 30)
         points_text = points_font.render(f'Points: {self.points}', True, Colors.black, Colors.sky_blue)
         points_rect = points_text.get_rect()
         points_rect.topleft = (10, 4)
 
-        lives_font = pygame.font.Font('font/font.ttf', 36)
+        lives_font = pygame.font.Font('font/font.ttf', 30)
         lives_text = lives_font.render(f'Lives: {self.lives}', True, Colors.black, Colors.sky_blue)
         lives_rect = lives_text.get_rect()
         lives_rect.topleft = (10, 39)
