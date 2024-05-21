@@ -174,8 +174,8 @@ class Path:
         print()
         '''
 
-        same_color = [(255, 0, 0), (0,0,0)]                 # Modified by Matthew Selvaggi May-15-24
-        self.color = random.choice(same_color)              # Added modification to generate a unique color for start/end
+                                                          # Modified by Matthew Selvaggi May-21-24
+        self.color = random.choice(Colors.random_colors)  # Added modification to generate a unique color for start/end
         if self.map['type'] == 'vanilla':
             start_image = TerrainSprites.grass
             end_image = TerrainSprites.grass

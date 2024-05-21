@@ -1,6 +1,7 @@
 # Constants used throughout the game
 
 import pygame
+import random
 
 # Constant variables - things you would configure
 # Resolution config
@@ -145,7 +146,7 @@ class PowerupSprites:
         pygame.image.load('images/powerup_images/bomb9.png')
     ]
     freeze = pygame.image.load('images/event_images/snowflake_icon.png').convert_alpha()
-    slow = pygame.image.load('images/powerup_images/slow.jpg').convert_alpha()
+    slow = pygame.image.load('images/powerup_images/slow.png').convert_alpha()
     background_image = pygame.image.load('images/powerup_images/toolbox_bg.png').convert_alpha()
 class Colors:
     black = (0, 0, 0)
@@ -157,6 +158,7 @@ class Colors:
     blue = (0, 0, 255)
     green = (0, 255, 0)
     yellow = (255, 255, 0)
+    random_colors = [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for _ in range(10)]
 
 def get_highlight_box(width, height, color, opacity = 128):
     highlight_surf = pygame.Surface((width,height), pygame.SRCALPHA)
