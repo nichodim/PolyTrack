@@ -3,17 +3,27 @@ from constants import *
 from game import Game
 import maps
 
+# Modified Matthew Selvaggi
+# Date:  5-21-24
+# Purpose: Created the menu in its own file away from main, allows for more expansion later on.
 class Menu:
-    def map_menu(self):  # Give it its own file at a later date
+    def map_menu(self):
         pygame.init()
 
-        image_scale = 3
         button_x = GAME_WIDTH / 4
-        button_radius = Images.grass_map.get_width() * 3 / 2
-        map_button_radius = Images.mapmenu_img.get_width() * 2 / 2
-        grass_map = Button(button_x - button_radius, 400, Images.grass_map, image_scale)
-        snow_map = Button(2 * button_x - button_radius, 400, Images.snow_map, image_scale)
-        snow_mapL = Button(3 * button_x - button_radius, 400, Images.snow_map_large, image_scale)
+        map_button_radius = Images.mapmenu_img.get_width()
+        image_scale = 3
+        button_radius = Images.grass_map.get_width()
+
+        center_x = GAME_WIDTH / 2
+        button_width = button_radius * image_scale
+
+        gap = (GAME_WIDTH - 2 * button_width) / 6
+        grass_map_x = center_x - button_width - gap / 2
+        snow_map_x = center_x + gap / 3
+
+        grass_map = Button(grass_map_x, 400, Images.grass_map, image_scale)
+        snow_map = Button(snow_map_x, 400, Images.snow_map, image_scale)
         map_img = Button(2 * button_x - map_button_radius, 100, Images.mapmenu_img, 2)
 
         render = True
