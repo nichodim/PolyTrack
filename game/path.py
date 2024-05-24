@@ -41,7 +41,7 @@ class Path:
 
         self.tiles_under = []
         self.create_stations()
-        self.create_station_tracks()
+        self.create_station_track()
     
     def add_tile_under(self, tile):
         x, y = tile
@@ -221,48 +221,55 @@ class Path:
         self.add_tile_under([start[0], start[1]])
         #self.add_tile_under(self.end_station_tile)
     
-    # Tracks that spawn next to the station based on orientation
-    def create_station_tracks(self):
-        for i in range(100):
-            start_orient = self.start_station.orientation
-            self.start_x = int(round(self.start[0] + math.cos(math.radians(start_orient)), 1))
-            self.start_y = int(round(self.start[1] - math.sin(math.radians(start_orient)), 1))
+    # Determine starting train orientation 
+    def train_orient(self, location):
+        x, y = location
+        orient = [0, 90, 180, 270]
+        if x == 0 or self.check_water(x - 1, y):
+            orient.remove(180)
+        if x == self.grid_cols - 1 or self.check_water(x + 1, y):
+            orient.remove(0)
 
-            success = self.try_create_station_track((self.start_x, self.start_y), start_orient)
-            if success: break
+        if y == 0 or self.check_water(x, y - 1):
+            orient.remove(90)
+        if y == self.grid_rows - 1 or self.check_water(x, y + 1):
+            orient.remove(270)
 
-        '''
-        end_orient = self.end_station.orientation
-        end_x = int(round(self.end[0] + math.cos(math.radians(end_orient)), 1))
-        end_y = int(round(self.end[1] - math.sin(math.radians(end_orient)), 1))
-        self.try_create_station_track((end_x, end_y), end_orient)
-        '''
+        return random.choice(orient)
+    
+    def check_water(self, x, y):
+        if x == -1 or x == self.grid_cols or y == -1 or y == self.grid_rows:
+            return True
+        return self.board_tiles[y][x].terrain == 'water'
     
     # generate station track based on train initial angle and location of starting station
-    def try_create_station_track(self, location, deg):
+    def create_station_track(self):
+        deg = self.start_station.orientation
+        self.start_x = int(round(self.start[0] + math.cos(math.radians(deg)), 1))
+        self.start_y = int(round(self.start[1] - math.sin(math.radians(deg)), 1))
+
+        x = self.start_x
+        y = self.start_y
         possible_tracks = [track_set_types.vertical, track_set_types.horizontal, track_set_types.left, track_set_types.right, track_set_types.ileft, track_set_types.iright]
-        if location[0] == 0 or location[0] == self.grid_rows - 1 or deg == 90 or deg == 270:
+        if x == 0 or x == self.grid_rows - 1 or deg == 90 or deg == 270 or (deg == 0 and self.check_water(x + 1, y)) or (deg == 180 and self.check_water(x - 1, y)):
             possible_tracks.remove(track_set_types.horizontal)
-        if location[1] == 0 or location[1] == self.grid_rows - 1 or deg == 0 or deg == 180:
+        if y == 0 or y == self.grid_rows - 1 or deg == 0 or deg == 180 or (deg == 90 and self.check_water(x, y - 1)) or (deg == 270 and self.check_water(x, y + 1)):
             possible_tracks.remove(track_set_types.vertical)
 
-        if location[0] == 0 or location[1] == self.grid_rows - 1 or deg == 180 or deg == 270:
+        if x == 0 or y == self.grid_rows - 1 or deg == 180 or deg == 270 or (deg == 90 and self.check_water(x - 1, y)) or (deg == 0 and self.check_water(x, y + 1)):
             possible_tracks.remove(track_set_types.left)
-        if location[0] == 0 or location[1] == 0 or deg == 90 or deg == 180:
+        if x == 0 or y == 0 or deg == 90 or deg == 180 or (deg == 0 and self.check_water(x, y - 1)) or (deg == 270 and self.check_water(x - 1, y)):
             possible_tracks.remove(track_set_types.ileft)
 
-        if location[0] == self.grid_cols - 1 or location[1] == self.grid_rows - 1 or deg == 0 or deg == 270:
+        if x == self.grid_cols - 1 or y == self.grid_rows - 1 or deg == 0 or deg == 270 or (deg == 90 and self.check_water(x + 1, y)) or (deg == 180 and self.check_water(x, y + 1)):
             possible_tracks.remove(track_set_types.right)
-        if location[0] == self.grid_cols - 1 or location[1] == 0 or deg == 0 or deg == 90:
+        if x == self.grid_cols - 1 or y == 0 or deg == 0 or deg == 90 or (deg == 270 and self.check_water(x + 1, y)) or (deg == 180 and self.check_water(x, y - 1)):
             possible_tracks.remove(track_set_types.iright)
         
-        tile = self.board_tiles[location[1]][location[0]]
-        if tile.terrain == 'water': return False
-
-        track_rect = pygame.Rect(self.board_tiles[location[1]][location[0]].rect.left, self.board_tiles[location[1]][location[0]].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
-        track = Track(track_rect, possible_tracks[random.randint(0, len(possible_tracks) - 1)])
-        self.board_tiles[location[1]][location[0]].attached = track
-        return True
+        print(possible_tracks)
+        track_rect = pygame.Rect(self.board_tiles[y][x].rect.left, self.board_tiles[y][x].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
+        track = Track(track_rect, random.choice(possible_tracks))
+        self.board_tiles[y][x].attached = track
     
     def create_train(self):
         starting_orient = self.start_station.orientation
@@ -482,21 +489,6 @@ class Path:
 
         if not still_fine:
             self.delete(False)
-    
-    # Dont look here
-    def train_orient(self, location):
-        orient = [0, 90, 180, 270]
-        if location[0] == 0:
-            orient.remove(180)
-        if location[0] == self.grid_cols - 1:
-            orient.remove(0)
-
-        if location[1] == 0:
-            orient.remove(90)
-        if location[1] == self.grid_rows - 1:
-            orient.remove(270)
-
-        return orient[random.randint(0, len(orient) - 1)]
     
     def delete(self, condition):
         self.end_call(self, condition)
