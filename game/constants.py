@@ -158,7 +158,8 @@ class Colors:
     blue = (0, 0, 255)
     green = (0, 255, 0)
     yellow = (255, 255, 0)
-    random_colors = [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for _ in range(10)]
+    random_colors = [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for _ in range(20)]
+    # Technically could crach the game if you were the unluckiest person in the world
 
 def get_highlight_box(width, height, color, opacity = 128):
     highlight_surf = pygame.Surface((width,height), pygame.SRCALPHA)

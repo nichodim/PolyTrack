@@ -50,6 +50,7 @@ class Board:
 
         # Creatre path boilerplate
         self.paths = []
+        self.used_path_colors = []
 
         # Load explosion images
         self.explosion_images = PowerupSprites.explosion_images
@@ -152,6 +153,9 @@ class Board:
             map = self.map                                
         )
         self.paths.append(new_path)
+        while new_path.color in self.used_path_colors:
+            new_path.color = random.choice(Colors.random_colors)
+        self.used_path_colors.append(new_path.color)
     
     # Path has returned end condition
     # End condition is then passed up to board
@@ -159,6 +163,7 @@ class Board:
     def path_call(self, path, condition):
         path.remove_all_under() # added by Kelvin Huang, April 28, 2024 delete all reference to path
         self.paths.remove(path)
+        self.used_path_colors.remove(path.color)
         del path
 
         # Tell the game that the board has end condition

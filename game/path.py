@@ -158,24 +158,9 @@ class Path:
                     acceptable_end = True
             
             if acceptable_start and acceptable_end: searching_for_station = False
-        
-        ''' Debug for checking in front of train which is not working right
-        col, row = start
-        orient = self.train_orient(start)
-        if orient == 0:
-            print(self.board_tiles[row][col + 1].terrain, self.board_tiles[row][col + 1].attached)
-        elif orient == 270:
-            print(self.board_tiles[row + 1][col].terrain, self.board_tiles[row + 1][col].attached)
-        elif orient == 180:
-            print(self.board_tiles[row][col - 1].terrain, self.board_tiles[row][col - 1].attached)
-        elif orient == 90:
-            print(self.board_tiles[row - 1][col].terrain, self.board_tiles[row - 1][col].attached)
-        print(invalid_in_front(start))
-        print()
-        '''
 
-                                                          # Modified by Matthew Selvaggi May-21-24
-        self.color = random.choice(Colors.random_colors)  # Added modification to generate a unique color for start/end
+                                                            # Modified by Matthew Selvaggi May-21-24
+        self.color = random.choice(Colors.random_colors)    # Added modification to generate a unique color for start/end
         if self.map['type'] == 'vanilla':
             start_image = TerrainSprites.grass
             end_image = TerrainSprites.grass
