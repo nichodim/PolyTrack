@@ -103,25 +103,6 @@ class Path:
         def near_edge(point):
             return (point[0] < 2 or self.grid_cols - 3 < point[0]) or (point[1] < 2 or self.grid_rows - 3 < point[1])
         
-        ''' TODO this doesnt work right idk why
-        def invalid_in_front(tile_coordinate):
-            col, row = tile_coordinate
-            orient = self.train_orient(tile_coordinate)
-            if orient == 0: # ->
-                if col + 1 >= self.grid_cols: return True
-                if not self.board_tiles[row][col + 1].is_open(): return True
-            elif orient == 270: # \/
-                if row + 1 >= self.grid_rows: return True
-                if not self.board_tiles[row + 1][col].is_open(): return True
-            elif orient == 180: # <-
-                if col - 1 <= 0: return True
-                if not self.board_tiles[row][col - 1].is_open(): return True
-            elif orient == 90: # /\
-                if row - 1 <= 0: return True
-                if not self.board_tiles[row - 1][col].is_open(): return True
-            return False
-        '''
-        
         start, end = (0, 0), (0, 0)
 
         searching_for_station = True
@@ -414,6 +395,7 @@ class Path:
                 return True
             else: 
                 self.train.remove(cart)
+                SFX.scomplete.play()
 
         # Modified by Kelvin Huang, April 28, 2024
         # deleting path condition
@@ -481,13 +463,14 @@ class Path:
     # Deletion of path doesnt leave behind objects
     def __del__(self): # Modified by Kelvin Huang, April 28, 2024 got __del__ function to work and replace the previous delete function with __del__
         # delete stations
-        col, row = self.start
-        self.board_tiles[row][col].attached = None
-        self.board_tiles[row][col].under_path = None
-
-        col, row = self.end
-        self.board_tiles[row][col].attached = None
-        self.board_tiles[row][col].under_path = None
+        if self.start:
+            col, row = self.start
+            self.board_tiles[row][col].attached = None
+            self.board_tiles[row][col].under_path = None
+        if self.end:
+            col, row = self.end
+            self.board_tiles[row][col].attached = None
+            self.board_tiles[row][col].under_path = None
 
         self.board_tiles[self.start_y][self.start_x].attached = None
 

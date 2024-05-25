@@ -2,17 +2,17 @@
 import random
 import pygame
 
-from itertools import product
 from constants import *
 from tile import Tile, TimedTileEffect
 from obstacle import Obstacle
 from path import Path
 from powerup import PowerUpTypes
-from weather import Weather
 from timer import Timer
+from powerup import *
 
 class Board:
-    def __init__(self, map, end_call, complete_map, animate_weather):
+    def __init__(self, map, end_call, complete_map, animate_weather, game_surf):
+        self.game_surf = game_surf
         self.map = map
         self.clocks = []
         # Find custom map values
@@ -161,10 +161,20 @@ class Board:
     # End condition is then passed up to board
     # Be careful with update and deletion, can cause crashing
     def path_call(self, path, condition):
+        col, row = path.tiles_under[len(path.tiles_under) - 1]
+        saved_tile = self.tiles[row][col]
+
         path.remove_all_under() # added by Kelvin Huang, April 28, 2024 delete all reference to path
         self.paths.remove(path)
         self.used_path_colors.remove(path.color)
         del path
+
+        if not condition:
+            empty_bomb = Powerup((-100,-100), 'bomb')
+            self.empty_highlight_bomb_tiles(empty_bomb, saved_tile)
+            self.trigger_powerup(empty_bomb, saved_tile, self.game_surf)
+        else:
+            SFX.complete.play()
 
         # Tell the game that the board has end condition
         self.end_call(condition)
@@ -230,6 +240,10 @@ class Board:
     def highlight_bomb_tiles(self, powerup, tile):
         tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile, 'circle')
         self.active_tile_highlight = 'bomb'
+        self.highlight(tiles_to_highlight)
+    def empty_highlight_bomb_tiles(self, powerup, tile):
+        tiles_to_highlight = self.get_tiles_in_radius(powerup.type['blast radius'], tile, 'circle')
+        self.active_tile_highlight = ''
         self.highlight(tiles_to_highlight)
 
     def highlight_slow_tiles(self, powerup, tile):
@@ -401,7 +415,7 @@ class Board:
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
 
     def draw_highlight(self, tile, game_surf):
-        if not tile.highlighted: return
+        if not tile.highlighted or self.active_tile_highlight == '': return
 
         highlight_color = (0,0,0)
         if self.active_tile_highlight == 'track': highlight_color = Colors.green

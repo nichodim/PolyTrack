@@ -16,7 +16,7 @@ class Game:
         self.map = map
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
-        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map, self.animate_weather)
+        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map, self.animate_weather, self.game_surf)
         self.track_box = Trackbox()
         self.active_set = None
         self.active_track_and_index = None
@@ -199,7 +199,7 @@ class Game:
         self.game_surf = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.fps = pygame.time.Clock()
 
-        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map, self.map)
+        self.board = Board(self.map, self.handle_board_end, self.handle_complete_map, self.map, self.game_surf)
         self.track_box = Trackbox()
         self.powerup_menu = PowerupMenu(self.track_box.rect)
 

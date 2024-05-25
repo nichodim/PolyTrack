@@ -50,8 +50,14 @@ class SFX:
     pickup2 = pygame.mixer.Sound('sfx/pickup2.mp3')
     slow = pygame.mixer.Sound('sfx/slow.mp3')
     bleep = pygame.mixer.Sound('sfx/bleep.wav')
+    complete = pygame.mixer.Sound('sfx/complete.mp3')
+    scomplete = pygame.mixer.Sound('sfx/complete2.mp3')
+    game_loss = pygame.mixer.Sound('sfx/game_loss.mp3')
 
 # Mixer
+SFX.game_loss.set_volume(0.25)
+SFX.complete.set_volume(0.2)
+SFX.scomplete.set_volume(0.2)
 SFX.metal_move.set_volume(0.2)
 SFX.small_metal_drop.set_volume(0.4)
 SFX.med_metal_drop.set_volume(0.4)
