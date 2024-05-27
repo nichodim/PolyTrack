@@ -33,6 +33,9 @@ class Powerup: # Generic class
         powerup_scaled = pygame.transform.scale(self.sprite, self.dimensions)
         game_surf.blit(powerup_scaled, self.rect.topleft)
 
+# Modified by Kelvin Huang
+# Add a 'cooldown duration' key to each powerup types determine cooldown duration of each powerup after it is used
+
 PowerUpTypes = { # Actual config
     'bomb': {
         # Generic definitions
@@ -42,7 +45,10 @@ PowerUpTypes = { # Actual config
 
         # Type specific
         'highlight color': Colors.red,
-        'blast radius': 1
+        'blast radius': 1,
+
+        # cooldown
+        'cooldown duration': .5
     },
     'bigbomb': {
         # Generic definitions
@@ -53,7 +59,10 @@ PowerUpTypes = { # Actual config
         # Type specific
         'highlight color': Colors.red,
         'highlight color': Colors.yellow,
-        'blast radius': 2
+        'blast radius': 2,
+
+        # cooldown
+        'cooldown duration': 1
     },
     'slow': {
         # Generic definitions
@@ -64,7 +73,10 @@ PowerUpTypes = { # Actual config
         # Type specific
         'highlight color': Colors.yellow,
         'time limit': 300, 
-        'slow radius': 2
+        'slow radius': 2,
+
+        # cooldown
+        'cooldown duration': 5
     }, 
     'freeze': {
         # Generic definitions
@@ -74,6 +86,9 @@ PowerUpTypes = { # Actual config
 
         # Type specific
         'full freeze strength': 2, 
-        'single freeze strength': 5, 
+        'single freeze strength': 5,
+
+        # cooldown
+        'cooldown duration': 10
     }
 }

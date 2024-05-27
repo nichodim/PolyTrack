@@ -45,8 +45,8 @@ class PowerupMenu:
     def find_powerup(self, pos):
         for type in self.powerup_types_list:
             slot = self.slots[type]
-            if slot.powerup == None: continue
-            if slot.powerup.rect.collidepoint(pos): return slot.powerup
+            if slot.timer != None: continue                                         # Modified by Kelvin Huang, May 26, 2024
+            if slot.powerup.rect.collidepoint(pos): return slot.powerup             # switch instead of checking if there a power check if it on cooldown
         return None
 
     def remove_powerup(self, powerup):

@@ -10,13 +10,19 @@
 import pygame
 import math
 
+
 class Timer:
-    def __init__(self, x, y, radius, duration = 3):
+    # Modified by Kelvin Huang
+    # add alpha parameter that can be pass through to determine transparency of the clock
+
+    def __init__(self, x, y, radius, duration = 3, alpha = 255):
         self.x = x
         self.y = y
         self.duration = duration * 60
         self.radius = radius
         self.clock_object = []
+
+        self.alpha = alpha
 
         self.rect = pygame.Rect(self.x - radius, self.y - radius, 2 * radius, 2 * radius)
         self.clock()
@@ -77,20 +83,20 @@ class Timer:
         # reference to https://stackoverflow.com/questions/6339057/draw-transparent-rectangles-and-polygons-in-pygame
         
         # draw the clock
-        color = pygame.Color(255, 255, 255, 255)
+        color = pygame.Color(255, 255, 255, self.alpha)
         target_rect = pygame.Rect(self.x - self.radius, self.y - self.radius, 2 * self.radius, 2 * self.radius)
         shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
         pygame.draw.circle(shape_surf, color, (self.radius, self.radius), self.radius)
         game_surf.blit(shape_surf, target_rect)
 
-        pygame.draw.arc(game_surf, (0, 0, 0), self.rect, 0, 2*math.pi, width=1)
+        pygame.draw.arc(game_surf, (0, 0, 0, self.alpha), self.rect, 0, 2*math.pi, width=1)
         
         for object in self.clock_object:
             point1, point2 = object
-            pygame.draw.line(game_surf, (0, 0, 0), point1, point2, width=1)
+            pygame.draw.line(game_surf, (0, 0, 0, self.alpha), point1, point2, width=1)
 
         # draw the timer
-        color = pygame.Color(100, 100, 100, 255)
+        color = pygame.Color(100, 100, 100, self.alpha)
         target_rect = pygame.Rect(self.x - self.radius, self.y - self.radius, 2 * self.radius, 2 * self.radius)
         shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
         pygame.draw.polygon(shape_surf, color, self.tick_object)

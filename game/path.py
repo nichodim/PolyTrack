@@ -10,8 +10,10 @@ from train import Train
 from obstacle import Obstacle
 from board_item_types import TrainSpeed_Multipliers
 
+from timer import Timer
+
 class Path:
-    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, add_clock, tick_clock, map):
+    def __init__(self, board_tiles, board_rect, end_call, train_type, grid_dimensions, map):
         # Prevents updates on nonexisting game objects
         self.path_initated = False
 
@@ -32,8 +34,6 @@ class Path:
         self.spawn_trains = False
 
         self.clock = None
-        self.add_clock = add_clock
-        self.tick_clock = tick_clock
         self.map = map
 
         # create a list for the train that will store in each cart
@@ -164,7 +164,7 @@ class Path:
         # add clock                                                                         # Modified by Kelvin Huang, May 13, 2024
         radius = 25                                                                         # add timer before train spawns
         duration = 3
-        self.clock = self.add_clock(rect_x + radius, rect_y + radius, radius, duration)
+        self.clock = Timer(rect_x + radius, rect_y + radius, radius, duration)
 
         # ending station
         rect_x = self.board_rect.left + OUTER_GAP + end[0] * (TRACK_WIDTH + INNER_GAP)
@@ -232,7 +232,6 @@ class Path:
         if x == self.grid_cols - 1 or y == 0 or deg == 0 or deg == 90 or (deg == 270 and self.check_water(x + 1, y)) or (deg == 180 and self.check_water(x, y - 1)):
             possible_tracks.remove(track_set_types.iright)
         
-        print(possible_tracks)
         track_rect = pygame.Rect(self.board_tiles[y][x].rect.left, self.board_tiles[y][x].rect.top, TRACK_WIDTH, TRACK_HEIGHT)
         track = Track(track_rect, random.choice(possible_tracks))
         self.board_tiles[y][x].attached = track
@@ -289,7 +288,7 @@ class Path:
     # Update
     def update(self):
         if self.clock != None:                          # Modified by Kelvin Huang, May 13, 2024
-            if self.tick_clock(self.clock) == True:     # Controls when to start spawning trains
+            if self.clock.tick():                       # Controls when to start spawning trains
                 self.clock = None
                 self.start_spawning_train = True
 
@@ -474,6 +473,7 @@ class Path:
 
         self.board_tiles[self.start_y][self.start_x].attached = None
 
+        print("delete")
         # delete train
         del self.train
 
@@ -493,3 +493,6 @@ class Path:
 
         pygame.draw.rect(game_surf, self.color, start_rect, 3)
         pygame.draw.rect(game_surf, self.color, end_rect, 3)
+
+        if self.clock != None:
+            self.clock.draw(game_surf)

@@ -14,7 +14,6 @@ class Board:
     def __init__(self, map, end_call, complete_map, animate_weather, game_surf):
         self.game_surf = game_surf
         self.map = map
-        self.clocks = []
         # Find custom map values
         grid_layout = map['board']
         self.type, self.obstacles, self.levels = map['type'], map['obstacles'], map['levels']
@@ -148,8 +147,6 @@ class Board:
             end_call = self.path_call, 
             train_type = train_type,
             grid_dimensions = (self.rows, self.cols),
-            add_clock = self.add_clock,                 # Modified by Kelvin Huang, May 13, 2024
-            tick_clock = self.tick_clock,               # pass these method to path so it can use it to add timer above starting stations  
             map = self.map                                
         )
         self.paths.append(new_path)
@@ -376,16 +373,6 @@ class Board:
         ):
             return self.tiles[row][col]
         return None
-    
-    def add_clock(self, x, y, radius, duration):    # Created by Kelvin Huang, May 13, 2024 
-        clock = Timer(x, y, radius, duration)       # handles adding new clock in board.py
-        self.clocks.append(clock)        
-        return clock
-    
-    def tick_clock(self, clock, speed = 1):         # handles ticking new clock in board.py
-        if clock.tick(speed) == True:
-            self.clocks.remove(clock)
-            return True
 
     def update(self):
         # for train
@@ -409,7 +396,6 @@ class Board:
         self.draw_tiles(game_surf)
         self.draw_paths(game_surf)
         self.draw_board_highlight(game_surf)
-        self.draw_clocks(game_surf)
 
     def draw_board(self, game_surf):
         pygame.draw.rect(game_surf, Colors.light_gray, self.rect)
@@ -467,7 +453,3 @@ class Board:
                         game_surf.blit(get_highlight_box(
                             tile.rect.width, tile.rect.height, color, opacity
                         ), tile.rect.topleft)
-    
-    def draw_clocks(self, game_surf):       # Created by Kelvin Huang, May 13, 2024
-        for clock in self.clocks:           # Draw each clock
-            clock.draw(game_surf)
