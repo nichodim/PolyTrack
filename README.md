@@ -15,6 +15,10 @@ by pressing `ESC` and they can rotate tracks by pressing `r`. After the user has
 `Watch Me`
 [![PolyTracks](https://github.com/mattsel/PolyTracks/assets/141775337/ef4d80fd-17d5-452d-82bb-280171b01317)](https://youtu.be/etNQuOJsIig)
 
+## ERD Diagram
+
+![Screenshot 2024-05-21 130617](https://github.com/mattsel/PolyTracks/assets/141775337/8aaabb13-15dd-4ef8-827b-ea3b9b9c6438)
+
 ## Train Logic
 The train's features were built using a combination of math and lists. Each time a new train is created, it will follow ing the path of the train in front of it. If the train is the front train, it will simply follow the 
 directions of the tracks through instructions from the tracks dictionary. The train can listen to the track's logic and adjust accordingly through this code.
