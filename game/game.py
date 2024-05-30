@@ -143,7 +143,7 @@ class Game:
         self.active_powerup = None
 
         # Pause menu initialization
-        self.lives = 2
+        self.lives = 5
         self.points = 0
         self.initial_lives = self.lives
         self.resume = True
