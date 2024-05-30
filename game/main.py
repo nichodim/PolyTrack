@@ -2,7 +2,7 @@
 
 from button import Button
 from constants import *
-from menu import Menu
+from game import Menu
 import sys
 
 
