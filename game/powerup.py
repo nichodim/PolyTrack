@@ -85,10 +85,10 @@ PowerUpTypes = { # Actual config
         'effected attachments': [], # Empty to effect all
 
         # Type specific
-        'full freeze strength': 2, 
-        'single freeze strength': 5,
+        'full freeze strength': 3, 
+        'single freeze strength': 6,
 
         # cooldown
-        'cooldown duration': 10
+        'cooldown duration': 8
     }
 }
