@@ -1,4 +1,4 @@
-# PolyTracks
+# PolyTrack
 The objective of this project was to practice team development using Agile Methodologies and an Evolutionary software life cycle development. This game was created with the help of three
 other developers as a means to become more proficient and collaborative programmers. Within this game, there are traces of excellent modular object-oriented programming which has allowed us
 to build a foundation that is more scaleable for our product's needs. Our process for developing this game was through the use of a Scrum master, Kanban boards, and 3-week sprints. Each sprint
